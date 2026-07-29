@@ -1,0 +1,11 @@
+# 忽略中間產物與大型備用檔
+*.pdf
+*.log
+scratch/
+白河商工/
+clean_dummy_files.py
+debug_*.py
+download_*.py
+fix_*.py
+parse_*.py
+split_*.py

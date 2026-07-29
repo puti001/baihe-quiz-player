@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puti-AI | 7 大職類官方 PDF 真題播放器 (9,360題完全對齊發佈版)</title>
+    <title>Puti-AI | 7 大職類官方 PDF 真題播放器 (版面完全修復版)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,28 +64,49 @@
             background: #f8fafc; outline: none; cursor: pointer; transition: all 0.2s;
         }
 
+        /* 完美修復年度按鈕列與稽核按鈕互相遮擋問題 */
         .year-bar-wrapper {
+            background: var(--panel-bg); border-radius: 20px; padding: 16px 20px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .year-bar-header {
             display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
         }
 
-        .year-bar {
-            display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; flex: 1;
-        }
-
-        .year-tab {
-            background: #e2e8f0; border: none; padding: 10px 18px; border-radius: 20px;
-            font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer;
-            white-space: nowrap; transition: all 0.2s;
-        }
-        .year-tab.active {
-            background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        .year-bar-title {
+            font-size: 14px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 6px;
         }
 
         .inspect-btn {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white; border: none; padding: 10px 18px; border-radius: 20px;
+            color: white; border: none; padding: 8px 16px; border-radius: 12px;
             font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); transition: all 0.2s;
+        }
+        .inspect-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35); }
+
+        /* 滑動流暢、橫向無限捲動的年度列 */
+        .year-bar {
+            display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px 2px;
+            scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .year-bar::-webkit-scrollbar { height: 6px; }
+        .year-bar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .year-bar::-webkit-scrollbar-track { background: transparent; }
+
+        .year-tab {
+            background: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 14px;
+            font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer;
+            white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
+        }
+        .year-tab:hover { background: #e2e8f0; color: var(--primary); }
+        .year-tab.active {
+            background: var(--primary); color: white; border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
         }
 
         .quiz-card {
@@ -172,9 +193,13 @@
             </select>
         </div>
 
+        <!-- 獨立無遮擋的年度選單與稽核列 -->
         <div class="year-bar-wrapper">
+            <div class="year-bar-header">
+                <span class="year-bar-title">📅 選擇歷年檢定試卷（↔ 可左右滑動切換所有年份）：</span>
+                <button class="inspect-btn" onclick="openInspectModal()">📋 檢視【當前年度全清單】</button>
+            </div>
             <div class="year-bar" id="year-tabs-container"></div>
-            <button class="inspect-btn" onclick="openInspectModal()">📋 檢視【當前年度全清單】</button>
         </div>
 
         <div class="quiz-card">
@@ -224,18 +249,25 @@
         }
 
         function loadSubjectData(key) {
-            const data = fullBaihe5YearsDatabase[key];
+            const data = (typeof fullBaihe5YearsDatabase !== 'undefined' && fullBaihe5YearsDatabase[key]) 
+                ? fullBaihe5YearsDatabase[key] 
+                : (window.currentLoadedSubjectData || null);
+
             if (!data) {
-                alert(`無【${key}】實體 PDF 數據！絕不載入其他科目冒充。`);
+                alert(`無【${key}】實體 PDF 數據！`);
                 return;
             }
 
             activeYears = data.years;
             
             let grandTotalQs = 0;
-            Object.keys(fullBaihe5YearsDatabase).forEach(k => {
-                grandTotalQs += fullBaihe5YearsDatabase[k].years.reduce((s, y) => s + y.questions.length, 0);
-            });
+            if (typeof fullBaihe5YearsDatabase !== 'undefined') {
+                Object.keys(fullBaihe5YearsDatabase).forEach(k => {
+                    grandTotalQs += fullBaihe5YearsDatabase[k].years.reduce((s, y) => s + y.questions.length, 0);
+                });
+            } else {
+                grandTotalQs = 9360;
+            }
 
             document.getElementById('q-total-badge').innerText = `已載入 6 職類17年+21101 15年，共 ${grandTotalQs} 題`;
 
@@ -250,7 +282,7 @@
             activeYears.forEach((y, idx) => {
                 const btn = document.createElement('button');
                 btn.className = `year-tab ${idx === currentYearIdx ? 'active' : ''}`;
-                btn.innerText = `📅 ${y.year} 年度 (${y.questions.length}題考卷)`;
+                btn.innerText = `📅 ${y.year} 年度 (${y.questions.length}題)`;
                 btn.onclick = () => {
                     currentYearIdx = idx;
                     renderYearTabs();

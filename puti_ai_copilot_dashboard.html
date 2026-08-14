@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puti-AI | 國小教師整學期全場景 AI 提示詞控制台</title>
+  <!-- 引入 Google Fonts Outfit 與 Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS Variables 設計系統 */
+    :root {
+      --primary: #7F56D9;
+      --primary-light: #F9F5FF;
+      --primary-hover: #6941C6;
+      --secondary: #9E77ED;
+      --accent: #D6BBFB;
+      --bg: #FAF9FC;
+      --card-bg: #FFFFFF;
+      --text: #344054;
+      --text-dark: #1D2939;
+      --text-muted: #667085;
+      --border: #EAECF0;
+      --border-accent: #E9D5FF;
+      --success: #12B76A;
+      --warning: #FEC84B;
+      --danger: #F04438;
+      --radius: 16px;
+      --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.1);
+      --shadow-md: 0 4px 20px -2px rgba(16, 24, 40, 0.08);
+      --shadow-lg: 0 12px 32px -4px rgba(16, 24, 40, 0.12);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 頂部 Header */
+    header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 4px 10px rgba(127, 86, 217, 0.3);
+    }
+
+    .brand-title {
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--text-dark), var(--primary-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 700;
+      border: 1.5px solid var(--accent);
+      padding: 4px 12px;
+      border-radius: 20px;
+      background-color: var(--primary-light);
+    }
+
+    /* 導覽列 */
+    .nav-container {
+      max-width: 1400px;
+      width: 100%;
+      margin: 24px auto 0 auto;
+      padding: 0 24px;
+    }
+
+    nav {
+      display: flex;
+      background-color: var(--card-bg);
+      padding: 8px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    nav button {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    nav button:hover {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    nav button.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 4px 12px rgba(127, 86, 217, 0.25);
+    }
+
+    nav button svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* 主要內容區域 */
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 網格卡片佈局 */
+    .scenario-section {
+      margin-bottom: 36px;
+    }
+
+    .scenario-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text-dark);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 6px;
+    }
+
+    .scenario-title.sc-purple { border-left: 5px solid #7F56D9; }
+    .scenario-title.sc-green { border-left: 5px solid #12B76A; }
+    .scenario-title.sc-blue { border-left: 5px solid #0086C9; }
+    .scenario-title.sc-orange { border-left: 5px solid #F04438; }
+    .scenario-title.sc-pink { border-left: 5px solid #EE46BC; }
+    .scenario-title.sc-yellow { border-left: 5px solid #F79009; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    /* 3D 翻轉卡片樣式 */
+    .prompt-card-wrapper {
+      perspective: 1000px;
+      width: 100%;
+      height: 180px;
+      cursor: pointer;
+    }
+
+    .prompt-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .prompt-card-wrapper.flipped .prompt-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .prompt-card-front, .prompt-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: var(--radius);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      box-shadow: var(--shadow-sm);
+      border: 1.5px solid var(--border);
+      transition: var(--transition);
+      background-color: var(--card-bg);
+    }
+
+    .prompt-card-front:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-accent);
+    }
+
+    .card-num {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary);
+      background-color: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-dark);
+      text-align: left;
+      margin: 8px 0 4px 0;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: left;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-click-tip {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .prompt-card-back {
+      background: linear-gradient(135deg, var(--success), #0f9f5c);
+      color: white;
+      transform: rotateY(180deg);
+      align-items: center;
+      justify-content: center;
+      border-color: #0f9f5c;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(18, 183, 106, 0.25);
+    }
+
+    .copied-badge {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copied-desc {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    .prompt-card-back .card-click-tip {
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 16px;
+    }
+
+    /* 情境邊框配色 */
+    .front-purple { border-top: 5px solid #7F56D9; }
+    .front-green { border-top: 5px solid #12B76A; }
+    .front-blue { border-top: 5px solid #0086C9; }
+    .front-orange { border-top: 5px solid #F04438; }
+    .front-pink { border-top: 5px solid #EE46BC; }
+    .front-yellow { border-top: 5px solid #F79009; }
+
+    /* 轉盤 & 計分板 */
+    .roulette-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wheel-wrapper {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      margin-bottom: 24px;
+    }
+
+    #wheelCanvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      box-shadow: var(--shadow-lg), 0 0 0 10px white, 0 0 0 12px var(--accent);
+      transition: transform 6s cubic-bezier(0.1, 0.8, 0.1, 1);
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 30px solid var(--primary);
+      z-index: 10;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    }
+
+    .wheel-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: var(--shadow-md);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid var(--primary);
+    }
+
+    .wheel-center::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .team-card {
+      background-color: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .team-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .team-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .team-score {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--primary);
+      margin: 8px 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .score-btns {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .score-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: white;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    .score-btn:hover {
+      background-color: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .remove-team {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: var(--danger);
+      color: white;
+      border: none;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .team-card:hover .remove-team {
+      opacity: 1;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(29, 41, 57, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background-color: white;
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-winner {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 24px;
+      background-color: var(--primary-light);
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    footer {
+      background-color: var(--card-bg);
+      border-top: 1px solid var(--border);
+      padding: 24px 40px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 紙花粒子畫布 -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- 頂部 Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">P</div>
+      <div>
+        <h1 class="brand-title">Puti-AI | 國小教師整學期全場景 AI 提示詞控制台</h1>
+      </div>
+    </div>
+    <div class="tagline">K-6 備課 / 班經 / 行政 AI 卡牌發射台 🚀</div>
+  </header>
+
+  <!-- 導覽列 -->
+  <div class="nav-container">
+    <nav>
+      <button class="active" onclick="switchTab('prompt-hub')">
+        <svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2zm1 17.93V18a1 1 0 0 1-2 0v-1.93c-3.14-.42-5.58-2.86-6-6H7a1 1 0 0 1 0-2h1.07c.42-3.14 2.86-5.58 6-6V5a1 1 0 0 1 2 0v1.07c3.14.42 5.58 2.86 6 6H17a1 1 0 0 1 0 2h-1.07c-.42 3.14-2.86 5.58-6 6v1.93z"/></svg>
+        AI 備課提示詞百寶箱
+      </button>
+      <button onclick="switchTab('classroom')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+        大螢幕隨堂抽籤轉盤
+      </button>
+      <button onclick="switchTab('scoreboard-tab')">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        小組競賽即時計分板
+      </button>
+    </nav>
+  </div>
+
+  <main>
+
+    <!-- ========================================================
+         分頁 1: AI 備課提示詞百寶箱 (18張精美3D卡牌牆)
+         ======================================================== -->
+    <div id="prompt-hub" class="tab-content active">
+      
+      <!-- A. 班級經營與常規建立 -->
+      <div class="scenario-section">
+        <h2 class="scenario-title sc-purple">🏫 A. 班級經營與常規建立</h2>
+        <div class="card-grid" id="grid-a"></div>
+      </div>
+
+      <!-- B. 課堂備課與教案設計 -->
+      <div class="scenario-section">
+        <h2 class="scenario-title sc-green">📖 B. 課堂備課與教案設計</h2>
+        <div class="card-grid" id="grid-b"></div>
+      </div>
+
+      <!-- C. 評量命題與審題 -->
+      <div class="scenario-section">
+        <h2 class="scenario-title sc-blue">📝 C. 評量命題與審題</h2>
+        <div class="card-grid" id="grid-c"></div>
+      </div>
+
+      <!-- D. 學生輔導與親師溝通 -->
+      <div class="scenario-section">
+        <h2 class="scenario-title sc-orange">🤝 D. 學生輔導與親師溝通</h2>
+        <div class="card-grid" id="grid-d"></div>
+      </div>
+
+      <!-- E. 節慶與活動企劃 -->
+      <div class="scenario-section">
+        <h2 class="scenario-title sc-pink">🎉 E. 節慶與活動企劃</h2>
+        <div class="card-grid" id="grid-e"></div>
+      </div>
+
+      <!-- F. 行政與期末評語 -->
+      <div class="scenario-section">
+        <h2 class="scenario-title sc-yellow">⚡ F. 行政與期末評語</h2>
+        <div class="card-grid" id="grid-f"></div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================
+         分頁 2: 大螢幕隨堂抽籤轉盤
+         ======================================================== -->
+    <div id="classroom" class="tab-content">
+      <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          課堂抽籤轉盤 (投影幕專用)
+        </div>
+        <div class="roulette-container">
+          <div class="wheel-wrapper">
+            <div class="wheel-pointer"></div>
+            <div class="wheel-center"></div>
+            <canvas id="wheelCanvas" width="300" height="300"></canvas>
+          </div>
+          <div class="btn-row" style="margin-bottom: 20px;">
+            <button class="btn" id="spinBtn" onclick="spinWheel()">🚀 開始抽籤</button>
+            <button class="btn btn-secondary" onclick="shuffleNames()">🔀 打亂名單</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="wheel-names">名單編輯 (以逗號或換行分隔)</label>
+          <textarea id="wheel-names" rows="4" oninput="initWheel()">小明, 小華, 小紅, 小美, 阿強, 阿榮, 曉婷, 大寶</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         分頁 3: 小組競賽即時計分板
+         ======================================================== -->
+    <div id="scoreboard-tab" class="tab-content">
+      <div class="card" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+          小組得分計分板 (投影幕互動)
+        </div>
+        <div class="btn-row" style="margin-bottom: 20px;">
+          <button class="btn btn-success" onclick="addTeam()">➕ 新增小組</button>
+          <button class="btn btn-secondary" onclick="awardWinner()">🏆 頒獎煙火</button>
+          <button class="btn btn-danger" onclick="resetScores()">🔄 重置分數</button>
+        </div>
+        <div class="scoreboard" id="scoreboard"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 頁尾 -->
+  <footer>
+    <p>屏東縣後庄國小黃朝榮老師作品，免費分享，歡迎擴散推廣，嚴禁商用與任何侵權、不尊重著作權的行為。</p>
+    <p>更多 Puti-AI 教學工具 <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank">點此前往 (https://padlet.com/clongwh/puti_ai_tools)</a></p>
+  </footer>
+
+  <!-- 模態視窗: 抽籤中獎 -->
+  <div class="modal-overlay" id="winnerModal" onclick="closeWinnerModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-winner" id="modalWinnerName">小明</div>
+      <div>
+        <button class="btn" onclick="closeWinnerModal()">確定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========================================================
+    // 18種全學期引導式高階 AI 提示詞 (Prompts Bank)
+    // ========================================================
+    const PROMPTS_CARDS = {
+      class_mgmt: [
+        {
+          num: "01",
+          name: "班級公約生活常規生成",
+          desc: "引導 AI 根據年級與班風期待，生成具備趣味口訣與行為指標的正向引導班級公約。",
+          color: "front-purple",
+          prompt: "你是一位資深的國小導師。請先詢問我：『適用年級』與『期待的班風』。當我提供後，請為我設計一套具趣味性、好記且正向引導的班級生活公約與生活常規細則。公約項目不超過 5 項，使用正向表述，且每項公約需配上 1 句好記的口訣，以及 2 個具體的生活情境行為指標。請以繁體中文表格或 Markdown 卡片排版呈現。"
+        },
+        {
+          num: "02",
+          name: "開學溫馨家長信",
+          desc: "引導 AI 根據教師的信念與宣導重點，生成一封專業、真誠且展現親師和諧溝通的期初信件。",
+          color: "front-purple",
+          prompt: "你是一位具備教育熱忱的國小導師。請先詢問我：『適用年級』與『我的教學信念/重點』。當我提供後，請為我撰寫一封溫暖、真誠且展現教師專業素養的開學給家長交流信，架構需包含親切問候、核心教學理念、期初 3 項家庭配合與溫馨結語，字數約 600-800 字，採用繁體中文撰寫。"
+        },
+        {
+          num: "03",
+          name: "晨會/班會宣導主題導讀",
+          desc: "針對反霸凌、品德等宣導主題，引導 AI 生成 10 分鐘晨會導讀教案、生動故事與引導討論題。",
+          color: "front-purple",
+          prompt: "你是一位擅長說故事的教育專家。請先詢問我：『宣導主題』與『學生年級』。當我提供後，請為我設計一份 10 分鐘的『互動式故事導讀教案與朗讀故事文本』，內容需包含 2 個暖身提問、一個具衝突與教育轉折的生動故事、以及 3 個啟發學生換位思考的引導問題。請用繁體中文撰寫。"
+        }
+      ],
+      lesson_prep: [
+        {
+          num: "04",
+          name: "新課綱三面九項素養教案",
+          desc: "輸入單元，一秒生成包含素養指標、學習目標、課堂流程表與形成性評量的完整 40 分鐘簡要教案。",
+          color: "front-green",
+          prompt: "你是一位國小教學設計專家。請先詢問我：『單元名稱』與『年級』。當我提供後，請設計一份一節課（40分鐘）的『108課綱素養導向簡要教案』。內容須包含單元名稱與年級、2 個對應核心素養、3 個具體學習目標、以表格呈現的課堂流程表（準備、發展、綜合活動）、及課堂末小組形成性評量設計。請以繁體中文撰寫。"
+        },
+        {
+          num: "05",
+          name: "課文提問與板書設計",
+          desc: "引導 AI 依據 Bloom 認知層次由淺入深設計 5 大提問，並給出黑板/大螢幕排版的心智圖架構。",
+          color: "front-green",
+          prompt: "你是一位精通教學法的資深國小教師。請先詢問我：『課文大綱或教學主題』與『年級』。當我提供後，請設計一套『課堂脈絡提問』與對應的『大螢幕/黑板板書設計架構』。提問須依據 Bloom 認知層次由淺入深設計 5 個問題；板書設計請以文字視覺化（如箭頭、框線）呈現左右配置與心智圖脈絡。請以繁體中文編寫。"
+        },
+        {
+          num: "06",
+          name: "生活情境探究任務設計",
+          desc: "將死板的課本概念（如數學乘除法、光學折射）轉化為適合國小生探究的生活情境任務。",
+          color: "front-green",
+          prompt: "你是一位引導探究式學習的國小名師。請先詢問我：『學科概念』與『年級』。當我提供後，請設計一個貼近生活情境的『真實學習探究任務 (Authentic Assessment Task)』，包含情境設定、探究挑戰、3-4人小組分工指引與成果展現方式。請以繁體中文撰寫，著重實用性與趣味性。"
+        }
+      ],
+      assessment: [
+        {
+          num: "07",
+          name: "段考雙向細目表生成",
+          desc: "段考命題前置作業。輸入範圍與重點，自動生成包含認知層次與題型配分比例的表格草案。",
+          color: "front-blue",
+          prompt: "你是一位教育測驗專家。請先詢問我：『段考單元與教學重點』與『年級』。當我提供後，請設計一份段考『雙向細目表』表格草案，包含單元、認知層次、題型配分與比例分佈。表格須以 Markdown 呈現，確保各單元與題型的總配分比例（百分比）分配合理、平衡。請以繁體中文撰寫。"
+        },
+        {
+          num: "08",
+          name: "Bloom認知生活非選題設計",
+          desc: "命題神器。輸入單元與生活時事，生成包含情境導文、兩小題子題及詳細評分規準的非選大題。",
+          color: "front-blue",
+          prompt: "你是一位命題大師。請先詢問我：『想考的單元重點』與『希望融入的生活情境/時事』。當我提供後，請設計一大題生活情境非選擇題，包含 100-150 字情境引導文、屬於應用層次的第(1)題、屬於分析決策層次的第(2)題，以及詳細的算式解析與評分規準（含 partial credit 規準）。請使用繁體中文編寫。"
+        },
+        {
+          num: "09",
+          name: "平時隨堂考卷與答案卷",
+          desc: "快速出小考卷。輸入單元，生成包含選擇、填空、簡答的試卷格式，並提供答案與簡析。",
+          color: "front-blue",
+          prompt: "你是一位國小命題專家。請先詢問我：『考試單元與概念』與『年級』。當我提供後，請為我設計一份包含選擇題（5題）、配合或填空題（5題）與簡答題（1題）的平時隨堂試卷（總分100分），並附上標準答案與簡要解析。請以繁體中文撰寫，格式需排版整齊，便於列印。"
+        }
+      ],
+      counseling: [
+        {
+          num: "10",
+          name: "親師衝突與焦慮回信神盾",
+          desc: "家長抱怨孩子碰撞受傷？引導 AI 生成同理傾聽、交代處置、立場溫堅的 Line 回信草稿。",
+          color: "front-orange",
+          prompt: "你是一位具備高度溝通智慧的國小導師。請先詢問我：『家長抱怨或質疑的事件關鍵字』。當我提供後，請協助撰寫一封回覆給家長的手機簡訊或 Line 訊息。語氣需同理傾聽、還原事實客觀處置、展現班經方針、立場溫和堅定。字數控制在 250-350 字，採用繁體中文撰寫，並在草案後附帶 3 個親師溝通小技巧。"
+        },
+        {
+          num: "11",
+          name: "偏差行為輔導與紀錄策略",
+          desc: "學生上課愛發怪聲？引導 AI 剖析心理需求，給出即時課堂應對、集點方案及客觀輔導紀錄。",
+          color: "front-orange",
+          prompt: "你是一位特教與輔導專家。請先詢問我：『學生偏差行為特徵』與『年級』。當我提供後，請為導師設計一套課堂行為改變技術輔導方案，內容包含行為背後動機分析、課堂即時應對低調處置策略、個別集點介入計畫，以及一段符合輔導系統要求的客觀輔導紀錄文字範例。請以繁體中文撰寫。"
+        },
+        {
+          num: "12",
+          name: "特教 IEP 年度與學期目標",
+          desc: "協助撰寫特教個別化教育計劃。輸入學生起點與目標領域，生成 SMART 目標與融教策略。",
+          color: "front-orange",
+          prompt: "你是一位特教專業教師。請先詢問我學生的『起點行為與限制』及『目標領域』。當我提供後，請撰寫本學期該生個別化教育計劃 (IEP) 的年度目標、2-3個符合 SMART 原則的學期目標、評量方式與普通班融合教學調整策略。請以繁體中文撰寫，字句客觀專業。"
+        }
+      ],
+      festival: [
+        {
+          num: "13",
+          name: "節慶與主題活動企劃案",
+          desc: "班級要辦中秋茶會或聖誕派對？輸入主題與時間預算，生成包含活動表、遊戲、採購清單的企劃。",
+          color: "front-pink",
+          prompt: "你是一位活動企劃大師。請先詢問我：『活動主題』、『年級』與『時間預算限制』。當我提供後，請設計一份生動、富教育意義的節慶活動企劃案，包含活動名稱、流程表、互動遊戲、物資預算表及準備工作。請以繁體中文撰寫，著重在課堂氣氛的營造與可執行度。"
+        },
+        {
+          num: "14",
+          name: "班級趣味闖關遊戲設計",
+          desc: "隨堂熱身或同樂會。輸入複習概念與關卡數，生成包含名稱、規則與過關條件的關卡企劃。",
+          color: "front-pink",
+          prompt: "你是一位團康引導專家。請先詢問我：『闖關核心學科重點』與『關卡數量』。當我提供後，請設計一套在教室內可執行的趣味闖關遊戲，每個關卡包含名稱、道具、簡單規則與過關條件。請使用繁體中文撰寫，確保教室動線與規則設計安全、著重小組合作。"
+        },
+        {
+          num: "15",
+          name: "晨光時間/課後社團方案",
+          desc: "晨光時間不知道帶什麼？輸入時間與材料限制，生成破冰暖身、主活動與反思分享方案。",
+          color: "front-pink",
+          prompt: "你是一位受小學生喜愛的晨光時間引導者。請先詢問我：『時間與材料限制』及『活動核心目標』。當我提供後，請設計一份包含破冰、主活動、反思提問的晨光活動方案。方案需確保好操作、規則好懂，能讓學生精神抖擻地迎接一天。請以繁體中文撰寫。"
+        }
+      ],
+      admin_end: [
+        {
+          num: "16",
+          name: "期末生動成績單評語產生器",
+          desc: "老師期末最大痛點！輸入學生優點與待改進處，生成溫暖鼓勵、條理期許與幽默 3 版本評語。",
+          color: "front-yellow",
+          prompt: "你是一位資深的國小導師。請先詢問我學生的『姓名』、『主要優點』與『需要改進之處』。當我提供後，請為該生撰寫成績單評語，長度約 120-150 字，提供三種語氣版本供挑選：(1) 溫暖鼓勵版、(2) 條理期許版、(3) 幽默風趣版。語氣應溫和且具備教育建設性。請直接輸出三版本，無須額外贅詞。"
+        },
+        {
+          num: "17",
+          name: "校內活動公文簽呈計畫擬稿",
+          desc: "要辦創客營需要寫簽呈？輸入計畫名稱與目的預算，一秒擬好校內公文簽呈與簡版計畫書。",
+          color: "front-yellow",
+          prompt: "你是一位熟諳校園行政文書的行政主任。請先詢問我：『活動計畫名稱』與『目的與經費預算』。當我提供後，協助撰寫一份標準的校內公文簽呈（包含主旨、說明、擬辦）與活動計畫書簡版（含依據、目的、辦理單位、對象、流程與經費預算表）。請使用台灣標準公務文書格式與繁體中文撰寫。"
+        },
+        {
+          num: "18",
+          name: "語音逐字稿智慧會議紀錄",
+          desc: "貼上大段開會亂糟糟的口語逐字稿，自動過濾口頭贅詞，智慧提取決議事項、待辦分工表格。",
+          color: "front-yellow",
+          prompt: "你是一位效率卓越的行政秘書。請先詢問我：『口語會議逐字稿』。當我提供後，請協助將其整理成一份條理分明的會議紀錄，包含主題時間、決議事項分工表格、重要叮嚀與待辦事項追蹤，並自動過濾贅詞，重構為精煉書面公務語，採用繁體中文撰寫。"
+        }
+      ]
+    };
+
+    // ========================================================
+    // 渲染卡牌牆
+    // ========================================================
+    function renderPromptCards() {
+      const categories = ['class_mgmt', 'lesson_prep', 'assessment', 'counseling', 'festival', 'admin_end'];
+      const gridIds = ['grid-a', 'grid-b', 'grid-c', 'grid-d', 'grid-e', 'grid-f'];
+
+      categories.forEach((cat, idx) => {
+        const grid = document.getElementById(gridIds[idx]);
+        grid.innerHTML = '';
+
+        PROMPTS_CARDS[cat].forEach((card) => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'prompt-card-wrapper';
+          wrapper.onclick = () => flipAndCopy(wrapper, card.prompt);
+
+          wrapper.innerHTML = `
+            <div class="prompt-card-inner">
+              <div class="prompt-card-front ${card.color}">
+                <div class="card-num">${card.num}</div>
+                <h3 class="card-title">${card.name}</h3>
+                <p class="card-desc">${card.desc}</p>
+                <span class="card-click-tip">👆 點擊一鍵複製 & 翻面</span>
+              </div>
+              <div class="prompt-card-back">
+                <div class="copied-badge">✓ 已自動複製</div>
+                <p class="copied-desc">高階提示詞已存入剪貼簿！<br>請直接去 Gemini 貼上使用。</p>
+                <span class="card-click-tip">👆 點擊翻回正面</span>
+              </div>
+            </div>
+          `;
+          grid.appendChild(wrapper);
+        });
+      });
+    }
+
+    // ========================================================
+    // 翻轉卡片並自動複製邏輯
+    // ========================================================
+    function flipAndCopy(element, promptText) {
+      // 檢查當前是否已經翻過來了
+      const isFlipped = element.classList.contains('flipped');
+      
+      if (!isFlipped) {
+        // 先複製到系統剪貼簿
+        navigator.clipboard.writeText(promptText).then(() => {
+          // 翻面
+          element.classList.add('flipped');
+          playSound('win');
+        }).catch(err => {
+          element.classList.add('flipped');
+          alert('自動複製失敗，請手動複製！');
+        });
+      } else {
+        // 翻回正面
+        element.classList.remove('flipped');
+        playSound('tick');
+      }
+    }
+
+    // ========================================================
+    // 導覽分頁切換
+    // ========================================================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      
+      const btns = document.querySelectorAll('nav button');
+      if (tabId === 'prompt-hub') btns[0].classList.add('active');
+      else if (tabId === 'classroom') btns[1].classList.add('active');
+      else if (tabId === 'scoreboard-tab') btns[2].classList.add('active');
+
+      if (tabId === 'classroom') {
+        initWheel();
+      } else if (tabId === 'scoreboard-tab') {
+        renderScoreboard();
+      }
+    }
+
+    window.onload = function() {
+      // 渲染 18 張卡牌
+      renderPromptCards();
+      
+      // 轉盤 & 計分板
+      initWheel();
+      renderScoreboard();
+      initConfetti();
+    };
+
+    // ========================================================
+    // 大螢幕免 AI 轉盤與計分工具
+    // ========================================================
+    let wheelCanvas, ctx;
+    let wheelNames = [];
+    let startAngle = 0;
+    let spinAngleStart = 10;
+    let spinTime = 0;
+    let spinTimeTotal = 0;
+    let isSpinning = false;
+    let spinTimeout;
+
+    const WHEEL_COLORS = [
+      '#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA',
+      '#FFC6FF', '#BDB2FF', '#CAFFBF', '#FDFFB6', '#FFADAD', '#A0C4FF'
+    ];
+
+    function initWheel() {
+      wheelCanvas = document.getElementById('wheelCanvas');
+      ctx = wheelCanvas.getContext('2d');
+      const rawNames = document.getElementById('wheel-names').value;
+      wheelNames = rawNames.split(/[,\n]/).map(n => n.trim()).filter(n => n.length > 0);
+      drawWheel();
+    }
+
+    function drawWheel() {
+      if (!ctx) return;
+      const numSegments = wheelNames.length;
+      const arc = Math.PI / (numSegments / 2);
+      ctx.clearRect(0, 0, 300, 300);
+      
+      if (numSegments === 0) {
+        ctx.fillStyle = '#667085';
+        ctx.font = '14px Noto Sans TC';
+        ctx.textAlign = 'center';
+        ctx.fillText('請在下方輸入抽籤名單', 150, 150);
+        return;
+      }
+
+      for (let i = 0; i < numSegments; i++) {
+        const angle = startAngle + i * arc;
+        ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+        ctx.beginPath();
+        ctx.arc(150, 150, 140, angle, angle + arc, false);
+        ctx.lineTo(150, 150);
+        ctx.fill();
+        
+        ctx.save();
+        ctx.fillStyle = '#1D2939';
+        ctx.font = '700 13px Noto Sans TC';
+        ctx.textAlign = 'right';
+        ctx.translate(150, 150);
+        ctx.rotate(angle + arc / 2);
+        const nameText = wheelNames[i];
+        const truncatedName = nameText.length > 6 ? nameText.slice(0, 5) + '..' : nameText;
+        ctx.fillText(truncatedName, 130, 5);
+        ctx.restore();
+      }
+    }
+
+    function spinWheel() {
+      if (isSpinning || wheelNames.length === 0) return;
+      isSpinning = true;
+      document.getElementById('spinBtn').disabled = true;
+      spinAngleStart = Math.random() * 10 + 10;
+      spinTime = 0;
+      spinTimeTotal = Math.random() * 3000 + 4000;
+      rotateWheel();
+    }
+
+    let lastTickAngle = 0;
+    function rotateWheel() {
+      spinTime += 30;
+      if (spinTime >= spinTimeTotal) {
+        stopRotateWheel();
+        return;
+      }
+      const spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+      startAngle += (spinAngle * Math.PI / 180);
+      
+      const segmentArc = (2 * Math.PI) / wheelNames.length;
+      if (Math.abs(startAngle - lastTickAngle) >= segmentArc * 0.4) {
+        playSound('tick');
+        lastTickAngle = startAngle;
+      }
+      drawWheel();
+      spinTimeout = setTimeout(rotateWheel, 30);
+    }
+
+    function easeOut(t, b, c, d) {
+      const ts = (t /= d) * t;
+      const tc = ts * t;
+      return b + c * (tc + -3 * ts + 3 * t);
+    }
+
+    function stopRotateWheel() {
+      clearTimeout(spinTimeout);
+      isSpinning = false;
+      document.getElementById('spinBtn').disabled = false;
+      const degrees = startAngle * 180 / Math.PI + 90;
+      const arcd = 360 / wheelNames.length;
+      const index = Math.floor((360 - (degrees % 360)) / arcd);
+      const winner = wheelNames[index % wheelNames.length];
+      playSound('win');
+      showWinnerModal(winner);
+    }
+
+    function shuffleNames() {
+      const rawNames = document.getElementById('wheel-names').value;
+      let nameArr = rawNames.split(/[,\n]/).map(n => n.trim()).filter(n => n.length > 0);
+      for (let i = nameArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [nameArr[i], nameArr[j]] = [nameArr[j], nameArr[i]];
+      }
+      document.getElementById('wheel-names').value = nameArr.join(', ');
+      initWheel();
+    }
+
+    function showWinnerModal(name) {
+      document.getElementById('modalWinnerName').textContent = name;
+      document.getElementById('winnerModal').classList.add('active');
+      triggerConfetti();
+    }
+
+    function closeWinnerModal() {
+      document.getElementById('winnerModal').classList.remove('active');
+      stopConfetti();
+    }
+
+    let teams = [
+      { name: "第一組", score: 0 },
+      { name: "第二組", score: 0 },
+      { name: "第三組", score: 0 },
+      { name: "第四組", score: 0 }
+    ];
+
+    function renderScoreboard() {
+      const container = document.getElementById('scoreboard');
+      container.innerHTML = '';
+      teams.forEach((team, index) => {
+        const card = document.createElement('div');
+        card.className = 'team-card';
+        card.innerHTML = `
+          <button class="remove-team" onclick="removeTeam(${index})">×</button>
+          <div class="team-name" contenteditable="true" onblur="updateTeamName(${index}, this.textContent)">${team.name}</div>
+          <div class="team-score">${team.score}</div>
+          <div class="score-btns">
+            <button class="score-btn" onclick="changeScore(${index}, -1)">-1</button>
+            <button class="score-btn" onclick="changeScore(${index}, 1)">+1</button>
+            <button class="score-btn" onclick="changeScore(${index}, 5)" style="background-color: var(--primary-light); color: var(--primary); font-weight:900;">+5</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function changeScore(index, value) {
+      teams[index].score += value;
+      if (teams[index].score < 0) teams[index].score = 0;
+      playSound('tick');
+      renderScoreboard();
+    }
+
+    function updateTeamName(index, newName) {
+      teams[index].name = newName.trim() || `第 ${index + 1} 組`;
+    }
+
+    function removeTeam(index) {
+      teams.splice(index, 1);
+      renderScoreboard();
+    }
+
+    function addTeam() {
+      teams.push({ name: `第 ${teams.length + 1} 組`, score: 0 });
+      renderScoreboard();
+    }
+
+    function awardWinner() {
+      if (teams.length === 0) return;
+      let maxScore = -1;
+      let winningTeam = '';
+      teams.forEach(t => {
+        if (t.score > maxScore) {
+          maxScore = t.score;
+          winningTeam = t.name;
+        }
+      });
+      if (maxScore > 0) {
+        playSound('cheer');
+        alert(`🏆 恭喜最高分組別：${winningTeam} (共得 ${maxScore} 分)！`);
+        triggerConfetti();
+        setTimeout(stopConfetti, 5000);
+      } else {
+        alert('請先進行評分！');
+      }
+    }
+
+    function resetScores() {
+      teams.forEach(t => t.score = 0);
+      renderScoreboard();
+    }
+
+    // ========================================================
+    // Web Audio API 音效合成
+    // ========================================================
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        const now = ctx.currentTime;
+        if (type === 'tick') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.exponentialRampToValueAtTime(100, now + 0.08);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'win') {
+          const chords = [523.25, 659.25, 783.99, 1046.50];
+          chords.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+            gain.gain.setValueAtTime(0, now + idx * 0.1);
+            gain.gain.linearRampToValueAtTime(0.15, now + idx * 0.1 + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.4);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.1);
+            osc.stop(now + idx * 0.1 + 0.45);
+          });
+        } else if (type === 'cheer') {
+          const numOscs = 5;
+          for (let i = 0; i < numOscs; i++) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            const baseFreq = 300 + Math.random() * 200;
+            osc.frequency.setValueAtTime(baseFreq, now + i * 0.05);
+            osc.frequency.exponentialRampToValueAtTime(baseFreq * 2, now + i * 0.05 + 0.5);
+            gain.gain.setValueAtTime(0.05, now + i * 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.6);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.05);
+            osc.stop(now + i * 0.05 + 0.65);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // ========================================================
+    // Confetti 特效
+    // ========================================================
+    let confettiCanvas, confettiCtx;
+    let confettiParticles = [];
+    let confettiAnimationId = null;
+
+    function initConfetti() {
+      confettiCanvas = document.getElementById('confettiCanvas');
+      confettiCtx = confettiCanvas.getContext('2d');
+    }
+
+    function triggerConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+      confettiCanvas.style.display = 'block';
+      confettiParticles = [];
+      const colors = ['#FFC6FF', '#BDB2FF', '#CAFFBF', '#FDFFB6', '#FFADAD', '#A0C4FF', '#7F56D9', '#9E77ED'];
+      for (let i = 0; i < 150; i++) {
+        confettiParticles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight - window.innerHeight,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * window.innerHeight,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.random() * 10 - 5,
+          tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+          tiltAngle: 0
+        });
+      }
+      if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+      drawConfettiFrame();
+    }
+
+    function drawConfettiFrame() {
+      confettiCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      let remaining = 0;
+      confettiParticles.forEach((p) => {
+        p.tiltAngle += p.tiltAngleIncremental;
+        p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+        p.x += Math.sin(p.tiltAngle);
+        p.tilt = Math.sin(p.tiltAngle - p.r / 2) * 15;
+        if (p.y <= window.innerHeight) remaining++;
+        confettiCtx.beginPath();
+        confettiCtx.lineWidth = p.r;
+        confettiCtx.strokeStyle = p.color;
+        confettiCtx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+        confettiCtx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+        confettiCtx.stroke();
+      });
+      if (remaining > 0) {
+        confettiAnimationId = requestAnimationFrame(drawConfettiFrame);
+      } else {
+        stopConfetti();
+      }
+    }
+
+    function stopConfetti() {
+      if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+      confettiCanvas.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

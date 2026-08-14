@@ -1,0 +1,3764 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puti-AI | 國小教師行事曆與成果生成神器</title>
+    <!-- Google Fonts & FontAwesome CDN (有網時載入，斷網時自動降級至本機系統字型與原生 UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #f3f4f6;
+            --bg-card: #ffffff;
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --primary-dark: #1d4ed8;
+            --accent: #0d9488;
+            --accent-light: #ccfbf1;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --purple: #7c3aed;
+            --purple-light: #f3e8ff;
+            --rose: #e11d48;
+            --rose-light: #ffe4e6;
+            
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 6px 24px rgba(37,99,235,0.08);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.05);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            /* Offline-first font fallbacks to prevent Times New Roman on school intranet */
+            font-family: 'Noto Sans TC', 'Outfit', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "微軟正黑體", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* Top Header */
+        header {
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #0d9488 100%);
+            color: white;
+            padding: 2.5rem 1.5rem 3.5rem;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 18% 15%, rgba(255,255,255,0.15), transparent 45%);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.35rem 1.1rem;
+            border-radius: 50px;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        header p {
+            font-size: 1.05rem;
+            opacity: 0.95;
+            max-width: 820px;
+            margin: 0 auto;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1280px;
+            margin: -2rem auto 0;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Classroom Config Section - Defaulted to clean placeholders for general teachers */
+        .controls-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .controls-section div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .controls-section label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .controls-section input {
+            padding: 0.65rem 0.85rem;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .controls-section input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Filter Panel */
+        .filter-panel {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 3rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn-reset-storage {
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.65rem 1.1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .btn-reset-storage:hover {
+            background: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        /* Filter Tabs */
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-right: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .tab-btn {
+            background: #f1f5f9;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 0.5rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .tab-btn:hover {
+            background: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+
+        /* Timeline & Month Section */
+        .month-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .month-badge {
+            flex: 0 0 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 24px;
+            color: var(--primary);
+            border: 1px solid var(--border-color);
+            position: sticky;
+            top: 20px;
+            align-self: flex-start;
+        }
+
+        .month-badge small {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: -2px;
+        }
+
+        .month-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+
+        /* Task Card */
+        .task-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            padding: 1.3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            gap: 0.8rem;
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: #cbd5e1;
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: var(--c, var(--primary));
+        }
+
+        .task-card.completed {
+            background: #f8fafc;
+            opacity: 0.72;
+            border-style: dashed;
+        }
+
+        .task-card.completed .card-title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .task-checkbox-label input {
+            cursor: pointer;
+            width: 17px;
+            height: 17px;
+            accent-color: var(--accent);
+        }
+
+        .time-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .cat-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 50px;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: auto;
+        }
+
+        .btn-generate {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .btn-generate:hover {
+            filter: brightness(1.1);
+        }
+
+        .done-btn {
+            border: 2px solid var(--border-color);
+            background: white;
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            width: 38px;
+            height: 38px;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.15s;
+            flex: 0 0 38px;
+        }
+
+        .done-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .task-card.completed .done-btn {
+            border-color: var(--accent);
+            background: #f0fdfa;
+            color: var(--accent);
+        }
+
+        /* Generator Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-container {
+            background: white;
+            width: 100%;
+            max-width: 1150px;
+            height: 92vh;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            background: #f8fafc;
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .modal-title-group h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .modal-close {
+            background: #e2e8f0;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #cbd5e1;
+            color: var(--text-main);
+        }
+
+        .modal-body {
+            display: grid;
+            grid-template-columns: 330px 1fr;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar Form Controls */
+        .modal-sidebar {
+            background: #f8fafc;
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.65rem 0.85rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn-fill-sample {
+            background: #e0e7ff;
+            color: var(--primary-dark);
+            border: 1px dashed var(--primary);
+            padding: 0.6rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-fill-sample:hover {
+            background: #c7d2fe;
+        }
+
+        /* Preview Window */
+        .modal-preview {
+            padding: 2rem;
+            overflow-y: auto;
+            background: #e2e8f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .paper-preview {
+            background: white;
+            width: 100%;
+            max-width: 820px;
+            min-height: 1050px;
+            padding: 3.2rem 3.8rem;
+            box-shadow: var(--shadow-lg);
+            border-radius: 4px;
+            color: #1e293b;
+            font-size: 1rem;
+            line-height: 1.8;
+            position: relative;
+        }
+
+        /* Document Formatting Styles */
+        .doc-header-block {
+            text-align: center;
+            border-bottom: 3px double #0f172a;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .doc-school-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: 2px;
+        }
+
+        .doc-doc-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-top: 0.3rem;
+        }
+
+        .doc-meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        .doc-meta-table td, .doc-meta-table th {
+            border: 1px solid #334155;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.93rem;
+        }
+
+        .doc-meta-table th {
+            background: #f1f5f9;
+            font-weight: 700;
+            width: 18%;
+            text-align: center;
+        }
+
+        .doc-section-h3 {
+            font-size: 1.18rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 1.6rem 0 0.8rem;
+            padding-left: 0.7rem;
+            border-left: 5px solid var(--primary);
+        }
+
+        .doc-content-p {
+            font-size: 0.96rem;
+            margin-bottom: 0.8rem;
+            text-align: justify;
+            color: #334155;
+        }
+
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .doc-table th, .doc-table td {
+            border: 1px solid #475569;
+            padding: 0.65rem 0.85rem;
+            text-align: left;
+        }
+
+        .doc-table th {
+            background: #f1f5f9;
+            text-align: center;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .photo-box {
+            border: 1px dashed #94a3b8;
+            border-radius: 6px;
+            padding: 0.6rem;
+            background: #fafafa;
+            text-align: center;
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: 185px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 0.4rem;
+        }
+
+        .photo-caption {
+            font-size: 0.85rem;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .sign-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 3.5rem;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 1.5rem;
+            text-align: center;
+        }
+
+        .sign-box p {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 2.8rem;
+        }
+
+        .sign-line {
+            border-bottom: 1px solid #0f172a;
+            width: 70%;
+            margin: 0 auto;
+        }
+
+        .note-box {
+            border: 1px solid #f59e0b;
+            background: #fffbeb;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 13.5px;
+            color: #92400e;
+        }
+
+        /* Modal Footer Action Bar */
+        .modal-footer {
+            background: white;
+            padding: 1rem 1.8rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-act {
+            padding: 0.65rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-copy { background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-copy:hover { background: #e2e8f0; }
+
+        .btn-download { background: var(--accent); color: white; }
+        .btn-download:hover { background: #0f766e; }
+
+        .btn-print { background: var(--primary); color: white; }
+        .btn-print:hover { background: var(--primary-dark); }
+
+        .btn-prompt { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple); }
+        .btn-prompt:hover { background: #e9d5ff; }
+
+        /* Tabs inside Modal */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            padding: 0 18px;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            border: none;
+            background: none;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--text-muted);
+            border-bottom: 3px solid transparent;
+            transition: 0.15s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .panes {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pane {
+            display: none;
+            flex: 1;
+            overflow: auto;
+        }
+
+        .pane.active {
+            display: block;
+        }
+
+        .pane textarea {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            border: none;
+            padding: 20px;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            outline: none;
+            resize: none;
+            color: var(--text-main);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0f172a;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: #ffffff;
+            border-top: 1px solid var(--border-color);
+            padding: 1.8rem 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Optimization Fixes */
+        @media (max-width: 720px) {
+            header {
+                padding: 2rem 1rem 3rem;
+            }
+            header h1 {
+                font-size: 1.6rem;
+            }
+            .container {
+                padding: 0 1rem;
+            }
+            .controls-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .month-group {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .month-badge {
+                position: static;
+                flex-direction: row;
+                width: 100%;
+                height: auto;
+                gap: 8px;
+                padding: 8px 14px;
+                justify-content: flex-start;
+                font-size: 16px;
+            }
+            .month-body {
+                grid-template-columns: 1fr;
+            }
+            .modal-overlay {
+                padding: 0;
+            }
+            .modal-container {
+                height: 100vh;
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .modal-body {
+                grid-template-columns: 1fr;
+                overflow-y: auto;
+            }
+            .modal-sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1rem;
+            }
+            .modal-preview {
+                padding: 1rem;
+            }
+            .paper-preview {
+                padding: 1.5rem 1.2rem;
+            }
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1rem;
+            }
+            .action-group {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+            .btn-act {
+                justify-content: center;
+            }
+            .search-row {
+                flex-direction: column;
+            }
+            .btn-reset-storage {
+                width: 100%;
+            }
+        }
+
+        /* Print Stylesheet */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            header, .container, .modal-header, .modal-sidebar, .modal-footer, .toast {
+                display: none !important;
+            }
+            .modal-overlay {
+                position: static;
+                background: none;
+                display: block;
+                padding: 0;
+            }
+            .modal-container {
+                box-shadow: none;
+                height: auto;
+                width: 100%;
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .modal-body {
+                display: block;
+            }
+            .modal-preview {
+                padding: 0;
+                background: white;
+            }
+            .paper-preview {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+                max-width: 100%;
+            }
+            /* A11y & Print page break logic */
+            .doc-header-block { page-break-after: avoid; break-after: avoid; }
+            .doc-meta-table { page-break-after: avoid; break-after: avoid; }
+            .sign-grid { page-break-inside: avoid; break-inside: avoid; }
+            .photo-grid { page-break-inside: avoid; break-inside: avoid; }
+            .note-box { page-break-inside: avoid; break-inside: avoid; }
+            table { page-break-inside: auto; break-inside: auto; }
+            tr { page-break-inside: avoid; break-inside: avoid; page-break-after: auto; break-after: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-badge">
+            <i class="fa-solid fa-graduation-cap"></i> Puti-AI 教學智慧工具庫
+        </div>
+        <h1>Puti-AI 國小教師行事曆與成果生成神器</h1>
+        <p>完整涵蓋第一學期與第二學期，依 12 個月份時序完美排定！一鍵產生 <span id="subtitleTaskCount">57</span> 種獨立專屬的正式成果報告與 AI 提示詞。</p>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Classroom Config Section - Defaulted to clean placeholders for general teachers -->
+        <section class="controls-section" aria-label="班級與校本日期設定">
+            <div>
+                <label for="inSchool">學校名稱</label>
+                <input id="inSchool" placeholder="○○國小" value="○○國小">
+            </div>
+            <div>
+                <label for="inSemester">學年度與學期</label>
+                <input id="inSemester" placeholder="115學年度 上學期" value="115學年度 第一學期">
+            </div>
+            <div>
+                <label for="inGrade">年級與班別</label>
+                <input id="inGrade" placeholder="三年甲班" value="三年甲班">
+            </div>
+            <div>
+                <label for="inTeacher">導師 / 負責教師</label>
+                <input id="inTeacher" placeholder="○○○老師" value="○○○老師">
+            </div>
+            <div>
+                <label for="inOpen">開學日</label>
+                <input id="inOpen" type="date" value="2026-08-31">
+            </div>
+            <div>
+                <label for="inFair">校慶 / 運動會日</label>
+                <input id="inFair" type="date" value="2026-12-05">
+            </div>
+            <div>
+                <label for="inExam">期中定期評量日</label>
+                <input id="inExam" type="date" value="2026-11-05">
+            </div>
+            <div>
+                <label for="inGrad">畢業典禮日</label>
+                <input id="inGrad" type="date" value="2027-06-18">
+            </div>
+        </section>
+
+        <!-- Filter & Search Bar -->
+        <div class="filter-panel">
+            <div class="search-row">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="搜尋行事曆任務或關鍵字（如：班親會、防災演練、評量複習、戶外教育、期末評語...）" aria-label="搜尋行事曆任務或關鍵字">
+                </div>
+                <button class="btn-reset-storage" id="btnResetStorage" title="重置個人資料與勾選進度">
+                    <i class="fa-solid fa-rotate-left"></i> 重置儲存設定
+                </button>
+            </div>
+
+            <!-- Month Quick Filter Links -->
+            <div class="filter-group" id="monthFilterGroup">
+                <span class="filter-label"><i class="fa-regular fa-calendar-days"></i> 月份快捷：</span>
+                <button class="tab-btn active" data-month="all">全部月份</button>
+                <button class="tab-btn" data-month="8">8月</button>
+                <button class="tab-btn" data-month="9">9月</button>
+                <button class="tab-btn" data-month="10">10月</button>
+                <button class="tab-btn" data-month="11">11月</button>
+                <button class="tab-btn" data-month="12">12月</button>
+                <button class="tab-btn" data-month="1">1月</button>
+                <button class="tab-btn" data-month="2">2月</button>
+                <button class="tab-btn" data-month="3">3月</button>
+                <button class="tab-btn" data-month="4">4月</button>
+                <button class="tab-btn" data-month="5">5月</button>
+                <button class="tab-btn" data-month="6">6月</button>
+                <button class="tab-btn" data-month="7">7月</button>
+            </div>
+
+            <!-- Category & Phase Filters -->
+            <div class="filter-group" role="tablist" aria-label="業務類別篩選">
+                <span class="filter-label"><i class="fa-solid fa-tags"></i> 業務類別：</span>
+                <button class="tab-btn active" data-cat="all" role="tab" aria-selected="true">全部類別</button>
+                <button class="tab-btn" data-cat="class" role="tab" aria-selected="false">🍎 教學</button>
+                <button class="tab-btn" data-cat="admin" role="tab" aria-selected="false">🏫 行政</button>
+                <button class="tab-btn" data-cat="parent" role="tab" aria-selected="false">💬 親師</button>
+                <button class="tab-btn" data-cat="exam" role="tab" aria-selected="false">📝 評量</button>
+                <button class="tab-btn" data-cat="counsel" role="tab" aria-selected="false">🤝 輔導</button>
+                <button class="tab-btn" data-cat="tech" role="tab" aria-selected="false">💻 資訊</button>
+            </div>
+
+            <div class="filter-group" role="tablist" aria-label="時間階段篩選">
+                <span class="filter-label"><i class="fa-regular fa-clock"></i> 時間階段：</span>
+                <button class="tab-btn active" data-phase="all" role="tab" aria-selected="true"><i class="fa-solid fa-layer-group"></i> 全部階段</button>
+                <button class="tab-btn" data-phase="start" role="tab" aria-selected="false"><i class="fa-solid fa-flag"></i> 開學前／開學週</button>
+                <button class="tab-btn" data-phase="mid" role="tab" aria-selected="false"><i class="fa-solid fa-book-open"></i> 學期中</button>
+                <button class="tab-btn" data-phase="end" role="tab" aria-selected="false"><i class="fa-solid fa-trophy"></i> 學期末</button>
+                <button class="tab-btn" data-phase="routine" role="tab" aria-selected="false"><i class="fa-solid fa-calendar-check"></i> 例行</button>
+                <button class="tab-btn" data-phase="vacation" role="tab" aria-selected="false"><i class="fa-solid fa-sun"></i> 假期</button>
+            </div>
+            
+            <div class="filter-group">
+                <span class="filter-label"><i class="fa-solid fa-circle-check"></i> 進度過濾：</span>
+                <button class="tab-btn" id="btnFilterTodo"><i class="fa-regular fa-circle"></i> 只顯示未完成</button>
+            </div>
+        </div>
+
+        <p id="timelineSummary" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; padding-left: 0.5rem; font-weight: 700;"></p>
+
+        <!-- Task Groups Container -->
+        <div id="timelineContainer"></div>
+
+    </div>
+
+    <!-- Generator Modal -->
+    <div class="modal-overlay" id="generatorModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span id="modalPhaseTag" class="time-badge">開學前</span>
+                    <h2 id="modalTitle">成果報告生成器</h2>
+                </div>
+                <div style="display:flex; gap:6px">
+                    <button class="modal-close" id="btnModalClose" aria-label="關閉視窗"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <!-- Sidebar Form Controls -->
+                <div class="modal-sidebar">
+                    <button class="btn-fill-sample" id="btnFillSample" aria-label="載入官方示範數據"><i class="fa-solid fa-wand-magic-sparkles"></i> 載入官方示範數據</button>
+                    <!-- B4 & B1. 恢復預設 / 重新生成按鈕 (解決手動編輯覆蓋的體驗陷阱) -->
+                    <button class="btn-fill-sample" id="btnRegenDoc" style="background:#fef3c7; color:#d97706; border:1px solid #f59e0b; display:none; width:100%; margin-top:10px;" aria-label="手動編輯已鎖定，點此重繪覆蓋"><i class="fa-solid fa-arrows-rotate"></i> 內容已手動修改，點此重寫預設</button>
+                    
+                    <hr style="border: none; border-top: 1px solid var(--border-color);">
+
+                    <div class="form-group">
+                        <label for="mSchool">學校名稱</label>
+                        <input type="text" id="mSchool">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mSemester">學年度與學期</label>
+                        <input type="text" id="mSemester">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mGrade">年級與班別</label>
+                        <input type="text" id="mGrade">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mTeacher">導師 / 負責教師</label>
+                        <input type="text" id="mTeacher">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mDate">辦理日期</label>
+                        <input type="date" id="mDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mTopic">主題 / 文件名稱</label>
+                        <input type="text" id="mTopic">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mNote">自訂備註（會寫入文件）</label>
+                        <textarea id="mNote" rows="3" placeholder="例如：本班特別強調自主學習與親子共學..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Real-time Tabbed Preview -->
+                <div style="display:flex; flex-direction:column; overflow:hidden; flex-grow:1;">
+                    <div class="tabs" role="tablist">
+                        <button class="tab active" id="tabDoc" role="tab" aria-selected="true">📄 成果文件</button>
+                        <button class="tab" id="tabPrompt" role="tab" aria-selected="false">🤖 AI 提示詞</button>
+                    </div>
+                    
+                    <div class="panes">
+                        <div class="pane active" id="paneDoc" role="tabpanel">
+                            <!-- Ethical AI Warning Banner (Professionalism & Quality Improvement) -->
+                            <div class="ethical-alert" style="background:#fffbeb; border:1px solid #f59e0b; border-radius:8px; padding:10px 15px; margin: 15px 15px 0; font-size:13.5px; color:#b45309; display:flex; align-items:flex-start; gap:10px; line-height:1.5;">
+                                <i class="fa-solid fa-triangle-exclamation" style="margin-top:2px;"></i>
+                                <div>
+                                    <strong>💡 AI 生成誠實信用提醒</strong>：AI 產出之內容僅供參考與草稿起步，請教師務必依據<b>真實活動狀況、實際觀察與成效數據</b>進行修改。請勿直接將虛構的學生成效或回饋作為正式報告呈報。
+                                </div>
+                            </div>
+                            <div class="modal-preview">
+                                <div class="paper-preview" id="paperPreview" contenteditable="true" aria-label="成果報告預覽與編輯區">
+                                    <!-- Preview template will render here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pane" id="panePrompt" role="tabpanel">
+                            <textarea id="promptText" spellcheck="false" aria-label="AI 提示詞"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bar -->
+            <div class="modal-footer">
+                <div style="font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-pen-to-square"></i> 預覽區可直接編輯；下載或列印會採用新修文字。
+                </div>
+                <div class="action-group">
+                    <button class="btn-act btn-prompt" id="btnCopyPrompt" aria-label="複製 AI 提示詞"><i class="fa-solid fa-robot"></i> 複製提示詞</button>
+                    <button class="btn-act btn-copy" id="btnCopyDoc" aria-label="複製文件全文"><i class="fa-regular fa-copy"></i> 複製文件全文</button>
+                    <button class="btn-act btn-download" id="btnDownloadWord" title="下載為 Word 相容格式文件" aria-label="下載 Word 檔"><i class="fa-solid fa-file-word"></i> 下載 Word 檔</button>
+                    <button class="btn-act btn-copy" style="background:#eef2f8;" id="btnDownloadMd" aria-label="下載 Markdown 檔"><i class="fa-brands fa-markdown"></i> 下載 .md</button>
+                    <button class="btn-act btn-print" id="btnPrintDocument" aria-label="友好列印成果文件"><i class="fa-solid fa-print"></i> 友善列印 / PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification (with Accessibility attributes) -->
+    <div class="toast" id="toastNotification" role="status" aria-live="polite">
+        <i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> <span id="toastMsg">成功複製內容到剪貼簿！</span>
+    </div>
+
+    <!-- Footer Copyright (RULE Compliance - DO NOT REMOVE) -->
+    <footer>
+        <p>屏東縣後庄國小黃朝榮老師作品，免費分享，歡迎擴散推廣，嚴禁商用與任何侵權、不尊重著作權的行為，更多 Puti-AI 教學工具 <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank" rel="noopener noreferrer">點此前往</a></p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        'use strict';
+        
+        // Output format helpers - Refactored using standard string concatenation to prevent template nesting JS runtime errors
+        const h3 = t => '<div class="doc-section-h3" style="font-size: 1.05rem; font-weight: bold; margin-top: 10px; color: #1e3a8a;">' + t + '</div>';
+        const h2 = t => '<div class="doc-section-h2" style="font-size:1.15rem; font-weight:800; color:#0f172a; margin:1.5rem 0 0.8rem; border-bottom:2px solid #2563eb; padding-bottom:3px;">' + t + '</div>';
+        const p = t => '<p class="doc-content-p" style="margin-bottom:0.8rem; text-align:justify;">' + t + '</p>';
+        const ul = a => '<ul>' + a.map(x => '<li>' + x + '</li>').join('') + '</ul>';
+        const ol = a => '<ol>' + a.map(x => '<li>' + x + '</li>').join('') + '</ol>';
+        const tbl = (head, rows) => '<table class="doc-table" style="width:100%; border-collapse:collapse; margin:1rem 0; font-size:0.9rem;"><tr>' + head.map(x => '<th style="border:1px solid #475569; padding:0.65rem 0.85rem; background:#f1f5f9; text-align:center; font-weight:700;">' + x + '</th>').join('') + '</tr>' + rows.map(r => '<tr>' + r.map(x => '<td style="border:1px solid #475569; padding:0.65rem 0.85rem; text-align:left;">' + x + '</td>').join('') + '</tr>').join('') + '</table>';
+
+        // 12 Months mapping for timeline sorting
+        const MONTHS = [
+            ["八月", "8"], ["九月", "9"], ["十月", "10"], ["十一月", "11"], ["十二月", "12"], ["一月", "1"],
+            ["二月", "2"], ["三月", "3"], ["四月", "4"], ["五月", "5"], ["六月", "6"], ["七月", "7"]
+        ];
+
+        // Color coding and naming mappings (Upgraded with tech: '資訊' class and #0ea5e9 color)
+        const CATC = { class: "#2563eb", admin: "#f59e0b", parent: "#ec4899", exam: "#8b5cf6", counsel: "#14b8a6", tech: "#0ea5e9" };
+        const CATN = { class: "教學", admin: "行政", parent: "親師", exam: "評量", counsel: "輔導", tech: "資訊" };
+        const PHASEN = { start: "開學週", mid: "學期中", end: "學期末", routine: "例行", vacation: "假期" };
+
+        // HTML escaping to prevent XSS (Security and quality improvement)
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Taiwan ROC Calendar Date Formatting Utility (Taiwanese school doc aesthetics)
+        function formatChineseDate(dateStr) {
+            if (!dateStr) return '＿＿年＿＿月＿＿日';
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            const y = parseInt(parts[0], 10);
+            const m = parseInt(parts[1], 10);
+            const d = parseInt(parts[2], 10);
+            const rocYear = y - 1911;
+            return '中華民國 ' + rocYear + ' 年 ' + m + ' 月 ' + d + ' 日';
+        }
+
+        // Standardized document wrapping formatting using safe string concatenation
+        const docWrap = (c, inner) => 
+            '<div class="doc-header-block">' +
+                '<div class="doc-school-title">' + c.school + '</div>' +
+                '<div class="doc-doc-title">' + c.semester + '　' + c.topic + '</div>' +
+            '</div>' +
+            '<table class="doc-meta-table" style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">' +
+                '<tr>' +
+                    '<th style="border:1px solid #334155; padding:0.6rem 0.8rem; background:#f1f5f9; font-weight:700; width:18%; text-align:center;">實施班級</th>' +
+                    '<td style="border:1px solid #334155; padding:0.6rem 0.8rem; font-size:0.93rem;">' + c.grade + '</td>' +
+                    '<th style="border:1px solid #334155; padding:0.6rem 0.8rem; background:#f1f5f9; font-weight:700; width:18%; text-align:center;">指導教師</th>' +
+                    '<td style="border:1px solid #334155; padding:0.6rem 0.8rem; font-size:0.93rem;">' + c.teacher + '</td>' +
+                    '<th style="border:1px solid #334155; padding:0.6rem 0.8rem; background:#f1f5f9; font-weight:700; width:18%; text-align:center;">辦理日期</th>' +
+                    '<td style="border:1px solid #334155; padding:0.6rem 0.8rem; font-size:0.93rem;">' + formatChineseDate(c.date) + '</td>' +
+                '</tr>' +
+            '</table>' +
+            inner +
+            (c.note ? '<div class="note-box" style="border:1px solid #f59e0b; background:#fffbeb; border-radius:8px; padding:10px 14px; margin-top:10px; font-size:13.5px; color:#92400e;">📌 備註：' + c.note + '</div>' : '') +
+            '<div class="sign" style="text-align:right; margin-top:30px; font-weight:bold;">承辦人：' + c.teacher + '　＿＿＿＿＿＿</div>';
+
+        // 38 Complete tasks database injected from original file
+        const TASKS = [
+            
+{
+id:'plan_class',month:'8',phase:'start',cat:'class',time:'開學前～第1週',
+title:'班級經營計畫書',desc:'帶班理念、常規建立、幹部制度、親師合作、獎懲配套一整年的藍圖。',
+doc:c=>docWrap(c,
+h2('壹、帶班理念')+
+p('以「尊重、合作、自律」為核心，透過班級常規與學習任務，培養學生自主學習與良好品格。')+
+h2('貳、班級常規與生活公約')+
+ol(['進教室即安靜坐好，取出課本預習','上課發言先舉手，尊重他人發言','下課不奔跑，走廊靠右走','確實做好整潔工作，分工合作','午餐安靜用餐，愛惜食物','放學前整理書包與抽屜，對齊桌椅'])+
+h2('參、班級幹部與工作分配')+
+tbl(['幹部','工作內容','輪替方式'],[
+['班長','領導班級、喊口令、協調事務','每兩週輪替'],
+['副班長','協助班長、點名與紀錄','與班長搭配'],
+['風紀股長','維護秩序、提醒規矩','每兩週輪替'],
+['衛生股長','檢查掃地區域、垃圾分類','每兩週輪替'],
+['學藝股長','布置佈告欄、收發作業','每月輪替']])+
+h2('肆、座位編排與環境布置')+
+p('採小組合作編排，每兩週定期輪轉，促進同儕互動；教室設置「閱讀角、作品牆、榮譽榜、值日生輪值表」四大區域。')+
+h2('伍、親師溝通策略')+
+ul(['聯絡簿每日聯繫，重要事項即時簽名','班級群組公告與資訊分享（遵守使用公約）','開學班親會＋期中個別聯繫','親師溝通用「描述事實＋正向期許」原則'])+
+h2('陸、獎懲制度')+
+ul(['加分制度：作業優良、表現進步、助人善行可集點兌換小獎勵','榮譽榜表揚、班級讚美樹、「今日之星」','違規以「提醒→輔導→與家長合作」漸進處理，不當眾羞辱'])+
+h2('柒、特殊需求學生輔導')+
+p('掌握個案背景，結合輔導室與資源班轉介，個別化輔導並定期紀錄；對轉學生與高關懷學生建立陪伴機制。')+
+h2('捌、每月行事重點')+
+tbl(['月份','重點工作'],[
+['8月','班級經營建立、教室布置、開學儀式'],
+['9-10月','班親會、防災演練、校慶運動會'],
+['11-12月','期中考、校外教學、成果發表會'],
+['1月','期末評量、寒假作業說明'],
+['2-4月','開學收心、兒童節、第二次期中考'],
+['5-6月','畢業考、畢業典禮、期末評量'],
+['7月','暑假生活與下學年規劃']])),
+prompt:c=>`你是擁有20年帶班經驗的國小資深導師，請為「${c.grade}」撰寫一份完整的《班級經營計畫書》。
+學校：${c.school}，導師：${c.teacher}，學期：${c.semester}。
+內容必須包含八大章：帶班理念、班級常規與生活公約、班級幹部與工作分配、座位編排與環境布置、親師溝通策略、獎懲制度、特殊需求學生輔導、配合全年度的每月行事重點表。
+格式：正式計畫書分章條列，重要句子用粗體，字數約1200字，可直接列印使用。`},
+
+{
+id:'start_notice',month:'8',phase:'start',cat:'parent',time:'開學前',
+title:'開學通知單',desc:'開學日需知、攜帶物品、繳交文件與班級群組加入方式。',
+doc:c=>docWrap(c,
+h2('壹、開學日期與作息')+
+tbl(['項目','說明'],[
+['開學日',`${c.open||'＿＿月＿＿日（星期＿）'}`],
+['到校時間','07:40 前到校'],
+['放學時間','＿＿:＿＿（請家長準時接送）'],
+['第一天請穿','運動服（領取新制服前）']])+
+h2('貳、請攜帶下列物品')+
+ul(['書包、鉛筆盒（鉛筆、橡皮擦、直尺）','水壺（貼姓名）、衛生紙一包','桌墊、潔牙用具（牙刷、漱口杯）','輕便雨衣一件','當日午餐（若尚未參加午餐訂購）'])+
+h2('參、開學當日請繳交')+
+ul(['家長簽名之「緊急聯絡資料」','健保卡影本','課後照顧／延托意願回條','班級群組加入意願表'])+
+h2('肆、本學期重要活動預告')+
+p('開學第2～3週班親會 → 9月防災演練 → 10月校慶運動會 → 11月期中評量 → 12月成果發表會 → 1月期末評量。')+
+h2('伍、親師溝通管道')+
+p('班級群組（Line／Messenger）與聯絡簿為主；緊急事項請直接電話聯繫。請家長詳閱並簽名回條。')+
+h2('陸、給家長的一段話')+
+p('新學期的開始，我們一起陪伴孩子成長。有任何疑問歡迎隨時聯繫導師。')+
+`<div class="sign">導師 ${c.teacher} 敬上　＿＿＿＿</div>`),
+prompt:c=>`請幫我撰寫「${c.grade}開學通知單」，對象是家長。
+學校：${c.school}，導師：${c.teacher}，學期：${c.semester}，開學日：${c.open||'請帶入'}。
+內容包含：開學日期與作息、需攜帶物品清單、開學當日需繳交文件、本學期重要活動預告、親師溝通管道（群組＋聯絡簿）、給家長的溫暖一段話。
+格式：條列清楚、語氣親切，約600字，結尾署名${c.teacher}敬上。`},
+
+{
+id:'parent_meeting',month:'9',phase:'start',cat:'parent',time:'開學第2～3週',
+title:'班親會（親師座談會）完整套組',desc:'邀請函、簡報大綱、會議紀錄一次搞定，還附家長意見彙整表。',
+doc:c=>docWrap(c,
+h2('壹、班親會邀請函')+
+p(`親愛的家長您好：本校 ${c.school} 訂於 ${c.date||'＿＿月＿＿日（星期＿）'} 晚間 7:00 於 ${c.grade}教室舉行班親會，誠摯邀請您蒞臨，一起了解孩子的學習與生活，共創親師合作。`) +
+`<div class="sign">導師 ${c.teacher} 敬邀</div>`+
+h2('貳、座談會簡報大綱')+
+ol(['自我介紹與帶班理念','班級經營與常規說明','課程與學習進度簡介','評量方式與成績說明','親師合作事項（群組公約、志工、班費）','家長需要協助與支援的地方','意見交流與 Q&A']) +
+h2('參、會議紀錄範本')+
+tbl(['項目','內容'],[
+['會議名稱',`${c.semester} ${c.grade}班親會`],
+['主席','導師'+c.teacher],
+['出席人數','家長＿＿位 / 教師＿＿位'],
+['討論事項一','班費收取與運用（決議：＿＿）'],
+['討論事項二','校外教學地點與日期（決議：＿＿）'],
+['討論事項三','班級群組使用公約（決議：＿＿）'],
+['臨時動議','＿＿＿'],
+['決議事項','＿＿＿']])+
+h2('肆、家長意見與回饋彙整')+
+p('會後整理家長意見，分類為「班級經營」「教學安排」「親師溝通」三類，追蹤處理並於群組回覆。')+
+`<div class="sign">紀錄：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小親師溝通專家，請產出「${c.grade}班親會完整套組」。
+學校：${c.school}，導師：${c.teacher}，學期：${c.semester}。
+請輸出三份文件：一、班親會邀請函（200字）；二、班親會簡報大綱（8-10頁逐頁標題與重點）；三、班親會會議紀錄範本（含主席報告、討論事項、臨時動議、決議）。
+格式：三份分開標示，內容具體可直接使用，約1200字。`},
+
+{
+id:'teacher_day',month:'9',phase:'mid',cat:'class',time:'9月28日前後',
+title:'教師節感恩活動企劃',desc:'DIY感恩卡、感謝影片、班級佈告欄成果展示的完整流程。',
+doc:c=>docWrap(c,
+h2('壹、活動主題與目標')+
+p('主題：感恩心・敬師情。目標：培養感恩情懷、增進表達力與美感創作，建立尊師重道班級氛圍。')+
+h2('貳、活動流程（20分鐘班級課堂版）')+
+tbl(['時間','活動內容','準備'],[
+['3分','暖場：分享「老師謝謝您」小故事','無'],
+['10分','動手做：DIY 感恩小卡','色紙、卡片、彩筆'],
+['4分','獻卡：全班排隊送卡＋說一句感謝話','卡片'],
+['3分','延伸：錄製30秒感謝影片','手機／平板']])+
+h2('參、感恩小卡文案範例')+
+ul(['「謝謝老師總是用溫柔的眼神看我。」','「您的教導，像陽光一樣溫暖我的每一天。」','「我會努力成為讓您驕傲的學生。」','「感謝您在我跌倒時拉我一把。」'])+
+h2('肆、成果展現')+
+p('卡片布置於教室「感恩牆」，影片剪輯後於班級群組分享，並於教師晨會代表獻上全班祝福。')+
+h2('伍、材料清單')+
+ul(['A5 卡片紙 × 全班人數','彩色筆、貼紙、緞帶','佈告欄布置用底板、花邊','錄影用平板或手機']) +
+`<div class="sign">企劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小活動企劃高手，請設計「教師節感恩活動企劃書」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：活動主題與目標、20分鐘課堂流程表、DIY感恩卡做法與3種文案範例、成果展現方式、材料清單。
+格式：流程清楚可直接執行，約800字，語氣溫馨活潑。`},
+
+{
+id:'earthquake_drill',month:'9',phase:'routine',cat:'admin',time:'9月21日前後',
+title:'防災教育與地震演練教案',desc:'地震保命三原則、疏散動線、班級演練腳本與學習單。',
+doc:c=>docWrap(c,
+h2('壹、教學目標')+
+ul(['知識：認識地震與火災的危險及防災原則','技能：能正確執行「趴下、掩護、穩住」與疏散動作','態度：建立冷靜、守秩序的安全素養'])+
+h2('貳、教學流程（40分鐘）')+
+tbl(['時間','活動'],[
+['5分','引起動機：口訣「地震保命三原則：趴下、掩護、穩住」'],
+['10分','地震發生時：躲桌下、保護頭頸、遠離玻璃窗與吊燈'],
+['10分','疏散練習：依學校指定動線排隊、快速安靜、集合點報數'],
+['10分','火災應變：低姿勢、煙霧躲避、摸牆壁沿路線逃生'],
+['5分','總結＋發學習單']]) +
+h2('參、班級演練腳本')+
+p('老師指令「地震了！」→ 全班立即趴下躲桌下，一手護頭頸，持續30秒 → 老師宣布「停、聽、看」→ 確認安全後「疏散」→ 排兩路縱隊、靠牆走、不推擠 → 到集合點依班級位置蹲下報數 → 老師清點人數並回報。')+
+h2('肆、學習單：防災我最行')+
+ol(['是非題5題（例如：地震時可坐電梯逃生（×））','繪圖題：畫出家中的避難路線','回家作業：與家人討論「家庭防災計畫」並記錄']) +
+h2('伍、給家長的宣導單')+
+p('請與孩子一起準備「緊急避難包」（水、乾糧、手電筒、證件影本、常用藥品），並約定家庭集合點。')+
+`<div class="sign">教案設計：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小安全教育專家，請設計「防災教育與地震演練教案」。
+學校：${c.school}，班級：${c.grade}，授課：${c.teacher}，時間40分鐘。
+內容需包含：教學目標（知識/技能/態度）、40分鐘教學流程表、班級演練逐句腳本、防災學習單（是非+繪圖+家庭作業）、給家長的宣導單。
+格式：完整教案＋學習單＋宣導單，約1200字。`},
+
+{
+id:'sports_day',month:'10',phase:'mid',cat:'class',time:'10～11月',
+title:'校慶運動會班級企劃',desc:'進場創意、趣味競賽、加油板、當天流程與分工表。',
+doc:c=>docWrap(c,
+h2('壹、活動目標')+
+p('透過校慶運動會凝聚班級向心力，培養運動精神與團隊合作；展現班級活力與創意。')+
+h2('貳、開幕進場創意隊形')+
+p(`主題：「${c.grade} 活力小勇士」。口號建議：「${c.grade}一出，誰與爭鋒；團結一心，勇奪第一！」道具：自製加油扇＋班旗，繞場一圈後於定位比手勢。`) +
+h2('參、趣味競賽項目設計')+
+tbl(['項目','規則','器材'],[
+['袋鼠跳跳樂','雙腳夾球跳至折返點接力','小球×4'],
+['傳水接力','紙杯傳水，水量最多者勝','紙杯、水桶'],
+['呼拉圈傳情','手拉手傳呼拉圈不落地','呼拉圈×2']])+
+h2('肆、當天時間流程表')+
+tbl(['時間','活動'],[
+['08:00','集合點名、檢整服裝道具'],
+['08:30','開幕典禮＋創意進場'],
+['09:30','班級趣味競賽'],
+['10:30','班際大隊接力'],
+['11:30','閉幕頒獎、合照']])+
+h2('伍、分工與安全')+
+tbl(['人員','任務'],[
+['導師 '+c.teacher,'總指揮、點名、秩序安全'],
+['家長志工','協助道具、補水、拍照'],
+['學生幹部','帶隊喊口令、保管道具']])+
+p('提醒：賽前暖身、備水防暑、身體不適立即回報。')+
+h2('陸、邀請與紀錄')+
+p('邀請卡文字：「誠摯邀請您蒞臨 ${c.school}校慶運動會，為孩子們加油！」事後將活動照片上傳班級群組並致謝志工家長。')+
+`<div class="sign">企劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小活動總策劃，請設計「校慶運動會班級參賽企劃書」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：活動目標、開幕創意進場構想（主題+口號+道具）、3個趣味競賽設計（規則+器材）、當天時間流程表、分工與安全注意事項、邀請家長文案。
+格式：可執行的企劃，約1100字。`},
+
+{
+id:'outdoor_education',month:'10',phase:'mid',cat:'class',time:'第8～10週',
+title:'校外教學完整計畫',desc:'計畫書、通知單、學習單、家長同意書四合一。',
+doc:c=>docWrap(c,
+h2('壹、校外教學計畫書')+
+tbl(['項目','說明'],[
+['日期',c.date||'＿＿月＿＿日（星期＿）'],
+['地點','＿＿＿＿＿＿（依實際擇定）'],
+['目的','結合課程、拓展視野、學習生活知能'],
+['交通','遊覽車（或步行）'],
+['時間','08:00 出發 ～ 16:00 返校'],
+['費用','每人＿＿元（含交通與保險）']])+
+h2('貳、給家長的通知單')+
+p('請於期限內繳交費用與同意書；當日請準備：水壺、輕便雨衣、零食點心、個人藥品，穿運動服與好走的鞋，不得攜帶貴重物品與電動玩具。')+
+h2('參、學習單：我的校外學習之旅')+
+ol(['行前預習：這個地方我最想看的「三樣東西」是什麼？','當天觀察：畫一畫印象最深刻的畫面並寫一句話','回家感想：用一句話＋一個心情貼圖表達今天的心情','感謝行動：回家對照顧我們的志工家長說聲謝謝']) +
+h2('肆、安全應變措施')+
+ul(['分組小組制，每組設小組長清點人數','隨行老師與志工責任區域分配','緊急聯絡、就醫與後送流程演練','雨天備案：改為室內參觀行程']) +
+h2('伍、家長同意書（樣式）')+
+p('本人同意子女參加本次校外教學活動，並遵守相關規定；如有特殊疾病將事先告知。＿＿＿ 家長簽名：＿＿＿＿＿＿')+
+`<div class="sign">承辦：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小戶外教育專家，請撰寫「${c.grade}校外教學完整計畫套組」。
+學校：${c.school}，導師：${c.teacher}，日期：${c.date||'帶入日期'}。
+請輸出四份文件：一、校外教學計畫書（目的/日期/時間表/交通/費用/安全應變/雨天備案）；二、給家長通知單；三、校外教學學習單（行前預習/當天觀察/回家感想）；四、家長同意書樣式。
+格式：四份分開標示、可直接列印，約1300字。`},
+
+{
+id:'exam_review',month:'11',phase:'mid',cat:'exam',time:'期中考前2週',
+title:'期中考複習卷與複習計畫',desc:'模擬題型、考前兩週日進度表與錯題整理策略。',
+doc:c=>docWrap(c,
+h2('壹、複習範圍')+
+p(`範圍：${c.topic||'課本第1～6課（依實際進度調整）'}，班級：${c.grade}。`) +
+h2('貳、複習卷題型設計')+
+tbl(['大題','題型','題數'],[
+['一','字詞聽寫（國字與注音）','10'],
+['二','選字填詞（形近字、多音字）','8'],
+['三','修辭與句型練習（比喻/擬人/排比）','6'],
+['四','文意理解（短文×2）','8'],
+['五','引導式造句與短文寫作','2']])+
+h2('參、考前兩週日進度表')+
+tbl(['天數','任務'],[
+['D-14～D-11','複習課文大意＋字詞聽寫'],
+['D-10～D-8','句型與修辭練習卷'],
+['D-7～D-5','短文閱讀每日一篇'],
+['D-4～D-2','綜合模擬卷＋錯題訂正'],
+['D-1','輕量複習：重點筆記瀏覽，提早就寢']])+
+h2('肆、錯題整理策略')+
+p('鼓勵學生建立「錯題本」，分「計算錯誤」「觀念錯誤」「粗心」三類標記；考前重看錯題本比多做新題更有成效。')+
+h2('伍、給家長的複習提醒')+
+p('每天固定15分鐘陪讀討論，多問「為什麼」而非背誦；避免熬夜與額外補題造成壓力。')+
+`<div class="sign">命題：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小命題教師，請設計「${c.grade}第一次定期評量 複習卷與複習計畫」。
+學校：${c.school}，範圍：${c.topic||'課本第1~6課'}。
+需產出：一、複習卷5大題題型與命題說明（含題數）；二、考前兩週日進度表；三、錯題整理策略；四、給家長的複習提醒。
+格式：以表格呈現題型與進度，約1000字。`},
+
+{
+id:'exam_analysis',month:'11',phase:'mid',cat:'exam',time:'期中考後',
+title:'段考成績分析報告',desc:'全班概況、各科優弱點、補救策略與親師溝通話術。',
+doc:c=>docWrap(c,
+h2('壹、全班成績概況')+
+tbl(['指標','數值'],[
+['平均分數','＿＿'],
+['最高／最低','＿＿ / ＿＿'],
+['及格率','＿＿％'],
+['90分以上人數','＿＿ 人']])+
+h2('貳、各科表現分析')+
+p('以試卷逐題統計答對率，歸納各領域優弱點，標示「全班最需加強」之概念單元（依實際試卷帶入）。')+
+h2('參、常見錯誤類型')+
+tbl(['類型','常見問題','補救策略'],[
+['計算錯誤','進位退位混淆、運算順序錯誤','每日計算基本功練習'],
+['觀念不清','單位換算、分數概念未建立','圖像式教學＋實作'],
+['粗心失分','題目沒讀完、抄錯數字','圈關鍵字＋驗算習慣']])+
+h2('肆、補救教學分組策略')+
+ul(['全班層級：全班答對率低之題型統一重教','小組層級：異質分組，由精熟學生擔任小老師','個別層級：學習落後學生安排課後個別輔導並與家長聯繫']) +
+h2('伍、給家長的溝通話術')+
+p('「孩子這次表現＿＿＿，我們一起討論了＿＿＿，接下來會用＿＿＿方法協助他，希望我們能一起陪伴鼓勵他。」避免貼標籤，聚焦「下一步怎麼做」。')+
+`<div class="sign">分析：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小教學評量專家，請撰寫「${c.grade}定期評量成績分析報告」。
+學校：${c.school}，導師：${c.teacher}。
+內容須包含：全班成績概況表、各科優弱點分析、常見錯誤類型與補救策略表、補救教學三層級策略（全班/小組/個別）、給家長的溫暖溝通話術。
+格式：以「分析+策略」為主，數字用表格，約1000字。`},
+
+{
+id:'year_end_show',month:'12',phase:'end',cat:'class',time:'12月～1月',
+title:'期末成果發表會企劃',desc:'展區規劃、學生1分鐘發表、邀請卡與成果檔案收納。',
+doc:c=>docWrap(c,
+h2('壹、展覽主題與空間規劃')+
+tbl(['展區','展出內容'],[
+['語文區','作文、書法、閱讀存摺'],
+['數學區','數學筆記、解題紀錄、數學繪本創作'],
+['藝文區','繪畫、勞作、書法作品'],
+['綜合區','綜合活動學習單、校外教學紀錄']])+
+h2('貳、學生動態發表會流程')+
+p('每位學生上台1分鐘分享最滿意的作品。引導句：「我最想跟大家分享的是＿＿＿，因為＿＿＿。」全班給予掌聲與「優點大風吹」回饋。')+
+h2('參、邀請與場佈')+
+p('邀請卡：「誠摯邀請您蒞臨 ${c.grade}期末成果發表會，見證孩子們的成長！」家長可於指定時段入班參觀，學生擔任小小解說員。')+
+h2('肆、成果檔案收納')+
+p('為每位學生建立「學習成長檔案」，將各領域代表作品、得獎紀錄與老師回饋裝入資料夾，期末帶回與家人分享。')+
+h2('伍、活動流程表')+
+tbl(['時間','活動'],[
+['13:00','場佈與作品定位'],
+['13:30','開幕＋導師引言'],
+['13:40','學生成果發表（每人1分鐘）'],
+['14:30','家長參觀交流'],
+['15:00','感謝回饋與閉幕']])+
+`<div class="sign">企劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小成果展策展人，請設計「${c.grade}期末學習成果發表會企劃書」。
+學校：${c.school}，導師：${c.teacher}。
+內容須包含：展區空間規劃表（語文/數學/藝文/綜合）、學生1分鐘發表流程與引導句、邀請卡文字、成果檔案收納方式、當天活動流程表。
+格式：流程具體可直接執行，約900字。`},
+
+{
+id:'student_comments',month:'1',phase:'end',cat:'counsel',time:'期末成績單',
+title:'成績單導師評語',desc:'12篇分型範例、評語公式與10個優美結尾金句。',
+doc:c=>docWrap(c,
+h2('壹、評語寫作公式')+
+p('肯定（具體事蹟）→ 期許（用比喻或明確目標）→ 正向結尾。避免「但是…」句型，改用「若能在…會更棒」。')+
+h2('貳、分型範例')+
+tbl(['類型','範例評語（可改名字直接套用）'],[
+['乖巧文靜型','○○做事細心、作業工整，是老師得力的小幫手。若能再多舉手發表想法，會讓大家更認識你的好點子。期待你像小太陽一樣展現光芒！'],
+['活潑好動型','○○活力滿滿，班級活動總有你的身影。若能靜下心把步驟看清楚，成績會更亮眼。像勇敢的小馬，跑得快也走得穩！'],
+['積極表現型','○○勇於發問、主動協助同學，領導力十足。未來擔任小幹部時，記得聆聽夥伴的聲音，會讓團隊更有力量。'],
+['內向害羞型','○○默默耕耘，作品細膩有想法。老師常看到你眼睛裡的認真，希望你能多一點信心，慢慢把聲音勇敢說出來。'],
+['學習待加強型','○○這學期準時到校、不缺席，已是很大的進步。若能每天練習基本功、不懂就問，老師相信你一定會一步步往前。']])+
+h2('參、10個優美結尾金句')+
+ol(['期待你持續綻放光芒，老師為你加油。','願你像種子一樣，在努力中茁壯。','相信自己，你一定做得到。','你比想像中更勇敢、更優秀。','把每次挑戰當作成長的禮物。','世界很大，等你慢慢探索。','你的進步，老師都看見了。','帶著笑容，繼續往前走吧！','善良與努力，是你最亮的光。','未來的你，會感謝現在努力的自己。'])+
+h2('肆、使用提醒')+
+p('評語前先複習學生整學期表現，挑選貼合個性的範例微調，避免全班評語過於雷同。')+
+`<div class="sign">導師 ${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小資深導師，請撰寫「學期成績單導師評語」。
+班級：${c.grade}，導師：${c.teacher}，學校：${c.school}。
+請提供：一、評語寫作公式；二、5種性格類型（乖巧文靜/活潑好動/積極表現/內向害羞/學習待加強）各2篇共10篇評語，每篇60-80字，含肯定+期許+正向結語；三、10個優美結尾金句。
+格式：分類清楚、可直接改名字套用，約1200字。`},
+
+{
+id:'winter_break',month:'1',phase:'vacation',cat:'admin',time:'寒假前',
+title:'寒假作業與通知',desc:'少抄寫、多體驗的自主學習作業與家長說明信。',
+doc:c=>docWrap(c,
+h2('壹、設計原則')+
+p('少抄寫、多體驗、重親子互動；每個任務都能在開學後的成果發表會上展現。')+
+h2('貳、寒假作業項目')+
+tbl(['項目','內容','做法'],[
+['閱讀存摺','選5本好書完成閱讀紀錄卡','每天固定閱讀30分鐘'],
+['健康護照','運動＋健康飲食紀錄','每天運動30分鐘，紀錄心情'],
+['過年任務','採買年貨、大掃除、吉祥話','和爸媽一起完成並拍照'],
+['生活觀察家','拍下3張最有意義的照片＋圖說','開學分享照片故事'],
+['技能新挑戰','學會一樣新技能（煮飯/騎車等）','用圖文紀錄過程']])+
+h2('參、給家長的寒假作業說明信')+
+p('親愛的家長：寒假期間請與孩子一起規劃作息，陪伴完成上述任務並注意安全。開學後將舉辦「寒假成果分享會」，讓孩子自信展現假期收穫。祝福闔家新年快樂！')+
+h2('肆、開學後展示與表揚')+
+p('開學第一週舉辦成果分享會，頒發「閱讀達人」「運動之星」「生活小達人」等獎項，優秀作品布置於佈告欄。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小作業設計專家，請設計「${c.grade}寒假自主學習作業」。
+學校：${c.school}，導師：${c.teacher}。
+設計原則：少抄寫、多體驗、重親子互動。請列出5個寒假作業項目（閱讀存摺/健康護照/過年任務/生活觀察家/技能新挑戰）各附做法，並寫給家長的作業說明信與開學後展示表揚規劃。
+格式：清楚分項、可直接印發，約1000字。`},
+
+{
+id:'newterm_start',month:'2',phase:'start',cat:'class',time:'開學第一週',
+title:'下學期開學收心活動',desc:'開學第一天流程、寒假作業分享會與3個收心小活動。',
+doc:c=>docWrap(c,
+h2('壹、開學第一天流程')+
+tbl(['時間','活動'],[
+['07:40','到校點名、整理座位'],
+['08:00','收寒假作業、發放新書'],
+['09:00','寒假成果分享會'],
+['10:10','收心活動：「新年新目標」'],
+['11:20','開學叮嚀＋環境整理']])+
+h2('貳、寒假作業分享會')+
+p('分組上台2分鐘分享最得意的作業。引導問題：「這個寒假你做了什麼？最想跟大家分享的一件事？」採「分享→讚美→提問」三部曲。')+
+h2('參、3個收心小活動')+
+ol(['「我的寒假寶箱」：畫出寒假最棒的回憶','「作息小鬧鐘」：規畫早睡早起與復學作息表','「新年新目標」：寫下這學期三個願望並貼上願望樹']) +
+h2('肆、給家長的開學提醒信')+
+p('調整作息、檢查作業、預告開學，與孩子聊聊新學期期待；若有任何需要協助請與導師聯繫。')+
+h2('伍、教室布置換季')+
+p('將寒假過年主題更換為「新春勵志」主題，重新布置榮譽榜與願望樹，迎接新學期。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小開學收心專家，請設計「下學期開學第一週收心活動方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：開學第一天時間流程表、寒假作業分享會流程與引導問題、3個收心小活動、給家長的開學提醒信、教室布置換季構想。
+格式：流程具體可直接執行，約900字。`},
+
+{
+id:'children_day',month:'4',phase:'mid',cat:'class',time:'4月4日前後',
+title:'兒童節慶祝活動企劃',desc:'把兒童節還給兒童：闖關、才藝秀、園遊會攤位三選一。',
+doc:c=>docWrap(c,
+h2('壹、活動理念')+
+p('「把兒童節還給兒童」：由孩子主導、歡樂為先，活動設計尊重兒童聲音與參與權。')+
+h2('貳、活動選單（擇一執行）')+
+h3('方案A：趣味闖關活動')+
+tbl(['關卡','規則'],[
+['神射手','投擲黏靶得分'],
+['記憶大考驗','翻牌配對'],
+['默契對對碰','比手畫腳'],
+['體能小將','障礙跑計時'],
+['益智拼拼樂','限時拼圖'],
+['吹球過河','吹乒乓球過水杯']])+
+h3('方案B：兒童才藝秀')+
+p('開放報名歌唱、舞蹈、樂器、說故事等，全員參與投票與頒獎；由學生擔任主持人，訓練表達力。')+
+h3('方案C：班級園遊會攤位')+
+tbl(['項目','規劃'],[
+['主題','由學生投票決定'],
+['商品','手作小物、二手書、輕食'],
+['定價與人力','學生分組輪班、收支透明化']])+
+h2('參、送給孩子的小禮物')+
+p('手寫祝福卡＋小盆栽或書籤，讓孩子感受被重視與祝福。')+
+h2('肆、給家長的祝福與建議')+
+p('兒童節當天，請多一點陪伴與傾聽，一起完成孩子的小心願。')+
+`<div class="sign">企劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小活動企劃達人，請設計「兒童節慶祝活動企劃書」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：活動理念（把兒童節還給兒童）、三個執行方案（闖關/才藝秀/園遊會攤位）各附詳細設計、送給孩子的小禮物點子、給家長的祝福與建議。
+格式：企劃完整可直接執行，約1000字。`},
+
+{
+id:'mothers_day',month:'5',phase:'mid',cat:'class',time:'5月第二週前',
+title:'母親節感恩活動',desc:'感恩課程、DIY禮物、任務卡與班級感恩影片。',
+doc:c=>docWrap(c,
+h2('壹、感恩主題課程（2節課）')+
+tbl(['節次','內容'],[
+['第1節','閱讀感恩繪本、分享「媽媽／家人的小故事」'],
+['第2節','動手做「愛的存摺」＋感恩卡']]) +
+h2('貳、DIY 禮物三選一')+
+ol(['康乃馨摺紙：色紙折花＋包裝','愛心小書：寫滿10件感謝的事','手繪杯墊：簽名祝福，家人天天可用']) +
+h2('參、送給家人的任務卡')+
+p('請孩子回家完成三件小事並打勾：幫家人掃地或洗碗、幫家人按摩或倒茶、對家人說「我愛你」。')+
+h2('肆、班級感恩影片')+
+p('錄製「媽媽／家人 我愛你」短片，每人大約5秒一句感謝話，剪輯後於群組分享，成為珍貴回憶。')+
+h2('伍、給家長的活動說明')+
+p('本活動將孩子準備的禮物與任務卡帶回，請家人們收到時記得給孩子一個大大的擁抱與鼓勵。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小品格教育教師，請設計「母親節主題課程與活動」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：2節感恩主題課程、3種DIY禮物做法、家庭任務卡設計、班級感恩影片腳本與拍攝建議、給家長的活動說明。
+格式：教案+步驟+範例完整，約950字。`},
+
+{
+id:'graduation',month:'6',phase:'end',cat:'counsel',time:'6月',
+title:'畢業典禮籌備與祝福',desc:'導師祝福詞、回憶影片企劃、畢業禮物與謝師卡。',
+doc:c=>docWrap(c,
+h2('壹、導師祝福詞（2分鐘版）')+
+p('親愛的孩子們：記得剛升上這個班時，你們還有些羞澀，如今已是自信挺拔的少年。這幾年的點點滴滴——晨讀的身影、操場上的汗水、一起完成的作品——都是我們共同的寶藏。畢業不是結束，而是新的開始。請帶著善良、勇氣與好奇去探索世界，老師永遠在母校為你們加油。願你們前程似錦，一路有光。')+
+h2('貳、畢業典禮流程與班級任務')+
+tbl(['流程','班級任務'],[
+['進場','依序入座、整齊安靜'],
+['頒獎','上台代表班級受獎'],
+['唱校歌','全體起立齊唱'],
+['謝師','代表獻花與感謝']])+
+h2('參、班級回憶影片企劃')+
+tbl(['主題','素材建議'],[
+['我們的日常','教室、午餐、下課活動照片'],
+['成長軌跡','一年級到現在的照片對比'],
+['一起做過的事','比賽、校外教學、成果展'],
+['畢業祝福','每位同學一句祝福＋導師結尾']])+
+h2('肆、畢業禮物點子')+
+p('手寫信（每人一封專屬信）、時間膠囊（寫信給10年後的自己）、畢業書籤。')+
+h2('伍、謝師卡與後續關懷')+
+p('引導學生寫謝師卡致贈所有任課老師；畢業後建立聯絡管道，重要節日傳遞問候。')+
+`<div class="sign">籌備：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小畢業典禮策劃高手，請設計「${c.grade}畢業典禮班級祝福與配套」。
+學校：${c.school}，導師：${c.teacher}。
+內容須包含：導師2分鐘祝福詞（溫馨感人）、典禮班級任務表、班級回憶影片分鏡企劃、畢業禮物點子、謝師卡活動與畢業後追蹤關懷。
+格式：文案與流程完整，約1100字。`},
+
+{
+id:'final_exam',month:'6',phase:'end',cat:'exam',time:'期末評量前',
+title:'期末考複習與命題套組',desc:'複習重點表、期末模擬卷、搶答題庫與考後檢討流程。',
+doc:c=>docWrap(c,
+h2('壹、複習重點提醒表')+
+tbl(['科目','重點單元','易錯點'],[
+['國語','課文大意、修辭、寫作','相似字、語詞運用'],
+['數學','（依進度帶入）','進位退位、應用題讀題'],
+['社會／自然','（依進度帶入）','概念記憶與圖表判讀']])+
+h2('貳、期末模擬卷設計')+
+p('國語＋數學各一份，每份6大題：基礎（60%）＋進階（30%）＋挑戰（10%），至少30%為生活情境題（買菜找零、時間規劃、閱讀理解）。')+
+h2('參、班級搶答遊戲題庫')+
+p('設計20題小組搶答題（可涵蓋各科），採「限時作答＋計分」方式，答錯由別組補答，鞏固易錯觀念並提升複習趣味。')+
+h2('肆、考後檢討流程')+
+p('發還試卷→全班共同訂正易錯題→分組「錯題討論」→個別補救與家長聯繫。')+
+h2('伍、給家長的考前提醒')+
+p('協助孩子規律作息、均衡飲食；考前聚焦「再複習錯題」而非狂做新題，多鼓勵少施壓。')+
+`<div class="sign">命題：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小命題專家，請設計「${c.grade}期末定期評量複習套組」。
+學校：${c.school}，導師：${c.teacher}。
+內容須包含：各科複習重點與易錯點表格、期末模擬卷6大題設計（含30%生活情境題）、班級搶答遊戲題庫20題、考後檢討流程、給家長的考前提醒。
+格式：試卷+詳解+題庫完整，約1400字。`},
+
+{
+id:'summer_break',month:'7',phase:'vacation',cat:'admin',time:'暑假前',
+title:'暑假作業與生活規劃',desc:'夏日閱讀、運動挑戰、生活小當家等自主任務＋家長信。',
+doc:c=>docWrap(c,
+h2('壹、設計原則')+
+p('彈性、自主、親子共學、開學能發表；讓孩子過一個健康、充實、有成長的暑假。')+
+h2('貳、暑假作業項目')+
+tbl(['項目','內容'],[
+['夏日閱讀馬拉松','從書單選讀，完成閱讀筆記'],
+['運動挑戰賽','每日運動紀錄（類型/時間/心情）'],
+['生活小當家','學做一道菜、整理房間、採買任務'],
+['校外探索','參觀在地景點並完成紀錄單'],
+['創意作品','繪畫/寫作/影片/手作，開學成果展投稿'],
+['暑期心情週記','每週一篇（提供開頭引導句）']])+
+h2('參、給家長的暑假建議信')+
+p('請與孩子共同訂定作息，規律運動與閱讀，控制3C使用時間，並注意水域與交通安全。開學後將舉辦「暑期成果發表會」，期待孩子的精彩分享。')+
+h2('肆、開學後成果發表')+
+p('開學第一週舉辦成果發表會，頒發閱讀達人、運動之星、生活小達人等獎項。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小暑假作業設計專家，請設計「${c.grade}暑假自主學習作業」。
+學校：${c.school}，導師：${c.teacher}。
+設計原則：彈性、自主、親子共學、開學能發表。請列出6個作業項目各附做法，並撰寫給家長的暑假建議信與開學後成果發表規劃。
+格式：清楚分項、可直接印發，約1000字。`},
+
+{
+id:'next_term_plan',month:'7',phase:'end',cat:'class',time:'暑假末',
+title:'新學年備課計畫',desc:'開學前四周時程、課程進度規劃表、教案範本與整備清單。',
+doc:c=>docWrap(c,
+h2('壹、開學前四周備課時程表')+
+tbl(['週次','重點任務'],[
+['第一週','確認課表與班級名單、熟悉新班資料'],
+['第二週','完成學期課程進度規劃與第一單元教案'],
+['第三週','準備教具、題庫、教學資源'],
+['第四週','教室布置、採購清單、親師通知文件']])+
+h2('貳、課程進度規劃表（範例）')+
+tbl(['週次','國語','數學'],[
+['第1-3週','第一課～第三課','第1單元'],
+['第4-6週','第四課～第六課','第2單元'],
+['第7-8週','複習與第一次評量','複習與評量'],
+['第9-11週','第七課～第九課','第3單元']])+
+h2('參、教案撰寫範本')+
+tbl(['項目','內容'],[
+['單元名稱','（依課程帶入）'],
+['教學目標','知識/技能/態度'],
+['活動流程','引起動機→教學活動→動手做→總結'],
+['評量方式','課堂觀察、學習單、實作']])+
+h2('肆、教學資源整備清單')+
+ul(['課本與習作、教具、多媒體教材','題庫與評量卷','閱讀繪本與延伸書籍','班級經營用品（印章、獎勵品）']) +
+h2('伍、教師專業成長計畫')+
+p('安排研習進修、每月參與社群共備、規畫閱讀書單，持續精進教學。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小教學備課顧問，請規劃「新學年備課計畫」。
+學校：${c.school}，擔任班級：${c.grade}，導師：${c.teacher}。
+內容須包含：開學前四周備課時程表、整學期課程進度規劃表、教案撰寫範本、教學資源整備清單、教師專業成長計畫。
+格式：規劃具體、按週可執行，約1200字。`},
+
+{
+id:'classroom_decor',month:'8',phase:'start',cat:'class',time:'開學前',
+title:'教室布置與班級角落構想',desc:'空間分區、佈告欄、閱讀角與低預算 DIY 布置藍圖。',
+doc:c=>docWrap(c,
+h2('壹、教室空間分區')+
+tbl(['區域','用途與素材建議'],[
+['黑板區','主黑板＋白板、磁貼、課表'],
+['佈告欄區','班級公約、值日生輪值表、榮譽榜'],
+['圖書角','藏書分類、借閱規則、閱讀存摺'],
+['作品展示牆','各領域學習單與作品定期更換'],
+['小組討論區','可拼排的桌椅動線、便利貼牆'],
+['獎勵牆','集點榜、今日之星、願望樹']])+
+h2('貳、佈告欄主題設計')+
+ul(['班級公約：字卡＋圖示，貼在視線高度','值日生輪值表：磁鐵可插卡設計','榮譽榜：集點換獎制度視覺化','生日牆：每月小壽星專區','學習單展示：輪流更換，人人有機會'])+
+h2('參、低預算 DIY 做法')+
+ul(['用大張壁報紙＋素色底布打底，季節更換只換中段','回收紙箱做收納盒與展示立架','美勞課作品直接成為布置素材','請學生共同創作班徽與標語，增加認同感'])+
+h2('肆、開學布置時程')+
+tbl(['時間','工作'],[
+['開學前1週','採買、底布與大標題就定位'],
+['開學前2天','佈告欄與座位牌完成'],
+['開學第1週','與學生共同完成角落布置']])+
+h2('伍、採買清單')+
+p('壁報紙、花邊帶、磁鐵、字卡、收納盒、圖釘或無痕膠帶、學生名牌、獎勵貼紙與印章。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小班級空間設計專家，請規劃「${c.grade}教室布置構想書」。
+學校：${c.school}，導師：${c.teacher}。
+內容須包含：教室空間分區表、佈告欄主題設計、低預算DIY做法、開學布置時程表、採買清單。
+格式：清楚分項＋實作步驟，適合與學生一起動手做，約900字。`},
+
+{
+id:'newclass_ppt',month:'8',phase:'start',cat:'class',time:'開學第一天',
+title:'開學新生簡報大綱',desc:'認識校園、一天的流程、上課規矩與安全守則逐頁規劃。',
+doc:c=>docWrap(c,
+h2('壹、簡報目標')+
+p('幫助新班級學生認識環境、建立常規、安心上學，並透過小遊戲促進同儕認識。')+
+h2('貳、逐頁簡報規劃')+
+tbl(['頁','標題','重點'],[
+['1','歡迎你來上學','自我介紹、學校校名'],
+['2','認識學校環境','教室、廁所、飲水機、保健室位置'],
+['3','一天的在校流程','進教室→上課→下課→午餐→放學'],
+['4','上課規矩我來學','坐姿、舉手、排隊、聽口令'],
+['5','安全守則','不奔跑、不攀爬、靠右走'],
+['6','午餐與潔牙','洗手、安靜用餐、飯後刷牙'],
+['7','認識新朋友','「找朋友」破冰小遊戲'],
+['8','給爸爸媽媽的信','帶回家長安心信範本']])+
+h2('參、破冰小遊戲建議')+
+p('「找朋友」：全班隨音樂走動，音樂停時與最近的同學握手並互相說「你好，我叫＿＿＿」，連續三輪認識三位新朋友。')+
+h2('肆、回家作業')+
+p('請孩子回家把「一天流程」說給家人聽，並請家長在安心信上簽名。')+
+`<div class="sign">製作：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小低年級教學專家，請設計「開學第一天新生適應簡報大綱」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+請規劃8頁簡報（歡迎上學/認識環境/一天流程/上課規矩/安全守則/午餐潔牙/認識朋友/給家長的信），每頁給標題+3-5條重點+插圖建議，並附破冰遊戲玩法。
+格式：適合做成活潑PPT，約800字。`},
+
+{
+id:'class_group',month:'9',phase:'start',cat:'parent',time:'開學初期',
+title:'班級群組與網頁使用公約',desc:'建立群組秩序、隱私保護與公告格式，讓親師溝通更安心。',
+doc:c=>docWrap(c,
+h2('壹、成立目的')+
+p('班級群組用於公告、提醒與活動分享，促進親師良性溝通；本公約請每位家長詳閱並同意加入。')+
+h2('貳、群組使用守則')+
+tbl(['類別','可發布','禁止'],[
+['導師發布','活動通知、作業提醒、課程資訊','—'],
+['家長交流','正向分享、問題詢問（私訊優先）','廣告、洗版、比較他生'],
+['隱私保護','經同意之班級活動照片','個資、他生相片、爭議言論']])+
+h2('參、發言禮儀')+
+ul(['重要或個別事項請先私訊導師','導師於上班時間回覆，緊急事項請直接來電','訊息避免「已讀不回」壓力，導師會盡力回覆'])+
+h2('肆、個人資料與肖像權')+
+p('拍攝或張貼照片前先徵得當事人同意；張貼內容以「班級活動」為主，避免單一學童特寫。')+
+h2('伍、公告格式範本')+
+p('【公告】班親會將於＿月＿日（＿）晚上7:00舉行。時間：＿＿；地點：＿＿；內容：＿＿。誠摯邀請家長踴躍參加。')+
+`<div class="sign">擬定：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小數位行政助手，請撰寫「班級群組使用公約」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：成立目的、群組使用守則表（可發布/禁止）、發言禮儀、個資與肖像權保護、公告格式範本。
+格式：條例式、語氣親切、可直接公告，約700字。`},
+
+{
+id:'morning_reading',month:'9',phase:'routine',cat:'class',time:'整學期',
+title:'晨讀與班級閱讀計畫',desc:'晨光時間運作、閱讀存摺、書單推薦與班級閱讀角經營。',
+doc:c=>docWrap(c,
+h2('壹、晨讀時間運作')+
+tbl(['時段','內容'],[
+['週一至五 07:40-08:00','到校靜心＋晨讀（書面或平板）'],
+['每週三','「悅讀分享」：學生輪流上台介紹一本書'],
+['每月','閱讀小達人表揚']])+
+h2('貳、閱讀存摺設計')+
+p('每位學生一本「閱讀存摺」，每次閱讀記錄書名、頁數、一句心得；集滿10本可兌換「小書蟲」獎勵。')+
+h2('參、分齡書單推薦')+
+tbl(['類別','建議書單方向'],[
+['橋梁書','成長故事、校園生活系列'],
+['繪本','品格與情緒主題'],
+['自然科普','動植物、天文圖鑑'],
+['小說','冒險奇幻、歷史故事']])+
+h2('肆、閱讀角經營')+
+ul(['圖書分類貼色標、借閱登記表','每月主題書展（配合節慶）','學生推薦榜：寫一句話推薦語貼在書上'])+
+h2('伍、給家長的共讀建議')+
+p('每天睡前親子共讀15分鐘，用「開放式提問」（你覺得呢？）引導思考，比測驗更重要。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小閱讀推動教師，請設計「晨讀與班級閱讀計畫」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：晨讀時間運作表、閱讀存摺設計、分齡書單推薦、閱讀角經營方法、給家長的親子共讀建議。
+格式：清楚分項、可直接執行，約900字。`},
+
+{
+id:'national_day',month:'10',phase:'mid',cat:'class',time:'10月10日前後',
+title:'雙十國慶主題學習單',desc:'國慶由來、國旗辨識、小小記者訪問與創作欄。',
+doc:c=>docWrap(c,
+h2('壹、認識國慶日')+
+p('十月十日是中華民國國慶日，紀念國家重要的日子；這一天各地會升起國旗、舉辦慶祝活動，表達對國家的祝福。')+
+h2('貳、學習單內容')+
+tbl(['單元','題目設計'],[
+['國旗辨識','連連看：認識國旗與國家象徵'],
+['歷史小故事','4題選擇，認識國慶的由來'],
+['小小記者','訪問家人：「你對國家未來的期待是什麼？」記錄下來'],
+['創作欄','「我最想對國家說的一句話」＋畫圖'],
+['家庭任務','和家人一起找找附近哪裡有國旗，拍照留念']])+
+h2('參、延伸討論')+
+p('國慶日是「愛國教育」的切入點：引導學生思考如何用行動愛自己的家鄉與學校，而非口號。')+
+h2('肆、成果展現')+
+p('學習單張貼於佈告欄「國家特輯」，挑選精彩創作於晨會分享。')+
+`<div class="sign">設計：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小社會領域教師，請設計「雙十國慶主題學習單」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：國慶由來簡介、國旗辨識、歷史連連看、小小記者訪問單、創作欄與家庭任務。
+格式：設計成可愛A4學習單版面，約700字。`},
+
+{
+id:'parent_counsel',month:'11',phase:'mid',cat:'parent',time:'期中考後',
+title:'親師個別晤談紀錄',desc:'晤談前準備、進行要點、紀錄表與後續追蹤清單。',
+doc:c=>docWrap(c,
+h2('壹、晤談前準備')+
+p('盤點該生學習與行為表現、作業與評量資料，列出「孩子的好表現→需要協助之處→希望家長配合事項」三段重點，避免開場先講缺點。')+
+h2('貳、晤談進行要點')+
+ul(['先肯定：具體說出孩子的2個優點','以「描述事實＋影響＋建議」方式說明問題','讓家長先分享觀察，再給建議','共同討論並聚焦「一項」優先改善目標','避免比較他生，聚焦孩子本身'])+
+h2('參、晤談紀錄表')+
+tbl(['項目','紀錄'],[
+['學生姓名','＿＿＿＿'],
+['晤談對象','□爸爸 □媽媽 □其他'],
+['孩子優點','＿＿＿'],
+['主要討論事項','＿＿＿'],
+['共同決定之目標','＿＿＿'],
+['後續追蹤方式與時間','＿＿＿'],
+['家長簽名／日期','＿＿＿']])+
+h2('肆、追蹤清單')+
+ul(['兩週後電訪或聯絡簿回饋','觀察目標是否達成，滾動調整','必要時轉介輔導室或資源班'])+
+`<div class="sign">紀錄：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小輔導專業人員，請設計「親師個別晤談紀錄表與操作指南」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：晤談前準備清單、晤談進行要點（先肯定後聚焦）、晤談紀錄表欄位設計、後續追蹤與轉介機制。
+格式：實用表格＋操作說明，約800字。`},
+
+{
+id:'christmas',month:'12',phase:'mid',cat:'class',time:'12月',
+title:'聖誕感恩活動企劃',desc:'一個月的漸進活動：布置、卡片、交換禮物與派對流程。',
+doc:c=>docWrap(c,
+h2('壹、活動主題')+
+p('「聖誕感恩月」：結合感恩教育與跨域學習，用一個月循序鋪陳節慶氛圍。')+
+h2('貳、四周漸進活動')+
+tbl(['週次','活動'],[
+['第1週','布置聖誕樹與教室（環保材質 DIY）'],
+['第2週','寫聖誕卡片給家人／好朋友（文案引導）'],
+['第3週','交換禮物（規則：價格上限、包裝創意獎）'],
+['第4週','聖誕Party＋成果分享']])+
+h2('參、交換禮物規則')+
+p('禮物價格上限100元、需包裝並寫祝福卡；抽籤決定，當場拆禮並表達感謝，訓練「收到禮物要感恩」的禮儀。')+
+h2('肆、三個班級小遊戲')+
+ol(['「聖誕音樂椅」：音樂停搶答聖誕小知識','「麋鹿套圈圈」：套中得點數','「禮物傳傳樂」：音樂停拿到禮物者抽任務卡'])+
+h2('伍、給家長的活動通知')+
+p('說明交換禮物規定與派對時間，邀請家長志工協助布置與準備點心。')+
+`<div class="sign">企劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小活動企劃高手，請設計「聖誕感恩月班級活動企劃」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：四周漸進活動表（布置/卡片/交換禮物/派對）、交換禮物規則、3個班級小遊戲、給家長的活動通知。
+格式：完整企劃＋文案，約950字。`},
+
+{
+id:'semester_reflect',month:'1',phase:'end',cat:'class',time:'期末',
+title:'期末學習回顧單',desc:'盤點成就、感謝的人、下學期目標與給自己的時光膠囊。',
+doc:c=>docWrap(c,
+h2('壹、設計目的')+
+p('引導學生回顧整學期成長，練習感恩與自我期許，建立學習檔案的重要素材。')+
+h2('貳、回顧單單元')+
+tbl(['單元','內容'],[
+['我的學習成就','這學期最得意的一件事、最喜歡的課、學會的新技能'],
+['我進步的地方','畫圖＋一句話說明'],
+['感謝的人','寫感謝卡給同學/老師/家人'],
+['下學期目標','具體的三個小目標'],
+['時光膠囊','寫一段話給下學期的自己'],
+['家人回饋欄','請家長寫一句鼓勵的話']])+
+h2('參、使用方式')+
+p('期末最後一週完成，搭配「成果發表會」上台分享；回顧單放入學習成長檔案帶回與家人分享。')+
+`<div class="sign">設計：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小課程統整專家，請設計「期末學習回顧學習單」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含6個單元：我的學習成就盤點、我進步的地方、感謝的人、下學期目標、時光膠囊、家人回饋欄，各附引導語。
+格式：設計活潑可愛、欄位清楚，適合A4列印，約600字。`},
+
+{
+id:'lantern',month:'2',phase:'mid',cat:'class',time:'元宵節前後',
+title:'元宵節文化活動',desc:'燈籠 DIY、猜燈謎、吉祥話與跨域結合教學。',
+doc:c=>docWrap(c,
+h2('壹、節慶故事時間')+
+p('元宵節又稱「上元節」，是春節的最後一天。相傳漢代為了慶祝平定，家家戶戶點燈祈福，慢慢演變成賞燈、猜燈謎、吃湯圓的習俗。')+
+h2('貳、活動內容')+
+tbl(['項目','做法'],[
+['DIY燈籠','用紅包袋或紙杯做環保燈籠，步驟教學'],
+['猜燈謎','設計10題適合本年級之燈謎'],
+['吉祥話教學','認識對聯與祝賀詞，練習書寫'],
+['湯圓體驗','（可行時）搓湯圓流程與衛生注意']])+
+h2('參、燈謎範例（10題）')+
+ol(['什麼東西越洗越髒？→ 水','紅門樓，白圍牆，裡面坐著小胖郎 → 花生','小時青青，長大紅紅，脫了衣裳露出白仁 → 荔枝','一個金黃盆，裝著白珍珠，圓圓甜又香 → 柚子','三張紙，中間空，風一吹翻跟斗 → 風箏','千條線萬條線，掉到水裡看不見 → 雨','彎彎一座橋，掛在半天腰 → 彩虹','弟兄七八個，圍著柱子坐，一分家衣服就破 → 大蒜','屋子裡有座山，大人小孩往上爬 → 書','黑黑圓圓圓，下水走一圈，上岸看不見 → 蝌蚪'])+
+h2('肆、跨領域結合')+
+p('數學（統計最受歡迎的年菜）、國語（寫逛燈會遊記）、生活（採訪長輩元宵習俗）。')+
+h2('伍、給家長的親子任務')+
+p('親子共賞花燈、一同搓湯圓，記錄一張「元宵全家福」。')+
+`<div class="sign">設計：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小節慶文化教育專家，請設計「元宵節主題教學活動」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：節慶由來說書腳本、環保燈籠DIY步驟、10題燈謎、吉祥話教學、跨領域結合活動、給家長的親子任務。
+格式：活動＋教材＋燈謎齊全，約1000字。`},
+
+{
+id:'tree_plant',month:'3',phase:'routine',cat:'class',time:'植樹節前後',
+title:'植樹節環境教育活動',desc:'班級種植、植物成長紀錄表、減塑桌遊與環保宣言。',
+doc:c=>docWrap(c,
+h2('壹、認識植樹節')+
+p('三月十二日是植樹節，提醒我們種樹、愛護地球的重要性。一棵樹能淨化空氣、涵養水源、提供生物棲所。')+
+h2('貳、班級種植活動')+
+tbl(['項目','做法'],[
+['種植選擇','綠豆／薄荷／小番茄（易成功）'],
+['觀察紀錄','四週紀錄表：日期、高度、畫圖、心得'],
+['照顧分工','值日生輪流澆水、日照管理']])+
+h2('參、減塑大作戰桌遊')+
+p('設計「減塑大作戰」：玩家擲骰前進，抽「環保題卡」（例：買飲料自帶杯可前進2格、用保麗龍盒退2格），先到終點者為「環保小尖兵」。')+
+h2('肆、班級環保宣言')+
+p('「我是○○班環保小尖兵：隨手關燈、節約用水、自帶餐具、做好分類，愛護地球從我做起！」全體舉手宣誓。')+
+h2('伍、給家長的親子行動')+
+p('與孩子一起種一盆植物，或做一次資源回收，拍照記錄上傳群組分享。')+
+`<div class="sign">設計：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小環境教育教師，請設計「植樹節暨環境教育活動方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：植樹節簡介、班級種植活動與四週觀察紀錄表、減塑桌遊規則、班級環保宣言、給家長的親子行動建議。
+格式：活動＋學習單＋宣言齊全，約950字。`},
+
+{
+id:'exam2_review',month:'4',phase:'mid',cat:'exam',time:'期中考前2週',
+title:'下學期期中考複習計畫',desc:'各科重點總整理、模擬題型、日進度表與考後分析表。',
+doc:c=>docWrap(c,
+h2('壹、複習重點總整理')+
+tbl(['科目','重點','易錯點'],[
+['國語','字詞、句型、文意理解','相似字、標點符號'],
+['數學','（依進度）單元概念與應用','進位、單位、應用題'],
+['社會/自然','（依進度）概念與圖表','記憶性與判讀題']])+
+h2('貳、模擬題型設計')+
+p('每科設計10題，標註基礎／進階層次並附答案與解析；至少含2題生活情境題，訓練讀題與應用能力。')+
+h2('參、考前兩週日進度表')+
+tbl(['天數','任務'],[
+['D-14～D-11','逐單元重點複習＋練習'],
+['D-10～D-7','模擬卷分科練習與訂正'],
+['D-6～D-4','錯題本重看＋弱科加強'],
+['D-3～D-1','輕量複習與考前心理調適']])+
+h2('肆、班級複習策略')+
+ul(['異質分組「小組互測」','「重點筆記競賽」評選最佳筆記','「錯題本」三類標記：計算/觀念/粗心'])+
+h2('伍、考後分析表')+
+p('提供全班成績統計表格（平均/及格率/各題答對率），考後依資料調整教學與補救分組。')+
+`<div class="sign">命題：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小教學與評量專家，請設計「下學期第一次定期評量複習計畫」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：各科複習重點與易錯點表、每科10題模擬題（含解析與基礎/進階標註）、考前兩週日進度表、班級複習策略、考後成績分析表。
+格式：內容具體可直接使用，約1200字。`},
+
+{
+id:'grad_trip',month:'5',phase:'mid',cat:'class',time:'畢業季',
+title:'畢業旅行行前配套',desc:'行前說明、同意書、分組住宿、緊急處理 SOP 與紀念任務。',
+doc:c=>docWrap(c,
+h2('壹、行前說明會大綱')+
+ol(['行程與住宿說明','安全規定與分組','費用與繳費說明','服裝與必帶物品清單'])+
+h2('貳、給家長的同意書與通知')+
+ul(['行程、時間、費用說明','必帶物品：換洗衣物、盥洗用具、健保卡、個人藥品','零用錢建議上限與保管方式','禁帶電動與貴重物品'])+
+h2('參、分組與住宿原則')+
+p('依人數分組並設小組長；住宿依抽籤＋同班分散原則安排，避免長期固定組合，晚上點名與熄燈時間明確。')+
+h2('肆、緊急事件處理SOP')+
+tbl(['狀況','處理流程'],[
+['暈車','開窗通風、轉移注意力、休息，嚴重者就醫'],
+['走失','原地不動＋找工作人員＋廣播尋人，隨身帶名牌'],
+['受傷','止血包紮、回報、必要時送醫並通知家長']])+
+h2('伍、旅途任務與回程成果')+
+ul(['車上活動與休息安排','「拍照任務」：每組3張主題照片','回程後：製作畢業旅行紀念冊或影片'])+
+`<div class="sign">籌備：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小高年級戶外教育專家，請撰寫「${c.grade}畢業旅行行前與當天配套」。
+學校：${c.school}，導師：${c.teacher}。
+內容須包含：行前說明會大綱、給家長的同意書與通知、分組與住宿原則、緊急事件處理SOP表、旅途任務與回程紀念成果。
+格式：從行前到回程都完整，約1100字。`},
+
+{
+id:'summer_camp',month:'7',phase:'vacation',cat:'class',time:'暑假',
+title:'夏令營課程規劃',desc:'五天課程總表、單日詳案、材料預算與成果展流程。',
+doc:c=>docWrap(c,
+h2('壹、課程主題建議')+
+p('可選擇「閱讀寫作營」「科學探索營」「程式積木營」「美勞創意營」其中一種作為主題。')+
+h2('貳、五天課程總表')+
+tbl(['天','主題','活動與產出'],[
+['第一天','相見歡＋主題導論','團隊建立、訂定主題'],
+['第二天','核心技能學習','完成主題第一件作品'],
+['第三天','實作深化','進階作品＋紀錄'],
+['第四天','整合發表','完成個人成果＋彩排'],
+['第五天','成果發表會','家長觀禮＋頒獎']])+
+h2('參、單日課程詳案（以第二天為例，180分鐘）')+
+tbl(['時間','活動'],[
+['0-15分','引起動機：展示範例作品'],
+['15-75分','分組實作（老師巡迴指導）'],
+['75-95分','休息與作品分享'],
+['95-170分','深化創作＋個人紀錄單'],
+['170-180分','今日成果回顧與明日預告']])+
+h2('肆、材料清單與預算')+
+p('依主題列材料與單價、數量、合計，預留10%耗損預算；採購前完成報價。')+
+h2('伍、成果展規劃')+
+p('最後一天下午舉辦成果發表會：作品陳列＋學生3分鐘分享＋頒發參與證書，邀請家長蒞臨。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小暑期課程規劃師，請設計「夏令營課程規劃書」。
+學校：${c.school}，授課：${c.teacher}，對象：${c.grade}。
+請依主題（閱讀寫作/科學探索/程式積木/美勞創意擇一）設計：五天課程總表、第二天單日180分鐘詳案、材料清單與預算、最後一天成果展流程、給家長的課程說明。
+格式：總表+詳案完整，約1200字。`},
+
+{
+id:'holiday_check',month:'7',phase:'end',cat:'admin',time:'開學前',
+title:'暑假作業檢核與回饋',desc:'檢核表、分類獎勵、開學分享會與優秀作品展示。',
+doc:c=>docWrap(c,
+h2('壹、檢核表設計')+
+tbl(['項目','內容完成','品質','備註'],[
+['閱讀馬拉松','□','□',''],
+['運動挑戰賽','□','□',''],
+['生活小當家','□','□',''],
+['校外探索','□','□',''],
+['創意作品','□','□',''],
+['暑期週記','□','□','']])+
+h2('貳、分類獎勵')+
+tbl(['獎項','標準'],[
+['完成獎','全部項目完成'],
+['創意獎','作品最具巧思'],
+['進步獎','與以往相比明顯進步']])+
+h2('參、開學分享會流程')+
+p('採「分組輪流上台」方式，每人1分鐘，時間控制在40分鐘內；先小組內互享，再推派代表全班分享。')+
+h2('肆、優秀作品展示')+
+p('佈告欄「暑假成果展」＋上傳班級群組；創意作品於班親會或校內展覽區展出。')+
+h2('伍、品質待加強的溫和處理')+
+p('以私下鼓勵替代公開指責：「老師看到你完成了＿＿，若能補上＿＿就更完整，需要老師協助嗎？」並通知家長協力。')+
+`<div class="sign">檢核：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小教師助理，請設計「暑假作業開學檢核與回饋方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：暑假作業檢核表、分類獎勵標準、開學分享會流程、優秀作品展示規劃、品質待加強的溫和處理話術。
+格式：檢核表＋流程＋文案完整，約900字。`},
+
+{
+id:'class_review',month:'11',phase:'mid',cat:'class',time:'期中考後',
+title:'期中後班級檢討與獎勵',desc:'頒獎表揚、班級檢討會、成果分享牆與下半學期目標設定。',
+doc:c=>docWrap(c,
+h2('壹、表揚方式')+
+tbl(['獎項','標準','獎勵'],[
+['進步獎','與上次表現相比明顯進步','獎狀＋小禮'],
+['努力獎','學習態度認真、主動請教','獎狀＋讚美卡'],
+['合作獎','小組合作表現優異','團體獎勵']])+
+h2('貳、班級檢討會流程')+
+tbl(['時間','活動'],[
+['10分','回顧：這半學期我們學到了什麼'],
+['10分','分享：最感謝的同學與原因'],
+['10分','省思：哪件事可以做得更好'],
+['10分','展望：下階段班級小目標投票']]) +
+h2('參、期中成果分享牆')+
+p('將學習單、作品、心得張貼於「期中成果牆」，配合作文〈我的半學期〉，讓成長被看見。')+
+h2('肆、下半學期班級目標')+
+p('與學生共同訂定 3 個具體目標（例：全班閱讀滿百本、課堂發言率提升、整潔競賽前三名），並訂定檢核點。')+
+h2('伍、給家長的期中親師信')+
+p('分享孩子上半學期表現亮點、班級活動回顧與下半學期計畫，邀請家長一同關注孩子成長。')+
+h2('陸、個別關懷訪談')+
+p('針對學習落後或適應困難學生安排一對一關懷，問題清單：最近學習卡在哪裡？需要什麼幫助？我可以怎麼支持你？')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小班級經營顧問，請規劃「期中考後班級激勵活動方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：表揚方式（進步/努力/合作獎＋獎狀文字）、班級檢討會流程、期中成果分享牆構想、下半學期班級目標設定、給家長的期中親師信、個別關懷訪談問題清單。
+格式：活動流程與文案具體可直接用，約950字。`},
+
+{
+id:'closing_day',month:'1',phase:'end',cat:'class',time:'休業式當天',
+title:'休業式叮嚀與反思',desc:'當天流程、學期回顧、導師寒假叮嚀講稿與給家長的寒假信。',
+doc:c=>docWrap(c,
+h2('壹、休業式當天時間流程表')+
+tbl(['時間','活動'],[
+['08:00','大掃除與教室環境整理'],
+['09:00','休業式典禮（廣播或禮堂）'],
+['09:40','回班：學期回顧活動'],
+['10:20','領成績單＋寒假作業說明'],
+['10:50','導師叮嚀＋放學']]) +
+h2('貳、學期回顧活動')+
+p('全班一起回顧這學期照片，「最想再玩一次」的活動投票＋一句話感言；之後進行「期末頒獎」（全勤、進步、熱心服務）。')+
+h2('參、導師寒假叮嚀講稿（3分鐘版）')+
+p('親愛的孩子們，寒假開始了。放假開心，也要記得三件事：一、安全第一——用火用電、水域交通都要小心；二、作息規律——早睡早起、少用3C；三、持續閱讀——每天讀一點書，開學分享給大家。祝大家寒假快樂，平安健康！')+
+h2('肆、給家長的寒假信')+
+p('感謝家長這學期的支持與配合。寒假期間請留意孩子作息與安全，並完成寒假作業任務。開學日為＿月＿日，請協助孩子調整作息、準備用品。')+
+h2('伍、開學需帶物品清單')+
+p('寒假作業、文具、水壺、潔牙用具、衛生紙、桌墊——請學生抄在聯絡簿帶回。')+
+`<div class="sign">導師 ${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小班級經營專家，請規劃「休業式班級活動流程與寒假叮嚀」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：休業式當天時間流程表、學期回顧活動與期末頒獎、導師3分鐘寒假叮嚀講稿、給家長的寒假信、開學需帶物品清單。
+格式：流程＋講稿＋信件都完整，約1000字。`},
+
+{
+id:'grad_exam',month:'5',phase:'mid',cat:'exam',time:'畢業考前',
+title:'畢業考總複習方案',desc:'六年級畢業考各科複習地圖、時間表、重點筆記與考前減壓。',
+doc:c=>docWrap(c,
+h2('壹、各科總複習地圖')+
+tbl(['科目','複習主軸'],[
+['國語','字詞、句型、文意、作文'],
+['數學','各單元概念＋應用題'],
+['社會','歷史地理概念＋圖表判讀'],
+['自然','實驗現象與概念記憶']])+
+h2('貳、畢業考複習時間表（考前兩週）')+
+tbl(['天數','任務'],[
+['D-14～D-11','逐科單元重點＋課本瀏覽'],
+['D-10～D-7','各科練習題分科進行與訂正'],
+['D-6～D-4','錯題本與重點筆記重看'],
+['D-3～D-1','輕量複習＋充足睡眠與運動']]) +
+h2('參、重點整理筆記範本')+
+p('以「數學：分數與小數」示範：定義→規則→例題→易錯提醒，四欄式筆記法，供學生模仿應用於其他單元。')+
+h2('肆、練習題精選')+
+p('每科10題考古風格題，標註基礎／進階與解析，至少3題生活情境題。')+
+h2('伍、考前減壓活動')+
+p('晨間「呼吸放鬆法」練習（4-7-8呼吸）、考前叮嚀「盡力就好」，避免過度施壓；放學前一週安排一次全班趣味小活動舒壓。')+
+h2('陸、給家長的陪伴指南')+
+p('陪伴而非盯成績：多問「複習得如何？需要幫忙嗎？」；維持正常作息，考前晚間減少延後作業。')+
+`<div class="sign">命題：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小畢業班教師，請設計「${c.grade}畢業考總複習方案」。
+學校：${c.school}，導師：${c.teacher}。
+內容須包含：各科總複習地圖、考前兩週複習時間表、重點整理筆記範本、每科10題練習精選、考前減壓活動、給家長的陪伴指南。
+格式：內容扎實可直接印發，約1200字。`},
+
+{
+id:'final_exam_1st',month:'12',phase:'end',cat:'exam',time:'12月～1月',
+title:'上學期期末評量試卷',desc:'命題細目表、國語數學試題範例、難易度與生活情境題分配。',
+doc:c=>docWrap(c,
+h2('壹、命題範圍與依據')+
+p(`範圍：${c.topic||'上學期各單元（依實際版本與進度帶入）'}。依據課綱學習表現與教學目標命題，兼顧基礎、進階與挑戰層次。`) +
+h2('貳、命題細目表')+
+tbl(['領域','認知層次','題型','配分'],[
+['記憶／理解','基礎題（60%）','選擇、填充','60'],
+['應用','進階題（30%）','生活情境應用','30'],
+['分析／評鑑','挑戰題（10%）','整合判斷','10']])+
+h2('參、國語卷試題範例')+
+ol(['字詞聽寫（10題，含國字與注音）',
+'選字填詞（8題：形近字、多音字）',
+'修辭辨識（6題：比喻、擬人、排比）',
+'文意理解（短文2篇，各4題）',
+'造句（2題引導式）',
+'短文寫作（1題，題目與引導提示）'])+
+h2('肆、數學卷試題範例')+
+ol(['計算題（16題：加減乘除、四則運算）',
+'填空與比較（8題：數線、分數、單位）',
+'圖形題（6題：長方形、三角形面積）',
+'生活應用（8題：買菜找零、時間規劃）',
+'挑戰題（2題：整合思考）'])+
+h2('伍、難易度與情境題分配')+
+p('基礎60%、進階30%、挑戰10%；至少30%為生活情境題，評量「讀題→理解→解決」的能力，避免背誦式命題。')+
+h2('陸、給家長的考前通知')+
+p('公告評量日期與範圍，提醒作息正常、早睡早起；考前一周發複習進度表，陪伴孩子逐項完成。')+
+`<div class="sign">命題：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小命題教師，請設計「${c.grade}上學期期末評量試卷」。
+學校：${c.school}，導師：${c.teacher}，範圍：${c.topic||'上學期各單元'}。
+內容須包含：命題範圍與依據、命題細目表（認知層次/題型/配分）、國語卷6大題題型範例、數學卷6大題題型範例、難易度（60/30/10）與至少30%生活情境題分配、給家長的考前通知。
+格式：以命題實務為主，含各題型的示例題目，約1200字。`},
+
+{
+id:'comments_2nd',month:'6',phase:'end',cat:'counsel',time:'學年結束',
+title:'下學期評語與學年總結',desc:'下學期評語範例、升學祝福語、學年總回顧信與成果報告素材。',
+doc:c=>docWrap(c,
+h2('壹、下學期評語範例（8篇分型）')+
+tbl(['類型','範例評語'],[
+['乖巧文靜型','○○默默耕耘、作業細心，這學期更多了幾分自信。期待你勇敢舉手發表，讓大家聽見你的好想法！'],
+['活潑進取型','○○精力旺盛、行動力十足，班級活動總衝第一。若能把衝勁用在訂正細節，成績會更亮眼！'],
+['才藝突出型','○○在美勞／音樂／體育表現亮眼，是班上的小明星。若能兼顧各科基礎，定能更加出色！'],
+['熱心服務型','○○樂於助人，是老師得力的小幫手，同學們都喜歡你。未來當幹部時記得傾聽夥伴，團隊會更有力量！'],
+['學習待加油型','○○準時到校、天天出席已是最大進步。只要每天練習基本功、不懂就問，老師相信你會一步一步往前！'],
+['內向害羞型','○○心思細膩、作品溫暖，默默努力被老師看見了。希望你能多一點信心，慢慢把聲音勇敢說出來！'],
+['進步顯著型','○○這學期從自律到自信，進步有目共睹！保持這份節奏，未來一定會越來越亮眼！'],
+['畢業祝福型','○○即將畢業，老師相信你在新階段一樣能發光發熱。記得回來看我們，老師永遠為你加油！']])+
+h2('貳、升上更高年級的祝福語（3種語氣）')+
+ul(['溫馨版：「升上更高年級，代表你更長大了，老師相信你會更成熟懂事。」',
+'期許版：「新學期、新挑戰，願你用好奇與勇氣迎接每一堂課。」',
+'簡短版：「升年級囉！帶著笑容與努力，繼續往前走吧！」'])+
+h2('參、給家長的學年總回顧信')+
+p('親愛的家長：這一學年孩子在課業、品格與生活自理上都有成長。感謝您這一年來的信任與配合。暑假期間請協助孩子維持規律作息、多閱讀多運動。我們下學年再見！')+
+h2('肆、班級年度成果亮點（供學校成果報告）')+
+tbl(['面向','內容'],[
+['教學活動','（例：晨讀計畫、跨域專題）'],
+['得獎紀錄','（例：校內競賽、縣市級獎項）'],
+['特色課程','（例：環境教育、閱讀推動）'],
+['班級活動','（例：校外教學、成果發表）']])+
+h2('伍、暑假叮嚀與親子共學')+
+p('建議書單（依年段）、每日運動30分鐘、控制3C、注意水域與交通安全，開學前調整作息。')+
+`<div class="sign">導師 ${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小資深導師，請撰寫「下學期學年評語與總結」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：8篇分型評語範例（乖巧文靜/活潑進取/才藝突出/熱心服務/學習待加油/內向害羞/進步顯著/畢業祝福）、升上更高年級祝福語3種語氣、給家長的學年總回顧信、班級年度成果亮點整理表（供學校成果報告）、暑假叮嚀與親子共學建議。
+格式：分類清楚可直接套用，約1300字。`},
+
+{
+id:'seating',month:'8',phase:'start',cat:'class',time:'開學前',
+title:'座位安排策略',desc:'編排原則、異質分組、輪替機制與特殊需求座位考量。',
+doc:c=>docWrap(c,
+h2('壹、座位編排原則')+
+ul(['依身高前後錯開，避免擋視線','開學先用「抽籤＋隨機」建立公平感，之後再微調','異質分組：依能力、性別、性格搭配，利於互助學習','將易分心學生安排在視線範圍內'])+
+h2('貳、常見編排方式')+
+tbl(['方式','優點','適用'],[
+['雙人座','簡單、便於管理','低年級'],
+['四人小組','利於合作學習','中高年級'],
+['U型／馬蹄型','討論與發表順暢','班會、閱讀課'],
+['個別座','利於專注','需加強專注學生']])+
+h2('參、輪替機制')+
+tbl(['方式','頻率','說明'],[
+['前後平移','每兩週一次','全班往後退一排，最後一排回最前'],
+['左右平移','每月一次','避免長期斜視、均等位置'],
+['同組內換位','每週一次','組內左右互換']]) +
+h2('肆、特殊需求座位')+
+p('視力聽力不佳者坐前排；輔導中學生與科任教師溝通座位安排；身障學生依無障礙動線配置，並避免與易衝突學生比鄰。')+
+h2('伍、換位與說明')+
+p('換位時說明理由與公平性，避免貼標籤；座位表更新後同步通知科任老師，並張貼於黑板側。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小班級經營專家，請設計「座位安排策略」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：座位編排原則、常見編排方式比較表（雙人/四人小組/U型/個別座）、輪替機制（前後/左右/組內換位）、特殊需求座位考量、換位時對學生與家長的說明方式。
+格式：策略＋表格，可直接執行，約900字。`},
+
+{
+id:'student_data',month:'8',phase:'start',cat:'admin',time:'開學初期',
+title:'班級通訊錄與學生資料建立',desc:'基本資料表、家庭聯絡網、資料保密與更新機制。',
+doc:c=>docWrap(c,
+h2('壹、建立目的')+
+p('開學初期建立完整學生與家庭資料，是班級管理、親師聯繫與緊急應變的基礎。')+
+h2('貳、資料表內容')+
+tbl(['類別','欄位'],[
+['學生基本資料','姓名、性別、生日、身分證字號、戶籍地址'],
+['家庭聯絡','監護人、聯絡電話、Line／緊急連絡人（2位）'],
+['健康資訊','特殊疾病、藥物過敏、視聽障礙、就醫醫院'],
+['交通方式','步行／家長接送／安親班／校車'],
+['緊急應變','放學去處、緊急聯絡序位、備註']]) +
+h2('參、資料蒐集方式')+
+p('隨開學通知單附「學生資料表」，請家長於開學一週內填妥繳回；可由行政校務系統匯出後逐項補齊。')+
+h2('肆、資料保密與更新')+
+ul(['資料僅供教育與緊急聯繫使用，不得外流','紙本資料櫃上鎖，電子檔設密碼','期中、期末各更新一次異動（電話、住址、緊急聯絡人）']) +
+h2('伍、通訊錄運用')+
+p('建置班級群組成員名冊，標註「聯絡人與關係」；家訪、個案會議、緊急事故時快速取得聯絡資訊。')+
+`<div class="sign">建立：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小行政助理，請設計「班級通訊錄與學生資料建立方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：建立目的、學生資料表欄位設計（基本/家庭/健康/交通/緊急應變）、資料蒐集方式、資料保密與定期更新機制、通訊錄運用方式。
+格式：表格＋流程清楚，約850字。`},
+
+{
+id:'duty_schedule',month:'8',phase:'start',cat:'class',time:'開學初期',
+title:'值日生與整潔工作分配',desc:'輪值辦法、掃區分配、掃具管理與每日檢核。',
+doc:c=>docWrap(c,
+h2('壹、值日生輪值辦法')+
+tbl(['項目','規劃'],[
+['輪值單位','2人一組，每週輪替'],
+['值日生工作','擦黑板、整潔檢查、領取點名、舉旗'],
+['週五','大掃除日，全班分工'],
+['交接','週五放學前與下週值日生交接']])+
+h2('貳、整潔掃區分配')+
+tbl(['區域','人數','備註'],[
+['教室（掃地、拖地）','6人','含桌椅與櫃子'],
+['走廊','4人','含窗台'],
+['外掃區','8人','依學校指定'],
+['洗手台／飲水區','2人','含倒垃圾']]) +
+h2('參、掃具管理')+
+p('開學清查掃具數量與損壞，編號定位擺放；每月檢查一次，補充耗材並養成學生愛惜習慣。')+
+h2('肆、每日檢核')+
+p('放學前由值日生與衛生股長共同檢核，檢查表張貼於後門；優良表現納入整潔競賽與榮譽集點。')+
+h2('伍、低年級作法')+
+p('低年級以「簡單任務＋圖示卡」引導，例如「掃地小超人」任務卡，用貼紙回饋建立習慣。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小班級經營顧問，請設計「值日生與整潔工作分配方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：值日生輪值辦法、整潔掃區分配表、掃具管理、每日檢核機制、低年級的簡化做法。
+格式：輪值表＋檢核表可直接使用，約850字。`},
+
+{
+id:'parent_conflict',month:'9',phase:'routine',cat:'parent',time:'隨時（例行）',
+title:'親師衝突處理',desc:'衝突類型、處理原則、溝通話術、紀錄與求助流程。',
+doc:c=>docWrap(c,
+h2('壹、常見衝突類型')+
+tbl(['類型','情境'],[
+['管教認知差異','對處罰、作業量、比賽名額看法不同'],
+['成績溝通','家長對評量結果不滿或質疑公平'],
+['同儕事件','孩子間衝突，家長各有立場'],
+['態度誤解','認為老師偏心、冷淡或針對自家孩子'],
+['期待落差','對班級經營或資源分配有不同期待']]) +
+h2('貳、處理基本原則')+
+ul(['先傾聽、後說明：讓家長完整表達再回應','就事論事、不人身攻擊、不情緒化','聚焦「孩子利益」而非「對錯勝負」','適時讓步非示弱，可先緩和情緒再談','必要時由第三方（主任、組長）共同協商']) +
+h2('參、溝通話術範例')+
+ul(['開啟：「很感謝您願意跟我溝通這件事。」','傾聽：「您說的這個狀況，我想再確認一下細節。」','同理：「我理解您會擔心，換成是我也會。」','聚焦：「我們一起想想，怎麼做對孩子最好。」','結尾：「這部分我會再了解，_天內回覆您。」']) +
+h2('肆、處理流程')+
+tbl(['步驟','做法'],[
+['1. 緩和','避免當場爭辯，約定另行面談'],
+['2. 了解','蒐集事證、詢問學生與相關人員'],
+['3. 面談','單獨、安靜場合，先聽再說'],
+['4. 紀錄','紀錄雙方共識與後續追蹤'],
+['5. 求助','無法化解時請求行政支援或專業諮詢']])+
+h2('伍、紀錄與回顧')+
+p('重要衝突以「事件紀錄表」留存（時間、對象、內容、處理、結果），保護自己也利於追蹤；事後自我回顧，調整溝通方式。')+
+`<div class="sign">擬訂：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是親師溝通專家與輔導專業人員，請撰寫「親師衝突處理守則」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：常見衝突類型表、處理基本原則、溝通話術範例（開啟/傾聽/同理/聚焦/結尾）、五步驟處理流程、事件紀錄表與求助轉介機制。
+格式：實用守則＋話術可直接套用，約1000字。`},
+
+{
+id:'tech_integration',month:'9',phase:'routine',cat:'class',time:'整學期',
+title:'資訊融入教學（AI・平板）',desc:'數位工具應用、平板教學、AI 輔助備課、學生使用與個資規範。',
+doc:c=>docWrap(c,
+h2('壹、資訊融入教學理念')+
+p('以「工具輔助學習」為核心，讓 AI 與平板協助教師備課、提升教學效率，並培養學生數位素養與資訊倫理。')+
+h2('貳、教師端數位工具')+
+tbl(['用途','工具方向'],[
+['備課與教材','AI生成教案、簡報、學習單'],
+['測驗與互動','即時出題、搶答、遊戲化評量'],
+['作業與評量','線上繳交、自動批改、錯題分析'],
+['親師溝通','群組、電子聯絡簿、家長通知']]) +
+h2('參、學生端平板教學策略')+
+tbl(['情境','應用'],[
+['自主學習','電子書、影音、線上任務'],
+['合作學習','共編文件、討論板'],
+['即時回饋','即時評量、個人進度追蹤'],
+['創作發表','簡報、影片、數位繪圖']]) +
+h2('肆、AI 融入教學建議')+
+ul(['用 AI 生成初稿，再人工修改與把關（教學設計、題目、通知）','設計「學生用 AI」任務：查資料、校稿、生成草稿後人工整理','訂定班級 AI 使用守則：不代寫作業、註明使用來源','落實個資保護：學生照片與作品不上傳未授權平台']) +
+h2('伍、使用規範與設備管理')+
+ul(['平板借用登記、充電管理、下課歸還','網路與內容安全過濾','資訊倫理課：辨別假訊息、合理使用、著作權']) +
+h2('陸、給家長的數位教養建議')+
+p('說明學校數位學習安排；提醒家中3C使用時間、親子共讀數位內容、設定家用過濾與「螢幕使用」規範。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是數位教學與教育科技專家，請設計「資訊融入教學（AI・平板）實施方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：資訊融入教學理念、教師端數位工具（備課/測驗/作業/溝通）、學生端平板教學策略、AI融入教學建議與班級AI使用守則、設備管理與個資保護、給家長的數位教養建議。
+格式：工具表＋守則＋策略完整，約1100字。`},
+
+{
+id:'class_fee',month:'9',phase:'routine',cat:'admin',time:'班親會後',
+title:'班費與收費管理',desc:'班費開支範圍、收費流程、帳目公開與保管原則。',
+doc:c=>docWrap(c,
+h2('壹、班費用途範圍')+
+ul(['班級用品（獎勵品、材料費）','活動費用（班親會、同樂會、校外教學補助）','雜支（影印、消耗品）','明確排除項目：不得收取不當費用、不得為個人使用']) +
+h2('貳、收費流程')+
+tbl(['步驟','做法'],[
+['1. 說明','於班親會說明收費項目與金額'],
+['2. 繳費','提供收費通知單與回條'],
+['3. 收錢','由家長會代表或指定委員保管，雙人核對'],
+['4. 開立','依學校規定開立收據或證明'],
+['5. 紀錄','逐筆登錄收支帳冊']]) +
+h2('參、帳目公開')+
+p('每學期於班親會或群組公布收支明細（收入、支出、結餘），接受家長查詢；結餘延續下學期或依決議處理。')+
+h2('肆、保管與監督')+
+p('班費以「收支兩本帳」記錄並由班級代表雙人管理；重大支出先經班親會決議；導師不直接保管現金，避免爭議。')+
+h2('伍、學校代收費用')+
+p('如保險費、校外教學費用等學校代收項目，依學校公告期程收繳，逐項核對開立證明，不併入班費。')+
+`<div class="sign">擬訂：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小行政與班級經營顧問，請撰寫「班費與收費管理辦法」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：班費用途範圍（含排除項目）、收費流程表、帳目公開與查詢機制、保管與監督原則、學校代收費用處理。
+格式：辦法＋表格，可直接採用，約900字。`},
+
+{
+id:'class_party',month:'6',phase:'end',cat:'class',time:'學期末',
+title:'班級同樂會企劃',desc:'學期末感恩同樂會：活動規劃、節目安排、場地與回饋。',
+doc:c=>docWrap(c,
+h2('壹、活動定位')+
+p('期末同樂會是整學期的美好收尾：感謝彼此、放鬆同樂、回顧成長，培養正向班級氛圍。')+
+h2('貳、活動規劃')+
+tbl(['項目','規劃'],[
+['時間','期末最後一週（可合併成果發表）'],
+['場地','教室（桌椅排成ㄇ字型）'],
+['主題','可加主題：夏日派對／感恩派對'],
+['預算','班費或自備點心（先確認規範）']]) +
+h2('參、節目安排')+
+ul(['才藝表演：自由報名（歌舞、樂器、魔術）','團康遊戲：支援前線、比手畫腳、音樂椅','全班合唱：一首「班歌」','感謝時間：抽籤說出一位同學的優點','回顧播放：這學期照片回顧短片']) +
+h2('肆、分工與安全')+
+p('學生分工（主持、場佈、音控、點心），導師負責秩序與安全；點心以簡易為主，注意過敏食物。')+
+h2('伍、回饋與收尾')+
+p('活動結束前請學生寫「一句感言」，收集後製作班級紀念頁；提醒假期安全與開學日期。')+
+`<div class="sign">企劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小活動企劃高手，請設計「學期末班級同樂會企劃」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：活動定位、規劃表（時間/場地/主題/預算）、節目安排（才藝/團康/合唱/感謝時間/回顧）、學生分工與安全、回饋與收尾。
+格式：流程清楚可直接執行，約850字。`},
+
+{
+id:'class_duties',month:'8',phase:'start',cat:'class',time:'開學初期',
+title:'班級幹部與工作分配',desc:'班級幹部、小老師、小組長、座位長與輪值公平制度。',
+doc:c=>docWrap(c,
+h2('壹、幹部設置與職責')+
+tbl(['幹部','工作內容'],[
+['班長','帶領班級、喊口令、協調事務'],
+['副班長','協助班長、點名、代理職務'],
+['學藝股長','布置、收發作業、板書'],
+['衛生股長','檢查掃區、垃圾分類'],
+['風紀股長','秩序維護、提醒規矩'],
+['資訊股長','平板與設備管理、影音操作'],
+['圖書長','圖書角整理、借閱登記'],
+['健康股長','協助衛生教育、健康檢查']]) +
+h2('貳、小老師與小組長')+
+ul(['小老師：各科協助收發、帶讀、解題互助（輪流擔任）','小組長：小組秩序、任務分工、代表發言','座位長：負責座位區域整潔與物品歸位']) +
+h2('參、輪值與公平制度')+
+ul(['班長等主要幹部每兩週～每月輪替','小老師、座位長、圖書長定期輪換','以「抽籤＋意願＋能力」配對，避免固定少數人','每學期重新選舉一次，訓練民主參與']) +
+h2('肆、幹部訓練')+
+p('幹部上任前個別說明職責；每月一次「幹部小會」檢討與回饋；給予明確授權與信任。')+
+h2('伍、敘獎與回饋')+
+p('期末辦理幹部敘獎，頒發感謝狀；於聯絡簿與班親會肯定孩子服務表現。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小班級經營顧問，請設計「班級幹部與工作分配方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：幹部設置與職責表（班長/副班長/學藝/衛生/風紀/資訊/圖書/健康）、小老師小組長座位長制度、輪值與公平機制（避免少數人承擔）、幹部訓練方式、期末敘獎回饋。
+格式：職責表＋制度清楚，可直接執行，約900字。`},
+
+{
+id:'class_rules',month:'8',phase:'start',cat:'class',time:'開學第一週',
+title:'班級常規與共同公約',desc:'與學生共同制定公約、各情境常規與修復式處理。',
+doc:c=>docWrap(c,
+h2('壹、共同公約制定流程')+
+ol(['全班討論「我們希望生活在什麼樣的上課環境？」','把想法整理成 5-8 條具體公約','逐條表決，全班通過才納入','學生簽名承諾，張貼於明顯處','每週五回顧檢核、隨時滾動修正']) +
+h2('貳、公約範例（學生版）')+
+ul(['說話前先舉手，聽人說完再回應','作業按時交，忘記帶要主動說明','借用他人物品要先問、用後歸位','小組合作：分工、傾聽、不搶功','發生衝突先用「停、聽、想」再溝通','愛惜公物，離開座位前整理乾淨']) +
+h2('參、各情境常規')+
+tbl(['情境','流程'],[
+['進教室','安靜入座、取出課本、開始晨讀'],
+['作業繳交','朝會前放至小組長桌上、確實登記'],
+['午餐午休','洗手、排隊、安靜用餐、潔牙、午睡'],
+['下課','先處理上課用品再離開、不奔跑'],
+['放學','收拾書包、對齊桌椅、檢查垃圾']]) +
+h2('肆、違規的修復式處理')+
+ol(['先了解事實：單獨詢問當事人','引導自省：「你覺得這樣做影響了什麼？」','提出補救：「你打算怎麼彌補？」','約定改進：具體、可執行、有時限','必要時與家長、輔導室合作，不以處罰為目的']) +
+h2('伍、給家長的說明')+
+p('班級公約由孩子共同制定，請家長協助在家呼應，讓「守規矩」成為孩子自己的選擇。')+
+`<div class="sign">規劃：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小班級經營專家，請設計「班級常規與共同公約建立方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：與學生共同制定公約的流程、學生版公約範例（說話/作業/借用/合作/衝突/公物）、各情境常規表（進教室/作業/午餐午休/下課/放學）、違規修復式處理流程、給家長的說明。
+格式：流程＋公約範例完整，約1000字。`},
+
+{
+id:'student_needs',month:'8',phase:'start',cat:'counsel',time:'開學初期',
+title:'學生個別需求盤點與支持',desc:'健康、家庭、學習優弱勢、情緒人際與特殊支持需求盤點。',
+doc:c=>docWrap(c,
+h2('壹、盤點面向')+
+tbl(['面向','項目'],[
+['健康','過敏、用藥、視聽障礙、慢性病'],
+['家庭與接送','主要照顧者、接送方式、家庭特殊狀況'],
+['學習','優勢科目、學習困難、注意力'],
+['情緒與人際','情緒特質、交友狀況、行為表現'],
+['特殊需求','特教資格、IEP、資源班、個別化支持']]) +
+h2('貳、盤點方式')+
+ul(['開學資料表＋與前任導師交接','開學兩週內個別觀察紀錄','必要時與特教老師、輔導室討論','家長個別電訪或約談補充資訊']) +
+h2('參、支持計畫紀錄表')+
+tbl(['學生代號','需求','支持策略','負責人','追蹤日期'],[
+['A','＿＿','＿＿','導師','＿＿'],
+['B','＿＿','＿＿','＿＿','＿＿']])+
+h2('肆、隱私與保密')+
+p('個別需求資料僅供教育與支持使用，不公開討論、不留下散落紙本；交接時完整移交。')+
+h2('伍、滾動更新')+
+p('每學期初重盤一次；期中如有家庭變故、情緒危機等，即時更新並啟動支持。')+
+`<div class="sign">盤點：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小輔導與特教專業人員，請設計「學生個別需求盤點與支持計畫」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：盤點面向表（健康/家庭/學習/情緒人際/特殊需求）、盤點方式、支持計畫紀錄表、隱私保密原則、滾動更新機制。
+格式：盤點表＋支持紀錄表，可直接使用，約850字。`},
+
+{
+id:'learning_gap',month:'9',phase:'mid',cat:'exam',time:'開學初＋期中考後',
+title:'學習落差診斷與補救計畫',desc:'診斷、分組補強、家庭聯繫與成效追蹤的完整流程。',
+doc:c=>docWrap(c,
+h2('壹、診斷時機')+
+tbl(['時機','診斷工具'],[
+['開學初','前一學年試卷回顧、開學診斷測驗'],
+['期中考後','段考成績與答對率分析'],
+['學期中','單元測驗＋課堂觀察'],
+['隨時','作業表現與錯誤類型']]) +
+h2('貳、落差分類')+
+tbl(['類型','特徵','策略'],[
+['基礎不穩','計算、識字、閱讀流暢度不足','每日基本功練習'],
+['概念未建立','特定單元重複出錯','圖像化＋實作重教'],
+['學習動機弱','作業缺交、上課分心','目標設定＋小成功經驗'],
+['家庭因素','無暇陪伴、資源不足','連結行政資源、彈性作業']]) +
+h2('參、補救分組')+
+ul(['異質分組：組內互助、小老師制','抽離補救：資源班或課後班（依資格）','個別指導：晨光或課後個別加強','彈性作業：依需求調整份量與難度']) +
+h2('肆、家庭聯繫')+
+p('補救開始前主動電訪說明「孩子需要協助的項目＋學校的作法＋希望家庭配合的兩件事」，建立合作而非責備關係。')+
+h2('伍、成效追蹤')+
+p('每兩週檢核一次，記錄「前測→介入→後測」；達標者調整策略，未改善者與輔導室／特教老師討論下一步。')+
+`<div class="sign">擬訂：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小教學評量與補救教學專家，請設計「學習落差診斷與補救計畫」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：診斷時機與工具表、落差分類與對應策略、補救分組方式（異質/抽離/個別/彈性）、家庭聯繫話術、成效追蹤與滾動調整。
+格式：診斷表＋策略表，約1000字。`},
+
+{
+id:'peer_conflict',month:'9',phase:'routine',cat:'counsel',time:'隨時（例行）',
+title:'同儕衝突與霸凌事件處理',desc:'立即處理、分別訪談、紀錄與關係修復的教師工作流程。',
+doc:c=>docWrap(c,
+h2('壹、立即處理原則')+
+ul(['先確保安全：即刻制止、隔離當事人','不當場審問：不在全班面前質問或責罵','先穩定情緒：分開後各自冷靜再談','立即了解：確認是否涉暴力、霸凌或受傷']) +
+h2('貳、分別訪談流程')+
+tbl(['步驟','重點'],[
+['1. 單獨訪談','當事人各自陳述，不互相干擾'],
+['2. 釐清事實','時間、地點、人物、行為、前因'],
+['3. 其他見證','必要時訪問第三者，交叉比對'],
+['4. 通報','涉霸凌或暴力依校規與處室流程通報'],
+['5. 記錄','填寫事件紀錄表並保存']]) +
+h2('參、事件紀錄表')+
+p('紀錄：日期時間、地點、當事人、行為描述、起因、處理過程、後續追蹤、是否通報處室。')+
+h2('肆、霸凌辨識與通報')+
+p('霸凌三要件：惡意、重複、權力不對等。符合定義時依「校園霸凌防制準則」通報學務處與輔導室，不私了。')+
+h2('伍、關係修復與追蹤')+
+ol(['雙方說明感受並道歉（引導非強迫）','安排小組任務促進合作與重新相處','一週內持續觀察與追蹤','必要時安排輔導室個別輔導']) +
+h2('陸、通知家長')+
+p('分別通知雙方家長，說明處理進度；用「我們一起協助孩子」的立場溝通，避免歸責與護航。')+
+`<div class="sign">擬訂：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小學務與輔導專業人員，請設計「同儕衝突與霸凌事件處理流程」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：立即處理原則（安全/不當場審問）、分別訪談流程、事件紀錄表格式、霸凌辨識與通報、關係修復與追蹤、通知家長的溝通方式。
+格式：流程＋紀錄表完整，約1000字。`},
+
+{
+id:'complaint_reply',month:'9',phase:'routine',cat:'parent',time:'隨時（例行）',
+title:'親師投訴與負面訊息回應',desc:'5 種常見投訴情境的回應模板與處理流程。',
+doc:c=>docWrap(c,
+h2('壹、回應基本原則')+
+ul(['先回應情緒、再處理事件','不當場反駁或承諾，「我需要一點時間了解」','就事論事、聚焦孩子利益','所有承諾都要設定回覆時間','群組公開指責→改為私訊或面談處理']) +
+h2('貳、五種情境回應模板')+
+h3('情境1：家長質疑評量公平')+
+p('「謝謝您提出這個疑問。我會重新核對批改與計分，並把該題評分標準說明給您。若有疏失一定更正。」')+
+h3('情境2：認為孩子被針對')+
+p('「我了解您會心疼孩子。孩子最近＿＿＿（描述具體事實），我採取的是＿＿＿（具體做法）。我們可以一起討論對孩子更合適的方式。」')+
+h3('情境3：反映同儕衝突')+
+p('「我已分別向雙方了解狀況，並做了＿＿＿處理。會持續觀察一週，再向您回報進度。」')+
+h3('情境4：要求立即處罰他人')+
+p('「我們的原則是先查明事實、再依規定處理，不會在資訊不足時就下結論。處理結果會在一定時間內讓您知道。」')+
+h3('情境5：群組公開指責')+
+p('「關於您提到的狀況，涉及孩子個人資料，我們改為私訊或約時間當面溝通，以保護每個孩子的隱私。」')+
+h2('參、處理流程')+
+tbl(['步驟','做法'],[
+['1. 緩和','先私下回應，不在群組爭辯'],
+['2. 了解','查證事實、必要時訪談學生'],
+['3. 回應','用模板原則，設定回覆時限'],
+['4. 紀錄','紀錄投訴內容與處理'],
+['5. 追蹤','後續追蹤並回報結果']])+
+h2('肆、紀錄與自我保護')+
+p('重要投訴以「溝通紀錄表」留存（時間、對象、訴求、回應、結果）；無法解決時請求主任或行政支援。')+
+`<div class="sign">擬訂：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是親師溝通專家，請撰寫「親師投訴與負面訊息回應模板」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：回應基本原則、5種常見投訴情境的回應模板（質疑評量/被針對/同儕衝突/要求處罰/群組指責）、處理流程表、溝通紀錄表與行政支援機制。
+格式：模板可直接套用，約1100字。`},
+
+{
+id:'tablet_mgmt',month:'9',phase:'routine',cat:'tech',time:'整學期',
+title:'平板與載具管理辦法',desc:'借用編號、充電保管、損壞遺失與家庭使用說明。',
+doc:c=>docWrap(c,
+h2('壹、借用與編號')+
+tbl(['項目','做法'],[
+['編號','每台載具固定編號，對應使用者'],
+['借用登記','上課前後登記借出／歸還'],
+['領取原則','教師統一發放，點名確認'],
+['管理責任','班級指派資訊股長協助檢核']]) +
+h2('貳、充電與保管')+
+ul(['充電車（櫃）固定位置，放學統一充電','下雨天放學與節慶前清點歸位','載具一律留在班級或指定櫃位，不得私帶回家（另有規定除外）']) +
+h2('參、損壞與遺失處理')+
+ul(['發現損壞立即回報並填寫紀錄','依學校規定辦理報修與賠償','疑似人為毀損：了解過程、依規輔導與通知家長','遺失：立即通報資訊組／設備組']) +
+h2('肆、帳號與登入')+
+p('使用學校帳號登入；不得共用帳號、不得隨意下載未經允許的App；登出後再歸還。')+
+h2('伍、家庭使用說明')+
+p('若有帶回家使用之規定，發「家庭使用同意書」：使用時間、保管責任、遺失賠償、內容過濾與親子約定。')+
+`<div class="sign">擬訂：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是學校資訊設備管理人員，請設計「平板與載具管理辦法」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：借用與編號制度、充電與保管、損壞遺失處理流程、帳號登入規範、家庭使用說明與同意書重點。
+格式：辦法＋表格，可直接採用，約900字。`},
+
+{
+id:'tablet_lesson',month:'9',phase:'routine',cat:'tech',time:'整學期',
+title:'平板融入教學單元設計',desc:'學習目標、平台選擇、學生產出、即時檢核與替代方案。',
+doc:c=>docWrap(c,
+h2('壹、設計原則')+
+p('先訂學習目標，再選數位工具；平板是「工具」而非主角，沒有設備時要有紙本替代方案。')+
+h2('貳、單元設計框架')+
+tbl(['項目','說明'],[
+['學習目標','本單元要學到的知識與能力'],
+['平台／工具','依目標選擇（即時測驗、共編、影音等）'],
+['學生任務','學生要產出什麼（作答、簡報、作品）'],
+['教師檢核','如何即時看到學習狀況並回饋'],
+['替代方案','沒有載具時的紙本做法']]) +
+h2('參、常見應用情境')+
+tbl(['情境','應用'],[
+['即時評量','選擇題測驗即時統計答對率'],
+['合作學習','共編文件、討論板'],
+['自主學習','電子書、影音、任務式學習'],
+['創作發表','簡報、影片、數位繪圖']]) +
+h2('肆、課程前中後')+
+ol(['課前：確認設備、網路、帳號登入','課中：清楚說明任務與時間、巡視協助','課後：收繳設備、整理學習數據']) +
+h2('伍、成效與檢核')+
+p('利用平台學習紀錄看完成率與常見錯誤，針對落差安排補救；每單元後簡短自我回顧「哪些環節載具真正提升了學習」。')+
+`<div class="sign">設計：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是數位教學設計專家，請設計「平板融入教學單元設計框架」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：設計原則、單元設計框架表（學習目標/平台/學生任務/教師檢核/替代方案）、常見應用情境表、課前課中課後流程、成效檢核方式。
+格式：框架＋範例清楚，約900字。`},
+
+{
+id:'ai_student_rules',month:'9',phase:'routine',cat:'tech',time:'整學期',
+title:'AI 融入教學與學生使用規範',desc:'AI 能做什麼、不能做什麼、查證方式與作業標示原則。',
+doc:c=>docWrap(c,
+h2('壹、AI 在教學中的定位')+
+p('AI 是「學習助手」而非「答案代寫機」：協助找靈感、整理資料、練習出題，但學習與思考必須由學生自己完成。')+
+h2('貳、學生使用 AI 的規則')+
+ul(['不直接複製貼上答案；要用自己的話說清楚','使用 AI 產出的內容要能解釋「為什麼」','查證資料來源，AI 也可能出錯','老師指定「可使用」的任務才用，未指定視為違規','完成後標示「本作業曾使用 AI 協助＿＿＿」']) +
+h2('參、教師用 AI 輔助教學')+
+ul(['備課：生成教案初稿、學習單、差異化教材','命題：出題初稿後人工把關與校正','回饋：草擬學生作品評語再人工修飾','提醒：AI 產出內容務必人工查核事實']) +
+h2('肆、不能交給 AI 的內容')+
+ul(['學生姓名、照片、個案資料等個資','完整個案紀錄與敏感資訊','命題涉及版權或評量機密','需要教師專業判斷與同理心的回饋']) +
+h2('伍、給家長的 AI 使用說明')+
+p('說明學校 AI 使用規範；建議家庭也訂「用 AI 不代寫作業」的家規，培養孩子誠實與自律。')+
+`<div class="sign">擬訂：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是教育科技與數位倫理專家，請設計「AI 融入教學與學生使用規範」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：AI在教學中的定位、學生使用AI的規則（不代寫/要解釋/查證/標示協助）、教師用AI輔助教學方式、不能交給AI的內容、給家長的AI使用說明。
+格式：規範條列清楚，可直接公告，約900字。`},
+
+{
+id:'digital_citizen',month:'9',phase:'routine',cat:'tech',time:'整學期',
+title:'數位公民與網路安全教學',desc:'密碼安全、網路霸凌、個資保護、假訊息辨識與螢幕時間。',
+doc:c=>docWrap(c,
+h2('壹、教學主題')+
+tbl(['主題','重點'],[
+['密碼安全','不共用、不公開、設定強密碼'],
+['網路霸凌','辨識與因應、保留證據、求助管道'],
+['個資保護','不隨意張貼個資與他人照片'],
+['假訊息辨識','查證來源、多來源比對'],
+['螢幕時間','適度使用、作息規律'],
+['網路禮儀','尊重發言、不散播謠言']]) +
+h2('貳、課程設計（4節）')+
+tbl(['節次','主題','活動'],[
+['第1節','網路安全與密碼','密碼拍賣會活動'],
+['第2節','個資與影像權','「這張照片可以PO嗎」討論'],
+['第3節','假訊息辨識','新聞查證小偵探'],
+['第4節','網路霸凌與求助','情境劇＋求助流程']]) +
+h2('參、班級約定（學生版）')+
+ul(['不在網路透露自己與他人的個資','收到奇怪連結或訊息先告訴大人','被霸凌或看到霸凌要勇敢求助','睡前與用餐時間放下螢幕']) +
+h2('肆、求助管道')+
+p('遇到問題先告訴師長與家人；校內可求助導師、輔導室；涉及違法或詐騙可求助警察機關與相關專線。')+
+h2('伍、給家長的數位守則')+
+p('設定家用上網過濾與螢幕使用時間；和孩子討論網路內容；以身作則減少低頭滑手機。')+
+`<div class="sign">設計：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是數位公民教育與網路安全專家，請設計「數位公民與網路安全教學方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：教學主題表（密碼安全/網路霸凌/個資保護/假訊息/螢幕時間/網路禮儀）、4節課課程設計、學生版班級約定、求助管道、給家長的數位守則。
+格式：教案＋活動清楚，約1000字。`},
+
+{
+id:'inclusive_support',month:'9',phase:'routine',cat:'counsel',time:'整學期',
+title:'特殊需求學生融合教育支持',desc:'融合班級經營、與特教團隊合作、調整與同儕理解活動。',
+doc:c=>docWrap(c,
+h2('壹、融合教育理念')+
+p('每個孩子都能在普通班級中學習與參與；透過調整與支持，讓特殊需求學生獲得公平的學習機會。')+
+h2('貳、與特教團隊合作')+
+tbl(['對象','合作事項'],[
+['特教老師','IEP 目標、課程調整、評量調整'],
+['教師助理員','課堂支持與協助紀錄'],
+['輔導室','評估、轉介與資源連結'],
+['前任導師','交接個案經驗與策略']]) +
+h2('參、班級調整策略')+
+ul(['座位：靠近教師、減少干擾','教材：放大字體、簡化指令、分段任務','評量：延長時間、報讀、調整題型（依IEP）','行為：正向支持、明確預告、穩定作息']) +
+h2('肆、同儕理解活動')+
+p('以繪本與討論認識「每個人都不一樣」；不放大差異、不標籤化；安排互助小天使但避免過度保護。')+
+h2('伍、個別化支持紀錄')+
+p('每週簡要紀錄該生的學習與行為進展；每月與特教團隊檢討；涉及 IEP 內容依規定保密。')+
+`<div class="sign">擬訂：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是融合教育與特教專業人員，請設計「特殊需求學生融合教育支持方案」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：融合教育理念、與特教團隊合作事項表（特教老師/助理員/輔導室/前任導師）、班級調整策略（座位/教材/評量/行為）、同儕理解活動、個別化支持紀錄與保密原則。
+格式：合作表＋策略清楚，約950字。`},
+
+{
+id:'handover',month:'7',phase:'end',cat:'admin',time:'學年結束',
+title:'學年交接與個案交接紀錄',desc:'檔案整理、年度成長摘要、個案交接與物品清點。',
+doc:c=>docWrap(c,
+h2('壹、交接目的')+
+p('把「班級與孩子」的完整資料與經驗交接給下一位導師，讓新學期無縫接軌，尤其特殊個案不能遺漏。')+
+h2('貳、交接內容')+
+tbl(['類別','內容'],[
+['學生資料','基本資料、聯絡人、健康與個別需求'],
+['學習概況','成績趨勢、學習優勢與困難、補救狀況'],
+['行為與情緒','特質、曾處理事件、有效策略'],
+['班級經營','常規、幹部、座位、家長群組運作'],
+['行政事項','費用、獎懲、未完成業務']]) +
+h2('參、個案交接重點')+
+ul(['特殊需求（IEP／資源班）完整移交','高關懷學生與暑期追蹤提醒','重要家庭背景（不散布，僅交接）','曾發生的重大事件與後續約定']) +
+h2('肆、物品與環境')+
+ul(['清點桌椅、掃具、設備與圖書','教室環境整理與歸還','班費與收支結算移交','個資紙本妥善銷毀或移交']) +
+h2('伍、暑假高關懷追蹤')+
+p('針對高關懷學生排定暑期關懷時間表（電訪或家訪），開學前確認就學狀況。')+
+`<div class="sign">交接：${c.teacher}　＿＿＿＿</div>`),
+prompt:c=>`你是國小行政與班級經營顧問，請設計「學年交接與個案交接紀錄表」。
+學校：${c.school}，班級：${c.grade}，導師：${c.teacher}。
+內容須包含：交接目的、交接內容表（學生資料/學習概況/行為情緒/班級經營/行政事項）、個案交接重點、物品環境清點、暑假高關懷追蹤。
+格式：交接清單＋紀錄表完整，約950字。`},
+,
+        {
+            id: "iep_plan",
+            month: "9",
+            time: "開學第1週",
+            phase: "start",
+            cat: "counsel",
+            title: "特教學生 IEP 個別化教育計畫設計",
+            desc: "針對班上特殊需求學生（如過動、自閉、學習障礙），撰寫符合 SMART 原則的 IEP 年度與學期目標，並擬定班級融合教學調整策略與座位輔導安排。",
+            doc: (c) => docWrap(c, 
+                h2("特教學生個別化教育計畫 (IEP) 會議暨目標設定表") +
+                p("為落實特殊教育法，保障身心障礙學生之受教權益，特針對本班特殊需求學生擬定本個別化教育計畫目標，以引導本學期之班級融合教學與輔導策略。") +
+                h3("一、 學生基本學習需求盤點") +
+                tbl(["需求領域", "起點行為與限制描述", "班級支持調整措施"], [
+                    ["學習與專注", "注意力不易集中，易受環境干擾，書寫速度慢。", "座位安排於教師前方，提供書寫代標或延長時間。"],
+                    ["同儕社交", "情緒起伏較大，與同儕溝通易產生摩擦。", "引導同儕互助小天使，實施結構化分組。"]
+                ]) +
+                h3("二、 IEP 學期個別化學習目標 (SMART)") +
+                ol([
+                    "行為領域目標：能於課堂中持續專注聽講 15 分鐘，且無無故走動或發出怪聲行為，達成率達 80%。",
+                    "學術領域目標：在提供適度報讀及延長時間 20% 輔助下，能獨力完成語文科平時評量，及格分數達 60 分。"
+                ]) +
+                h3("三、 班級融合教學調整與省思") +
+                p("本學期將結合協同特教教師，於彈性課程實施差異化教學，並在座位安排上將該生置於同理心強、情緒穩定的學伴旁，以期達到最佳的同儕學習成效。")
+            ),
+            prompt: (c) => "你是熟諳特殊教育與融合教育輔導的國小特教專家，請為導師「" + c.teacher + "」帶領的「" + c.grade + "」特教需求學生撰寫一份 IEP（個別化教育計畫）的學期短期目標與普通班調整策略。\n學校名稱：" + c.school + "\n辦理日期：" + c.date + "\n學生核心限制（起點行為）：請扮演專家引導我如何根據學生的專注力缺失與同儕衝突行為，設計 2 個符合 SMART 原則的學期學習與行為目標，並提供 3 個導師在普通班課堂上立即可用的教學調整策略（如座位、評量調整）。請以繁體中文撰寫，字數約 800 字。"
+        },
+        {
+            id: "open_class_prep",
+            month: "10",
+            time: "第6週",
+            phase: "mid",
+            cat: "class",
+            title: "公開授課課文提問與心智圖板書設計",
+            desc: "設計公開授課所需的精緻教學流程、由淺入深的 Bloom 認知層次 5 大提問，以及心智圖黑板板書配置架構。",
+            doc: (c) => docWrap(c, 
+                h2("教師公開授課簡要教案暨板書心智圖規劃表") +
+                p("為促進教師專業成長，落實校長及教師公開授課辦法，特設計本單元公開授課計畫。") +
+                h3("一、 公開授課單元基本資料") +
+                tbl(["教學領域", "單元主題", "觀課對象", "教學亮點"], [
+                    ["語文領域 (國語)", "公開授課指定課文", "全學年教師與校長", "Bloom多層次提問、心智圖板書架構"]
+                ]) +
+                h3("二、 課堂核心引導提問設計 (Bloom 認知層次)") +
+                ol([
+                    "【記憶/理解層次】：課文中主角在遭遇困難時，第一個做出的反應是什麼？請從課文第二段找出關鍵字。",
+                    "【應用/分析層次】：如果將主角的解決方法與我們之前學過的方法相比，你覺得哪一個更適合？為什麼？",
+                    "【評鑑/創造層次】：請小組合作，為課文重新設計一個不同的結局，並說明你們的設計理念。"
+                ]) +
+                h3("三、 螢幕與黑板板書配置心智圖規劃") +
+                p("黑板左側配置課文結構圖，中間呈現小組發想樹狀心智圖，右側留作學生課堂即時發表回饋區，以結構化板書引導學生深度思考。")
+            ),
+            prompt: (c) => "你是一位擅長新課綱素養教學與課堂提問設計的國小教學專家。請協助導師「" + c.teacher + "」為公開授課撰寫一份『課文提問與板書設計計畫』。\n學校：" + c.school + "\n班級：" + c.grade + "\n請先詢問我『公開授課的課文或教學單元主題』。當我提供後，請為我設計：(1) 依據 Bloom 認知層次由淺入深設計的 5 大引導提問；(2) 一套黑板心智圖板書配置架構（以文字排版圖示左右配置）；(3) 3 個課堂中如何引導小組發表與議課的實務教學策略。請使用專業教育口吻與繁體中文撰寫。"
+        },
+        {
+            id: "admin_document_draft",
+            month: "10",
+            time: "第8週",
+            phase: "mid",
+            cat: "admin",
+            title: "校內活動公文簽呈與計畫書擬稿",
+            desc: "快速擬定校內申辦活動（如班級創客、戶外教育、專案申請）的標準公文簽呈（主旨、說明、擬辦）與簡版活動計畫書草案。",
+            doc: (c) => docWrap(c, 
+                h2("校內活動辦理公文簽呈暨活動計畫書(簡版)") +
+                tbl(["簽呈類別", "承辦單位", "會辦單位", "經費來源"], [
+                    ["校內一般簽呈", "三年級導師群", "教務處、總務處、會計室", "學校相關校務推動經費"]
+                ]) +
+                h3("一、 公文簽呈草案 (辦理校內活動專用)") +
+                p("主旨：擬於本校辦理「校內創客與特色主題體驗活動」，陳請 鑒核。") +
+                p("說明：一、為提升學生自主探究與實作能力，特規劃本特色學習活動。二、活動日期預定於民國115年12月中旬辦理。三、活動經費擬由校務推動專款下支應，詳如計畫書。") +
+                p("擬辦：本案奉核後，將會同相關處室依法辦理，並於活動結束後依規定辦理經費核銷與成果呈報。") +
+                h3("二、 活動計畫大綱") +
+                tbl(["活動項目", "實施對象", "預期成效"], [
+                    ["特色實作課程", "本年級全體學生", "學生實作滿意度達90%以上，產出特色作品。"]
+                ])
+            ),
+            prompt: (c) => "你是一位熟悉台灣學校行政與公務文書格式的行政主任。請協助承辦教師「" + c.teacher + "」撰寫一份校內專案活動的公文簽呈與簡版計畫書。\n學校：" + c.school + "\n學期：" + c.semester + "\n請先詢問我：『活動計畫名稱』與『活動目的與經費預算』。當我提供後，請為我輸出：(1) 標準公文簽呈草稿（含主旨、說明、擬辦三段式，符合台灣公文用語習慣）；(2) 簡版計畫書架構（含目的、辦理單位、流程與經費預算表大綱）。請以繁體中文撰寫，語氣莊重專業。"
+        },
+        {
+            id: "meeting_transcript_record",
+            month: "11",
+            time: "期中考後",
+            phase: "mid",
+            cat: "admin",
+            title: "會議逐字稿整理與智慧會議紀錄",
+            desc: "將學年會議或領域會議的口語錄音逐字稿，過濾贅詞並智慧整理成條理分明的會議紀錄、決議事項分工表與追蹤表。",
+            doc: (c) => docWrap(c, 
+                h2("學年會議暨領域教學研討會議紀錄表") +
+                tbl(["會議主題", "會議時間", "主持人", "記錄人員"], [
+                    ["學年教學研討會議", c.date, "學年主任", c.teacher]
+                ]) +
+                h3("一、 會議重要決議事項") +
+                tbl(["決議事項說明", "承辦/執行分工", "預定完成期限", "進度追蹤"], [
+                    ["期末多元評量內容與命題分配", "各班導師協同命題", "第14週", "已發布通知"],
+                    ["寒假輔導與寒假作業大綱確認", "年級導師群", "放學前", "已彙整草案"]
+                ]) +
+                h3("二、 教學研討論壇重點紀錄") +
+                p("本次會議主要針對期中考後學生學習落差進行討論。多數導師反映部分學生數學科乘除法概念不穩固，決議於每日早自習時間加強小組互助晨讀與基礎練習計算。")
+            ),
+            prompt: (c) => "你是一位效率極高的國小行政秘書。請協助「" + c.teacher + "」將雜亂的學年會議口語逐字稿整理成結構完整的『會議紀錄』。\n學校名稱：" + c.school + "\n請先詢問我：『請提供會議逐字稿或口語討論摘要』。當我提供後，請為我自動過濾口頭贅詞，並智慧化生成：(1) 條理分明的會議主題與時間；(2) 決議事項分工表格（包含事項、分工、時程）；(3) 待追蹤重點備忘錄。請將口語重構為專業書面公務語言，並以繁體中文表格或 Markdown 輸出。"
+        },
+        {
+            id: "exam_blueprints",
+            month: "11",
+            time: "第10週",
+            phase: "mid",
+            cat: "exam",
+            title: "段考命題雙向細目表設計",
+            desc: "段考命題必備。依據教學單元與認知層次比例，自動規劃與設計段考雙向細目表及題型配分比例草案。",
+            doc: (c) => docWrap(c, 
+                h2("段考定期評量雙向細目表與審查計畫書") +
+                p("本表旨在規劃定期評量命題之範圍、認知層次分佈與題型比例，以提升評量之信度與效度。") +
+                h3("一、 雙向細目分析表 (認知領域層次分配)") +
+                tbl(["單元主題", "記憶 (配分)", "理解 (配分)", "應用/分析 (配分)", "合計百分比"], [
+                    ["單元一：課文理解與生字", "15分", "10分", "5分", "30%"],
+                    ["單元二：句型語法修辭", "5分", "15分", "10分", "30%"],
+                    ["單元三：閱讀理解與生活寫作", "0分", "15分", "25分", "40%"]
+                ]) +
+                h3("二、 評量題型比例規劃") +
+                p("選擇題 30%、填空題 30%、閱讀測驗 20%、情境非選擇題（應用寫作） 20%。認知領域記憶理解與高階應用分析比例維持為 5:5，符合素養命題方向。")
+            ),
+            prompt: (c) => "你是測驗與評量專家。請為導師「" + c.teacher + "」設計一份「段考雙向細目表」命題規劃。\n學校名稱：" + c.school + "\n班級：" + c.grade + "\n請先詢問我：『想出題的領域學科、單元重點及總分』。當我提供後，請為我規劃並生成：(1) 雙向細目分析表格（包含單元、認知層次『記憶/理解/高階分析』、題型配分）；(2) 段考命題重點提示與配分比例說明。請以繁體中文與 Markdown 表格呈現，確保百分比加總合理。"
+        },
+        {
+            id: "classroom_game_design",
+            month: "1",
+            time: "期末同樂會",
+            phase: "end",
+            cat: "class",
+            title: "班級趣味闖關與同樂會遊戲設計",
+            desc: "針對期末同樂會、隨堂複習或歲末班級活動，設計包含關卡名稱、道具、規則與小組合作條件的趣味闖關遊戲企劃。",
+            doc: (c) => docWrap(c, 
+                h2("學期末班級同樂會暨趣味學習闖關活動企劃書") +
+                p("為豐富學生學期末校園生活，促進團隊合作並複習本學期學科重點，特規劃本次班級闖關同樂活動。") +
+                h3("一、 闖關活動基本規畫") +
+                tbl(["活動主題", "實施日期", "活動對象", "道具物資準備"], [
+                    ["期末同樂趣味闖關", "學期末休業式前", c.grade, "紙張、計時器、平板、計分板"]
+                ]) +
+                h3("二、 闖關遊戲關卡設計表") +
+                tbl(["關卡名稱", "挑戰規則說明", "過關條件 (小組合作)"], [
+                    ["字彙接力賽", "小組成員輪流在黑板寫出本學期國語生字，限時2分鐘。", "拼字正確且字數達15字以上"],
+                    ["邏輯心算大考驗", "利用平板抽取數學生活情境題，小組合力以畫板解題。", "限時內答對3道情境題"]
+                ]) +
+                h3("三、 獎勵方案與活動注意事項") +
+                p("通關小組可獲得班級學習存摺點數獎勵。活動期間強調同儕包容、互助共好，並維持教室基本動線安全。")
+            ),
+            prompt: (c) => "你是一位擁有豐富團康與課堂互動經驗的國小導師。請協助「" + c.teacher + "」為班級「" + c.grade + "」設計一份趣味的『期末同樂會或複習闖關活動企劃』。\n學校名稱：" + c.school + "\n請先詢問我：『闖關核心學科（如國數）或娛樂同樂性質』與『關卡數量』。當我提供後，請為我設計：(1) 具創意與小組合作特性的關卡規則（含名稱、道具、挑戰方法、過關標準）；(2) 教室動線安排與安全注意事項。請以繁體中文撰寫，風格生動有趣。"
+        }
+        ];
+
+        let currentActiveTask = null;
+        let completedTaskIds = new Set();
+        let isManuallyEdited = false; // B1. Tracking contentedit manual edits
+        let lastActiveElement = null; // C4. Focus tracking on modal close
+        let toastTimer = null; // Bug 5: Toast timeout instance tracker
+        let userProfile = {
+            school: '○○國小',
+            semester: '115學年度 第一學期',
+            grade: '三年甲班',
+            teacher: '○○○老師',
+            open: '2026-08-31',
+            fair: '2026-12-05',
+            exam: '2026-11-05',
+            grad: '2027-06-18'
+        };
+
+        // SCOPED STORAGE PATH GENERATOR
+        function getStorageScopeKey() {
+            const school = (document.getElementById('inSchool') ? document.getElementById('inSchool').value.trim() : userProfile.school) || '○○國小';
+            const semester = (document.getElementById('inSemester') ? document.getElementById('inSemester').value.trim() : userProfile.semester) || '115學年度 第一學期';
+            const grade = (document.getElementById('inGrade') ? document.getElementById('inGrade').value.trim() : userProfile.grade) || '三年甲班';
+            const teacher = (document.getElementById('inTeacher') ? document.getElementById('inTeacher').value.trim() : userProfile.teacher) || '○○○老師';
+            return `${school}_${semester}_${grade}_${teacher}`.replace(/[\s#.]/g, '_');
+        }
+
+        // LOCAL STORAGE LOAD/SAVE STATE (with Scope Load override to prevent input rewriting)
+        function loadStorageData(onlyLoadScope = false) {
+            try {
+                const saved = localStorage.getItem('puti_teacher_calendar_v4_clean');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    
+                    // Critical Fix 1: Only load global profile if NOT doing in-app scope changes
+                    if (!onlyLoadScope) {
+                        userProfile = { ...userProfile, ...(data.profile || {}) };
+                    }
+                    
+                    const scopeKey = getStorageScopeKey();
+                    if (data.scopes && data.scopes[scopeKey]) {
+                        completedTaskIds = new Set(data.scopes[scopeKey].completed || []);
+                    } else {
+                        completedTaskIds.clear();
+                    }
+                }
+            } catch (e) {
+                console.warn('LocalStorage Read Error:', e);
+            }
+        }
+
+        function saveStorageData() {
+            try {
+                const saved = localStorage.getItem('puti_teacher_calendar_v4_clean');
+                let rootObj = saved ? JSON.parse(saved) : { scopes: {}, profile: {} };
+                
+                const scopeKey = getStorageScopeKey();
+                if (!rootObj.scopes) rootObj.scopes = {};
+                
+                rootObj.scopes[scopeKey] = {
+                    completed: Array.from(completedTaskIds)
+                };
+                rootObj.profile = userProfile;
+                
+                localStorage.setItem('puti_teacher_calendar_v4_clean', JSON.stringify(rootObj));
+            } catch (e) {
+                console.warn('LocalStorage Save Error:', e);
+            }
+        }
+
+        // SYNC USER INPUTS TO CORE INPUT FIELDS
+        function syncInputsToUI() {
+            document.getElementById('inSchool').value = userProfile.school;
+            document.getElementById('inSemester').value = userProfile.semester;
+            document.getElementById('inGrade').value = userProfile.grade;
+            document.getElementById('inTeacher').value = userProfile.teacher;
+            document.getElementById('inOpen').value = userProfile.open;
+            document.getElementById('inFair').value = userProfile.fair;
+            document.getElementById('inExam').value = userProfile.exam; // Corrected exam typo
+            document.getElementById('inGrad').value = userProfile.grad;
+        }
+
+        // RENDER MONTH-GROUPED TIMELINE CARDS
+        let searchQuery = '', filterCat = '', filterPhase = '', filterMonth = 'all', onlyTodo = false;
+
+        function renderTimeline() {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+            let totalShown = 0;
+
+            MONTHS.forEach(([zhName, monthNum]) => {
+                // Skip if month filter is active and not matching
+                if (filterMonth !== 'all' && filterMonth !== monthNum) return;
+
+                // Filter tasks belonging to this month
+                const monthTasks = TASKS.filter(t => t.month === monthNum);
+                if (!monthTasks.length) return;
+
+                // Further filter based on search and selected options
+                const visibleTasks = monthTasks.filter(task => {
+                    const isCompleted = completedTaskIds.has(task.id);
+                    if (filterCat && task.cat !== filterCat) return false;
+                    if (filterPhase && task.phase !== filterPhase) return false;
+                    if (onlyTodo && isCompleted) return false;
+
+                    if (searchQuery) {
+                        const q = searchQuery.toLowerCase();
+                        const haystack = (task.title + ' ' + task.desc + ' ' + (CATN[task.cat] || '') + ' ' + PHASEN[task.phase]).toLowerCase();
+                        if (!haystack.includes(q)) return false;
+                    }
+                    return true;
+                });
+
+                if (!visibleTasks.length) return;
+                totalShown += visibleTasks.length;
+
+                // Create month grouping layout
+                const monthSec = document.createElement('section');
+                monthSec.className = 'month-group';
+
+                const badge = document.createElement('div');
+                badge.className = 'month-badge';
+                badge.innerHTML = `${monthNum}月<small>${zhName}</small>`;
+
+                const body = document.createElement('div');
+                body.className = 'month-body';
+
+                visibleTasks.forEach(task => {
+                    const isCompleted = completedTaskIds.has(task.id);
+                    const card = document.createElement('article');
+                    card.className = `task-card ${isCompleted ? 'completed' : ''}`;
+                    card.style.setProperty('--c', CATC[task.cat] || '#64748b');
+                    card.setAttribute('data-id', task.id);
+
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div class="card-header-left">
+                                <label class="task-checkbox-label">
+                                    <input type="checkbox" class="chk-completed" data-task-id="${task.id}" ${isCompleted ? 'checked' : ''}>
+                                    <span>${isCompleted ? '已完成' : '標記完成'}</span>
+                                </label>
+                            </div>
+                            <span class="cat-badge" style="background:${CATC[task.cat] || '#64748b'}">${CATN[task.cat] || '未分類'}</span>
+                        </div>
+                        <div>
+                            <span class="time-badge"><i class="fa-regular fa-calendar"></i> ${task.time}</span>
+                            <span class="time-badge" style="background:#f1f5f9;"><i class="fa-regular fa-clock"></i> ${PHASEN[task.phase]}</span>
+                        </div>
+                        <h3 class="card-title">${task.title}</h3>
+                        <p class="card-desc">${task.desc}</p>
+                        <div class="card-actions">
+                            <button class="btn-generate btn-action-open" data-task-id="${task.id}">
+                                <i class="fa-solid fa-bolt"></i> 生成成果文件
+                            </button>
+                            <button class="done-btn btn-action-done" data-task-id="${task.id}" aria-label="${isCompleted ? '標記未完成' : '標記已完成'}">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </div>
+                    `;
+                    body.appendChild(card);
+                });
+
+                monthSec.appendChild(badge);
+                monthSec.appendChild(body);
+                container.appendChild(monthSec);
+            });
+
+            document.getElementById('timelineSummary').innerHTML = `本區間共計顯示 <b>${totalShown}</b> 項任務`;
+
+            if (totalShown === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding: 4rem 1rem; color: var(--text-muted);">
+                        <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: #cbd5e1;"></i>
+                        <p style="font-size: 1.1rem; font-weight:700;">沒有符合篩選條件的行事曆任務。</p>
+                    </div>
+                `;
+            }
+            
+            // Dynamic sync count subtitle
+            document.getElementById('subtitleTaskCount').innerText = TASKS.length;
+        }
+
+        // GATHER CONTEXT DATA FROM TOP INPUT FORMS (RAW for AI Prompt, escaped for HTML)
+        function getRawContextData() {
+            return {
+                school: document.getElementById('inSchool').value || '○○國小',
+                semester: document.getElementById('inSemester').value || '115學年度 第一學期',
+                grade: document.getElementById('inGrade').value || '三年甲班',
+                teacher: document.getElementById('inTeacher').value || '○○○老師',
+                open: document.getElementById('inOpen').value,
+                fair: document.getElementById('inFair').value,
+                exam: document.getElementById('inExam').value,
+                grad: document.getElementById('inGrad').value
+            };
+        }
+
+        // SMART DATE RECOMMENDATION FALLBACK ALGORITHM (Semester Aware - Critical Fix 3)
+        function getSmartDefaultDate(task, ctx) {
+            let baseYear = new Date().getFullYear();
+            if (ctx.open) {
+                baseYear = new Date(ctx.open).getFullYear();
+            }
+            
+            const monthNum = parseInt(task.month, 10);
+            
+            // Critical Fix 3: Detect second/spring semester using regex
+            const isSecondSemester = /(二|下)/.test(ctx.semester);
+            
+            let taskYear = baseYear;
+            if (!isSecondSemester) {
+                // First Semester: 8-12 is current year, 1-7 is next year
+                if (monthNum >= 1 && monthNum <= 7) {
+                    taskYear = baseYear + 1;
+                }
+            } else {
+                // Second Semester: 2-7 is current year, 8-12 is previous year
+                if (monthNum >= 8 && monthNum <= 12) {
+                    taskYear = baseYear - 1;
+                }
+            }
+            
+            // Important school milestones linking
+            if (task.month === '8' && ctx.open) return ctx.open;
+            if (task.month === '10' && ctx.fair) return ctx.fair;
+            if (task.month === '11' && ctx.exam) return ctx.exam;
+            if (task.month === '6' && ctx.grad) return ctx.grad;
+            
+            const padMonth = String(monthNum).padStart(2, '0');
+            return `${taskYear}-${padMonth}-15`;
+        }
+
+        // OPEN MODAL WITH SELECTED TASK
+        function openGenerator(taskId) {
+            let task = TASKS.find(t => t.id === taskId);
+            if (!task) return;
+
+            lastActiveElement = document.activeElement; // Track element for focus restore (C4)
+            currentActiveTask = task;
+            const ctx = getRawContextData();
+
+            // Setup Modal Fields
+            document.getElementById('mSchool').value = ctx.school;
+            document.getElementById('mSemester').value = ctx.semester;
+            document.getElementById('mGrade').value = ctx.grade;
+            document.getElementById('mTeacher').value = ctx.teacher;
+            
+            // Smart Date fallback recommendations (Semester aware)
+            document.getElementById('mDate').value = getSmartDefaultDate(task, ctx);
+            
+            document.getElementById('mTopic').value = task.title + ' · ' + ctx.grade;
+            document.getElementById('mNote').value = '';
+            
+            document.getElementById('modalTitle').textContent = `${task.title}（${CATN[task.cat] || '未分類'}）`;
+            document.getElementById('modalPhaseTag').textContent = task.time;
+
+            // Reset manual edits tracker
+            isManuallyEdited = false;
+            showRegenWarning(false);
+
+            updatePreview();
+            switchTab('doc');
+
+            document.getElementById('generatorModal').classList.add('active');
+            document.getElementById('btnModalClose').focus();
+        }
+
+        // Close Modal wrapper (with discard warnings - Bug 4)
+        function closeModal() {
+            if (isManuallyEdited) {
+                if (!confirm('您的成果文件已被手動修改。關閉視窗將會捨棄所有修改內容！確定要關閉嗎？')) {
+                    return; // Abort close action
+                }
+            }
+            document.getElementById('generatorModal').classList.remove('active');
+            // C4. Restore focus on modal close
+            if (lastActiveElement) {
+                lastActiveElement.focus();
+            }
+        }
+
+        // LOAD SAMPLE DATA FOR SELECTED TASK (Still keeps original Puti-AI context as demo data)
+        function fillSampleData() {
+            if (!currentActiveTask) return;
+            document.getElementById('mSchool').value = '屏東縣後庄國民小學';
+            document.getElementById('mSemester').value = '115學年度 第一學期';
+            document.getElementById('mGrade').value = '五年一班';
+            document.getElementById('mTeacher').value = '黃朝榮 老師';
+            document.getElementById('mDate').value = '2026-09-18';
+            document.getElementById('mTopic').value = currentActiveTask.title + ' · 五年一班';
+            document.getElementById('mNote').value = '本班特別強調自主學習、團隊互助及資訊素養與感恩教育。';
+            
+            // Fill also triggers manual reset
+            isManuallyEdited = false;
+            showRegenWarning(false);
+
+            updatePreview();
+            showToast('已載入該任務之官方完整實務數據！');
+        }
+
+        // ASSEMBLE CONTENT DATA FROM MODAL INPUT FORMS (Split: Raw vs Escaped - Critical Fix 4)
+        function getRawModalContext() {
+            return {
+                school: document.getElementById('mSchool').value,
+                semester: document.getElementById('mSemester').value,
+                grade: document.getElementById('mGrade').value,
+                teacher: document.getElementById('mTeacher').value,
+                date: document.getElementById('mDate').value,
+                topic: document.getElementById('mTopic').value || (currentActiveTask ? currentActiveTask.title : '成果報告'),
+                note: document.getElementById('mNote').value
+            };
+        }
+
+        function getEscapedModalContext() {
+            const raw = getRawModalContext();
+            return {
+                school: escapeHtml(raw.school),
+                semester: escapeHtml(raw.semester),
+                grade: escapeHtml(raw.grade),
+                teacher: escapeHtml(raw.teacher),
+                date: escapeHtml(raw.date),
+                topic: escapeHtml(raw.topic),
+                note: escapeHtml(raw.note)
+            };
+        }
+
+        // B1/B4 Manual edits control banner logic
+        function showRegenWarning(show) {
+            const regenBtn = document.getElementById('btnRegenDoc');
+            if (regenBtn) {
+                regenBtn.style.display = show ? 'inline-flex' : 'none';
+            }
+        }
+
+        // DYNAMIC PREVIEW RENDERING (Safeguards contenteditable from being overwritten - B1, Separates RAW for prompt - B3/B4)
+        function updatePreview(force = false) {
+            if (!currentActiveTask) return;
+            const escaped = getEscapedModalContext();
+            const raw = getRawModalContext();
+            
+            // Render Document Paper preview with HTML ESCAPED data
+            if (!isManuallyEdited || force) {
+                document.getElementById('paperPreview').innerHTML = currentActiveTask.doc(escaped);
+                if (force) {
+                    isManuallyEdited = false;
+                    showRegenWarning(false);
+                }
+            }
+            
+            // Render AI prompt text with RAW unescaped data (Critical Fix 4)
+            document.getElementById('promptText').value = currentActiveTask.prompt(raw);
+        }
+
+        // SWITCH TAB (Doc vs AI Prompt)
+        function switchTab(target) {
+            const docTab = document.getElementById('tabDoc');
+            const promptTab = document.getElementById('tabPrompt');
+            const docPane = document.getElementById('paneDoc');
+            const promptPane = document.getElementById('panePrompt');
+
+            if (target === 'doc') {
+                docTab.classList.add('active');
+                docTab.setAttribute('aria-selected', 'true');
+                promptTab.classList.remove('active');
+                promptTab.setAttribute('aria-selected', 'false');
+                docPane.classList.add('active');
+                promptPane.classList.remove('active');
+            } else {
+                docTab.classList.remove('active');
+                docTab.setAttribute('aria-selected', 'false');
+                promptTab.classList.add('active');
+                promptTab.setAttribute('aria-selected', 'true');
+                docPane.classList.remove('active');
+                promptPane.classList.add('active');
+            }
+        }
+
+        // WORD / MARKDOWN FILE DOWNLOADS WITH OPTIMIZED NAMING (Using raw components - Bug 3)
+        function getCleanFilename(ext) {
+            const c = getRawModalContext();
+            const rawName = `${c.school}_${c.grade}_${c.topic}`;
+            return rawName.replace(/[\\/:*?"<>|]/g, '_') + '.' + ext;
+        }
+
+        function downloadWord() {
+            if (!currentActiveTask) return;
+            const innerHTML = document.getElementById('paperPreview').innerHTML;
+            const c = getEscapedModalContext();
+            
+            const htmlContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>${c.topic}</title>
+                    <style>
+                        body { font-family: "微軟正黑體", "PMingLiU", "SimSun", sans-serif; padding:24px; line-height:1.8; }
+                        .doc-header-block { text-align:center; margin-bottom: 20px; border-bottom:3px double #000; padding-bottom:10px; }
+                        .doc-school-title { font-size: 22pt; font-weight: bold; }
+                        .doc-doc-title { font-size: 15pt; font-weight: bold; margin-top:5px; }
+                        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                        th, td { border: 1px solid #000; padding: 6px 10px; font-size: 11pt; }
+                        th { background: #f2f2f2; text-align: center; }
+                        .doc-section-h3 { font-size: 12pt; font-weight: bold; margin-top: 14px; color: #1e3a8a; }
+                        .doc-section-h2 { font-size: 14pt; font-weight: bold; margin-top: 18px; border-bottom: 2px solid #000; padding-bottom:3px; }
+                        li { margin: 3px 0; }
+                        .note-box { border: 1px solid #000; background:#f9f9f9; padding: 10px; margin-top: 15px; }
+                        .sign { text-align: right; margin-top: 30px; }
+                    </style>
+                </head>
+                <body>
+                    ${innerHTML}
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob(['\\ufeff' + htmlContent], { type: 'application/msword' });
+            const fileName = getCleanFilename('doc');
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast(`已成功下載 Word 相容文件：${fileName}`);
+        }
+
+        function downloadMarkdown() {
+            if (!currentActiveTask) return;
+            const promptVal = document.getElementById('promptText').value;
+            const blob = new Blob(['\\ufeff' + promptVal], { type: 'text/markdown;charset=utf-8' });
+            const fileName = getCleanFilename('md');
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast(`已成功下載 Markdown 提示詞：${fileName}`);
+        }
+
+        // EVENT LISTENERS AND DELEGATIONS
+        function setupGlobalEventListeners() {
+            const container = document.getElementById('timelineContainer');
+            const searchInput = document.getElementById('searchInput');
+            const catBtns = document.querySelectorAll('[data-cat]');
+            const phaseBtns = document.querySelectorAll('[data-phase]');
+            const monthFilterGroup = document.getElementById('monthFilterGroup');
+            const filterTodoBtn = document.getElementById('btnFilterTodo');
+
+            // Search
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.trim();
+                renderTimeline();
+            });
+
+            // Month Quick Filter Click
+            monthFilterGroup.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-month]');
+                if (!btn) return;
+                
+                monthFilterGroup.querySelectorAll('[data-month]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                filterMonth = btn.getAttribute('data-month');
+                renderTimeline();
+            });
+
+            // Cat Tags Filter
+            catBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    catBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-selected', 'true');
+                    filterCat = btn.getAttribute('data-cat') === 'all' ? '' : btn.getAttribute('data-cat');
+                    renderTimeline();
+                });
+            });
+
+            // Phase Tabs Filter
+            phaseBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    phaseBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-selected', 'true');
+                    filterPhase = btn.getAttribute('data-phase') === 'all' ? '' : btn.getAttribute('data-phase');
+                    renderTimeline();
+                });
+            });
+
+            // Todo Only Filter
+            filterTodoBtn.addEventListener('click', () => {
+                onlyTodo = !onlyTodo;
+                filterTodoBtn.classList.toggle('active', onlyTodo);
+                filterTodoBtn.innerHTML = onlyTodo ? 
+                    `<i class="fa-solid fa-circle-check"></i> 顯示全部任務` : 
+                    `<i class="fa-regular fa-circle"></i> 只顯示未完成`;
+                renderTimeline();
+            });
+
+            // Card Action Buttons (Event Delegation)
+            container.addEventListener('click', (e) => {
+                const genBtn = e.target.closest('.btn-action-open');
+                if (genBtn) {
+                    const id = genBtn.getAttribute('data-task-id');
+                    openGenerator(id);
+                    return;
+                }
+
+                const doneBtn = e.target.closest('.btn-action-done');
+                if (doneBtn) {
+                    const id = doneBtn.getAttribute('data-task-id');
+                    toggleTaskCompleted(id);
+                    return;
+                }
+            });
+
+            container.addEventListener('change', (e) => {
+                if (e.target.classList.contains('chk-completed')) {
+                    const id = e.target.getAttribute('data-task-id');
+                    toggleTaskCompleted(id, e.target.checked);
+                }
+            });
+
+            // Storage Reset Button (Critical Fix 2: Persist reset global profile settings)
+            document.getElementById('btnResetStorage').addEventListener('click', () => {
+                if (confirm('確定要清除目前學期儲存的個人設定、學校基本資料與勾選進度嗎？')) {
+                    const scopeKey = getStorageScopeKey();
+                    const saved = localStorage.getItem('puti_teacher_calendar_v4_clean');
+                    if (saved) {
+                        let rootObj = JSON.parse(saved);
+                        if (rootObj.scopes && rootObj.scopes[scopeKey]) {
+                            delete rootObj.scopes[scopeKey];
+                        }
+                        // Reset profile variables
+                        userProfile = {
+                            school: '○○國小',
+                            semester: '115學年度 第一學期',
+                            grade: '三年甲班',
+                            teacher: '○○○老師',
+                            open: '2026-08-31',
+                            fair: '2026-12-05',
+                            exam: '2026-11-05',
+                            grad: '2027-06-18'
+                        };
+                        rootObj.profile = userProfile;
+                        localStorage.setItem('puti_teacher_calendar_v4_clean', JSON.stringify(rootObj));
+                    }
+                    completedTaskIds.clear();
+                    syncInputsToUI();
+                    renderTimeline();
+                    showToast('已成功重置目前學期與個人資料設定！');
+                }
+            });
+
+            // B1. Track manual edit inputs inside editable paper preview
+            document.getElementById('paperPreview').addEventListener('input', () => {
+                if (!isManuallyEdited) {
+                    isManuallyEdited = true;
+                    showRegenWarning(true);
+                }
+            });
+
+            // Action: Reset manual edits back to default template
+            document.getElementById('btnRegenDoc').addEventListener('click', () => {
+                updatePreview(true);
+            });
+
+            // Modal Input Live Bindings
+            ['mSchool', 'mSemester', 'mGrade', 'mTeacher', 'mDate', 'mTopic', 'mNote'].forEach(id => {
+                document.getElementById(id).addEventListener('input', (e) => {
+                    // B2. Two-way data sync: Modal inputs write back to main screen inputs
+                    if (['mSchool', 'mSemester', 'mGrade', 'mTeacher'].includes(id)) {
+                        const topId = 'in' + id.slice(1);
+                        const topInput = document.getElementById(topId);
+                        if (topInput) {
+                            topInput.value = e.target.value;
+                            
+                            const key = id.slice(1).toLowerCase();
+                            const profileKey = key === 'school' ? 'school' :
+                                               key === 'semester' ? 'semester' :
+                                               key === 'grade' ? 'grade' :
+                                               key === 'teacher' ? 'teacher' : key;
+                            userProfile[profileKey] = e.target.value;
+                            saveStorageData();
+                        }
+                    }
+                    updatePreview();
+                });
+            });
+
+            // Global Config Input Live Bindings & Auto Save (with scope auto-isolation)
+            ['inSchool', 'inSemester', 'inGrade', 'inTeacher', 'inOpen', 'inFair', 'inExam', 'inGrad'].forEach(id => {
+                document.getElementById(id).addEventListener('input', () => {
+                    const key = id.replace('in', '').toLowerCase();
+                    const profileKey = key === 'school' ? 'school' :
+                                       key === 'semester' ? 'semester' :
+                                       key === 'grade' ? 'grade' :
+                                       key === 'teacher' ? 'teacher' : key;
+                    userProfile[profileKey] = document.getElementById(id).value;
+                    
+                    // Critical Fix 1: Only load completed scope status, do not overwrite typing profile!
+                    if (['inSchool', 'inSemester', 'inGrade', 'inTeacher'].includes(id)) {
+                        loadStorageData(true);
+                    }
+                    
+                    saveStorageData();
+                    renderTimeline();
+                });
+            });
+
+            // Tab Buttons
+            document.getElementById('tabDoc').addEventListener('click', () => switchTab('doc'));
+            document.getElementById('tabPrompt').addEventListener('click', () => switchTab('prompt'));
+
+            // Action Buttons
+            document.getElementById('btnModalClose').addEventListener('click', closeModal);
+            document.getElementById('btnCopyPrompt').addEventListener('click', () => {
+                safeCopyText(document.getElementById('promptText').value, '🤖 已成功複製 AI 提示詞！');
+            });
+            document.getElementById('btnCopyDoc').addEventListener('click', () => {
+                safeCopyText(document.getElementById('paperPreview').innerText, '已成功複製成果文件全文！');
+            });
+            document.getElementById('btnDownloadWord').addEventListener('click', downloadWord);
+            document.getElementById('btnDownloadMd').addEventListener('click', downloadMarkdown);
+            document.getElementById('btnPrintDocument').addEventListener('click', () => window.print());
+
+            // A1. Active official fill sample button
+            document.getElementById('btnFillSample').addEventListener('click', fillSampleData);
+
+            // Modal overlay click to close
+            document.getElementById('generatorModal').addEventListener('click', (e) => {
+                if (e.target.id === 'generatorModal') closeModal();
+            });
+
+            // ESC Key down to close modal
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        }
+
+        // TOGGLE COMPLETED STATE
+        function toggleTaskCompleted(taskId, forceState = null) {
+            const currentlyCompleted = completedTaskIds.has(taskId);
+            const newState = forceState !== null ? forceState : !currentlyCompleted;
+
+            if (newState) {
+                completedTaskIds.add(taskId);
+            } else {
+                completedTaskIds.delete(taskId);
+            }
+
+            saveStorageData();
+            
+            // Re-render matching card
+            const card = document.querySelector(`.task-card[data-id="${taskId}"]`);
+            if (card) {
+                card.classList.toggle('completed', newState);
+                
+                const chk = card.querySelector('.chk-completed');
+                if (chk) chk.checked = newState;
+
+                const lbl = card.querySelector('.task-checkbox-label span');
+                if (lbl) lbl.innerText = newState ? '已完成' : '標記完成';
+            }
+
+            showToast(newState ? '任務已標記為完成！🎉' : '已取消該任務完成標記。');
+        }
+
+        // 複製到剪貼簿功能，相容於各種瀏覽器 (包括離線非 HTTPS 環境)
+        function safeCopyText(text, successMsg) {
+            if (!text) return;
+            
+            // 嘗試 navigator.clipboard
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(successMsg);
+                }).catch(err => {
+                    fallbackCopyText(text, successMsg);
+                });
+            } else {
+                fallbackCopyText(text, successMsg);
+            }
+        }
+
+        function fallbackCopyText(text, successMsg) {
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.top = "0";
+                textArea.style.left = "0";
+                textArea.style.width = "2em";
+                textArea.style.height = "2em";
+                textArea.style.padding = "0";
+                textArea.style.border = "none";
+                textArea.style.outline = "none";
+                textArea.style.boxShadow = "none";
+                textArea.style.background = "transparent";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (successful) {
+                    showToast(successMsg);
+                } else {
+                    alert('複製失敗，請手動複製！');
+                }
+            } catch (err) {
+                console.error('Fallback Copy Error:', err);
+                alert('複製失敗，請手動複製！');
+            }
+        }
+
+        // TOAST HELPER (Bug 5 Fix: Clear existing timeout instance to prevent overlap issues)
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMsg').innerText = msg;
+            
+            if (toastTimer) {
+                clearTimeout(toastTimer);
+            }
+            
+            toast.classList.add('show');
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                toastTimer = null;
+            }, 3000);
+        }
+
+        // LOAD STORAGE & SYNC
+        loadStorageData();
+        syncInputsToUI();
+        renderTimeline();
+        setupGlobalEventListeners();
+    </script>
+</body>
+</html>

@@ -68,6 +68,77 @@
     .btn-fb { background: #1877f2; color: white; border-color: #1877f2; }
     .btn-fb:hover { background: #166fe5; }
 
+    /* Forward-looking Quote Box */
+    .forward-quote-box {
+      background: linear-gradient(135deg, #eff6ff, #e0f2fe);
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .forward-quote-text {
+      font-size: 14px;
+      color: #1e3a8a;
+      font-weight: 500;
+      line-height: 1.7;
+    }
+
+    /* Prompt Display Card */
+    .prompt-card {
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .prompt-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .copy-btn {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { background: rgba(56, 189, 248, 0.3); }
+
+    .prompt-code {
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      background: #1e293b;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+
     /* Sticky Synced Video Section */
     .video-sticky-bar {
       background: #0f172a;
@@ -120,7 +191,6 @@
       text-decoration: underline;
       font-weight: 500;
     }
-    .source-credit-link:hover { color: #93c5fd; }
 
     .main-layout { max-width: 1400px; margin: 24px auto; padding: 0 24px; }
 
@@ -355,7 +425,7 @@
     }
 
     @media print {
-      header, .video-sticky-bar, .header-actions, .card-time-btn, .zoom-hint, footer, .modal-toolbar { display: none !important; }
+      header, .video-sticky-bar, .header-actions, .card-time-btn, .zoom-hint, footer, .modal-toolbar, .prompt-card, .forward-quote-box { display: none !important; }
       body { background: white !important; }
       .cards-grid { display: block !important; }
       .card-item { page-break-inside: avoid; margin-bottom: 30px !important; border: 2px solid #000 !important; }
@@ -390,6 +460,36 @@
   </header>
 
   <main class="main-layout">
+
+    <!-- Forward Looking Quote Box -->
+    <div class="forward-quote-box">
+      <div class="forward-quote-text">
+        💬 <strong>設計心聲與未來展望：</strong><br>
+        <em>「我知道在專業人士的眼中，這些圖紙也許還沒有非常標準、非常正確，但我相信在 AI Agent 不斷的進步之下，以後使用一樣的提示詞，它的表現一定會越來越好、越來越實用！」</em>
+      </div>
+    </div>
+
+    <!-- Universal Prompt Display Card -->
+    <div class="prompt-card">
+      <div class="prompt-header">
+        <div class="prompt-title">
+          <i class="fa-solid fa-terminal"></i> 本網頁生成使用之「萬用影片轉工程圖 AI Agent 提示詞」
+        </div>
+        <button class="copy-btn" onclick="copyMasterPrompt()"><i class="fa-solid fa-copy"></i> 複製提示詞</button>
+      </div>
+      <div class="prompt-code" id="promptText">請完整分析影片「&lt;輸入影片檔案路徑或網址&gt;」（原始出處：&lt;輸入原始網址，無可填無&gt;）。先精確轉譯語音逐字稿並結合視覺畫面細節，將影片中出現的物件或工程，零遺漏地拆解並繪製成現代化淺色背景工程設計圖網頁，並發佈至 GitHub Pages。
+
+【三大工程圖紙結構】
+1. 整體圖 (Master Drawings)：總立面圖、剖面結構圖與總體尺寸標註。
+2. 施工/組裝步驟圖 (Step-by-Step Diagrams)：按時間順序拆解 Step 1 至 Step N 的關鍵工序圖解。
+3. 零件圖 (Part Blueprints)：將每一個出現的細部零件/機構，繪製出標準 CAD 幾何圖、材質與尺寸規格。
+
+【卡片排版與互動規格】
+1. 雙邊對照：每張圖紙採用左右對照卡片（左：影片該秒數真實截圖 / 右：對應 CAD 向量圖）。
+2. 時間戳對照：每張圖紙標註影片秒數（如 00:15），並設有按鈕，點擊可跳轉頂部播放器自動播放至該秒數。
+3. 高階功能：圖紙點擊全螢幕無損放大與縮放（100%-500%）、單張 CAD 圖檔（SVG）下載、一鍵匯出全套工程圖紙 PDF。
+4. 版權維護：頁首、播放器與頁尾皆標註原始影片出處連結，並加上 Puti-AI 免費推廣宣告。</div>
+    </div>
 
     <!-- Sticky Synced Video Player -->
     <div class="video-sticky-bar" id="videoBar">
@@ -461,6 +561,15 @@
     let currentZoom = 1.0;
     let activeSVGContent = '';
     let activeFileName = 'blueprint';
+
+    function copyMasterPrompt() {
+      const text = document.getElementById('promptText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('萬用提示詞已成功複製到剪貼簿！');
+      }).catch(err => {
+        console.error('複製失敗:', err);
+      });
+    }
 
     function jumpToVideo(sec, title, desc) {
       const video = document.getElementById('mainVideo');

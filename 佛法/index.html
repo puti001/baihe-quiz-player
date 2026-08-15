@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puti-AI | 禪宗大師與語錄四格漫畫有聲劇場</title>
+    <style>
+        :root {
+            --primary-color: #5d4037;
+            --primary-light: #efebe9;
+            --accent-color: #d84315;
+            --accent-light: #fbe9e7;
+            --text-dark: #2c3437;
+            --text-light: #ffffff;
+            --bg-light: #fcfbf9;
+            --card-bg: #ffffff;
+            --border-color: #e6dfd8;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.65;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #5d4037 0%, #3e2723 100%);
+            color: var(--text-light);
+            padding: 2.2rem 1rem 1.8rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        header p {
+            font-size: 1.05rem;
+            opacity: 0.92;
+            max-width: 800px;
+            margin: 0 auto 1rem auto;
+        }
+        
+        .reference-bar {
+            background-color: rgba(255,255,255,0.12);
+            border-radius: 8px;
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .reference-bar a {
+            color: #ffccbc;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        
+        .reference-bar a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .btn-download-all {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.6rem;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-download-all:hover {
+            background-color: #bf360c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+        }
+        
+        .container {
+            max-width: 1240px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: 290px 1fr;
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+        
+        aside {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-list {
+            list-style: none;
+            margin-bottom: 1.6rem;
+        }
+        
+        .nav-list li {
+            margin-bottom: 0.35rem;
+        }
+        
+        .nav-list button {
+            width: 100%;
+            text-align: left;
+            padding: 0.65rem 0.9rem;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-list button:hover {
+            background-color: var(--primary-light);
+            padding-left: 1.1rem;
+        }
+        
+        .nav-list button.active {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            font-weight: bold;
+            padding-left: 1.1rem;
+        }
+        
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        /* 故事主卡片 */
+        .showcase-card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        }
+        
+        .showcase-header {
+            background-color: var(--primary-light);
+            padding: 1.4rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .showcase-title-area h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .showcase-title-area .subtitle {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        .btn-download-single {
+            background-color: #ffffff;
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .btn-download-single:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .showcase-body {
+            padding: 2rem;
+        }
+        
+        /* 升級版高擬真真人有聲播音器 */
+        .audio-player-box {
+            background: linear-gradient(135deg, #fffaf5 0%, #fdf0e9 100%);
+            border: 1px solid #ffd8c7;
+            border-radius: 14px;
+            padding: 1.4rem 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(216, 67, 21, 0.08);
+        }
+        
+        .player-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .btn-play-voice {
+            background: linear-gradient(135deg, #e64a19 0%, #d84315 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.6rem;
+            border-radius: 30px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(216, 67, 21, 0.35);
+            transition: all 0.2s;
+        }
+        
+        .btn-play-voice:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 16px rgba(216, 67, 21, 0.45);
+        }
+        
+        .btn-stop-voice {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.92rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .btn-stop-voice:hover {
+            background-color: #6d4c41;
+        }
+        
+        .voice-badge {
+            background-color: #ffe0b2;
+            color: #e65100;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .rate-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .rate-btn {
+            background: white;
+            border: 1px solid #ffccbc;
+            color: #5d4037;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .rate-btn.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        /* 音訊進度條 */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .time-text {
+            font-size: 0.85rem;
+            color: #795548;
+            font-weight: bold;
+            min-width: 45px;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: #d7ccc8;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+            accent-color: var(--accent-color);
+        }
+        
+        /* 漫畫圖片展示區 */
+        .comic-display-wrapper {
+            text-align: center;
+            background-color: #f7f4ee;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        
+        .comic-display-wrapper img {
+            max-width: 100%;
+            height: auto;
+            max-height: 680px;
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .comic-display-wrapper img:hover {
+            transform: scale(1.01);
+        }
+        
+        .comic-zoom-tip {
+            margin-top: 0.8rem;
+            font-size: 0.88rem;
+            color: #777;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        /* 故事讀誦與禪理內涵 */
+        .story-text-card {
+            background-color: #fdfbf7;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .story-text-card h3 {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-bottom: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 0.6rem;
+        }
+        
+        .story-text-card p {
+            font-size: 1.08rem;
+            line-height: 1.85;
+            color: #3e3e3e;
+            text-indent: 2em;
+        }
+        
+        .concept-highlight {
+            margin-top: 1.4rem;
+            padding: 0.9rem 1.2rem;
+            background-color: #efebe9;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0 8px 8px 0;
+            font-size: 1rem;
+            color: #4e342e;
+        }
+        
+        /* Lightbox 圖片放大檢視器 */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        footer {
+            margin-top: 4rem;
+            background-color: var(--primary-light);
+            border-top: 1px solid var(--border-color);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #5d4037;
+        }
+        
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            aside {
+                position: static;
+            }
+            .player-top-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Puti-AI | 禪宗大師與語錄四格漫畫有聲劇場</h1>
+        <p>10 位禪宗代表大師 ╳ 6 則經典禪門語錄 ｜ 四格漫畫展覽 ╳ 微軟 Neural 擬真真人語音朗讀</p>
+        <div class="reference-bar">
+            📖 典籍出處：<a href="https://books.masterhsingyun.org/ArticleDetail/artcle6651" target="_blank">星雲大師全集／教科書／佛教叢書15 宗派(1)／禪宗／p047 肆、禪宗大師與禪門語錄</a>
+        </div>
+        <div class="header-actions">
+            <button class="btn-download-all" onclick="downloadAllTxt()">
+                📄 一鍵下載全部完整劇本 (.txt)
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside>
+            <div class="section-title">🎋 禪宗大師 (10位)</div>
+            <ul class="nav-list" id="char-nav">
+                <!-- JS populated -->
+            </ul>
+            
+            <div class="section-title">📜 經典語錄 (6則)</div>
+            <ul class="nav-list" id="quote-nav">
+                <!-- JS populated -->
+            </ul>
+        </aside>
+
+        <main>
+            <div class="showcase-card" id="showcase-card">
+                <!-- JS populated -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="main-audio" preload="auto"></audio>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox-modal" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" alt="漫畫大圖">
+    </div>
+
+    <footer>
+        <p>屏東縣後庄國小黃朝榮老師作品，免費分享，歡迎擴散推廣，嚴禁商用與任何侵權、不尊重著作權的行為，更多 Puti-AI 教學工具 <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank">點此前往(https://padlet.com/clongwh/puti_ai_tools)</a></p>
+    </footer>
+
+    <script>
+        const data = {"characters": [{"id": "bodhidharma", "name": "菩提達摩", "title": "中土禪宗始祖", "image": "images/01菩提達摩_一葦渡江的真相.png", "intro": "西域南天竺人，捨棄王位出家，泛海來華，於嵩山少林寺面壁九年，倡「二入四行」，被尊為東土禪宗初祖。", "script_title": "一葦渡江的真相", "concept": "展現達摩超然不凡與世人對奇蹟執著的趣味對比。", "story": "菩提達摩是中土禪宗的初祖。相傳梁武帝無法理解達摩直指人心的禪法，達摩遂渡江北上。江邊風浪洶湧，渡船停駛，商旅急得跳腳。只見達摩安詳地拾起江邊一根蘆葦投入滔滔江水中，輕輕躍上，飄然過江。岸上眾人驚呼神蹟，卻不知達摩早已渡過了內心生死的無明大河。神通常在，而心清淨才是真正的彼岸。", "panels": [{"panel": "第一格（起）", "visual": "江邊風大浪急，渡輪停開。一群商人與旅人在岸邊焦急地踱步，指著江水嘆氣。", "dialogue": "旅人甲：『哎呀，這風浪這麼大，今天過不了江了！這可怎麼辦？』"}, {"panel": "第二格（承）", "visual": "達摩祖師身披紅色袈裟，神色泰然自若地走到江邊，彎腰撿起一根細小的蘆葦投入江中。", "dialogue": "達摩：『既然無船，那便隨緣吧。』"}, {"panel": "第三格（轉）", "visual": "達摩輕飄飄地躍上那根蘆葦，雙手合十，在洶湧的江面上如履平地般向對岸滑行。", "dialogue": "眾人（瞪大雙眼，下巴掉下來）：『天啊！神仙下凡啦！竟然踩著草就過去了！』"}, {"panel": "第四格（合）", "visual": "達摩回頭微笑，江水在他身後化為平靜，留下目瞪口呆的眾人。", "dialogue": "旁白：『世人皆驚嘆於渡江的神通，卻不知達摩早已渡過了生死的心河。』"}], "audio": "audio/char_bodhidharma.mp3"}, {"id": "huineng", "name": "六祖惠能", "title": "力倡頓悟禪祖師", "image": "images/02六祖惠能_本來無一物.png", "intro": "中國禪宗第六祖。以「本來無一物」偈受五祖衣缽，隱遁十五年後於曹溪大弘禪法，主張直指人心、見性成佛。", "script_title": "本來無一物", "concept": "經典偈頌的視覺化呈現，對比神秀的漸修拂塵與惠能的自性本淨。", "story": "六祖惠能大師在黃梅東山寺舂米。神秀大師題詩：身是菩提樹，心如明鏡台，時時勤拂拭，勿使惹塵埃。惠能聽後，也請人題下千古名偈：菩提本無樹，明鏡亦非台，本來無一物，何處惹塵埃。神秀教人時時清除煩惱，惠能卻直指自性本來清淨、無垢無染。五祖弘忍默許其悟境，於三更時分密傳衣缽，開創了南宗頓悟法門。", "panels": [{"panel": "第一格（起）", "visual": "書生打扮的神秀在寺院牆上題寫：『身是菩提樹，心如明鏡台，時時勤拂拭，勿使惹塵埃。』眾僧在旁讚嘆圍觀。", "dialogue": "眾僧：『寫得太好了！時時拂拭，心靈才能保持乾淨！』"}, {"panel": "第二格（承）", "visual": "正在碓房舂米的年輕惠能走過來，因不識字，恭敬請路過僧人幫忙在旁邊題寫他的偈子。", "dialogue": "惠能：『我也有一偈：菩提本無樹，明鏡亦非台，本來無一物，何處惹塵埃。』"}, {"panel": "第三格（轉）", "visual": "眾僧看著兩幅偈子陷入震撼。神秀的偈子旁是辛苦擦鏡的人，惠能的偈子旁則是一片自性光芒，鏡子與灰塵皆融於虛空。", "dialogue": "眾僧（驚呼）：『本來就沒有東西，那灰塵要落在哪裡？這境界太不可思議了！』"}, {"panel": "第四格（合）", "visual": "五祖弘忍在惠能的偈子前，用草鞋將字擦掉，嘴上說『亦未見性』，眼中卻閃爍著讚許笑意，暗示惠能半夜三更前來丈室。", "dialogue": "旁白：『擦拭塵埃是漸修，照見本空是頓悟。本來無一物，才是真正的本來面目。』"}], "audio": "audio/char_huineng.mp3"}, {"id": "mazu", "name": "馬祖道一", "title": "始創禪宗叢林祖師", "image": "images/03馬祖道一_磨磚怎能作鏡.png", "intro": "南嶽懷讓法嗣，倡「平常心是道」、「即心即佛」，性格豪邁，牛行虎視，開創別立禪居的叢林制度。", "script_title": "磨磚怎能作鏡", "concept": "經典公案漫畫化，點出禪非死板枯坐，而在於悟心自性。", "story": "馬祖道一在衡山日夜打坐修行。懷讓禪師問他：大德坐禪圖個什麼？道一回答：圖作佛。懷讓便拿了一塊磚頭在庵前用力磨擦。道一納悶詢問：磨磚做什麼？懷讓回答：磨作鏡。道一笑說：磨磚豈能作鏡？懷讓直截點醒：磨磚既不能作鏡，枯坐禪定又豈能成佛？道一豁然契悟，明白了修行不在於外在的坐相，而在於心中的無住與覺醒。", "panels": [{"panel": "第一格（起）", "visual": "南嶽衡山傳法院。馬祖道一在禪堂裡雙目緊閉、端正坐禪，宛如石雕。懷讓禪師在旁觀察他。", "dialogue": "懷讓：『大德，你天天在此坐禪，圖個什麼？』\n馬祖：『圖作佛。』"}, {"panel": "第二格（承）", "visual": "懷讓取來一塊粗糙的紅磚，在馬祖庵前的石板上用力磨擦，發出刺耳的『刷刷』聲。", "dialogue": "馬祖（被干擾，睜開眼納悶）：『師父，您磨磚做什麼？』\n懷讓（認真臉）：『我磨磚做鏡子啊。』"}, {"panel": "第三格（轉）", "visual": "馬祖忍不住笑了出來，搖搖頭表示荒謬。懷讓禪師目光如炬地直視馬祖。", "dialogue": "馬祖：『磨磚豈能作鏡？』\n懷讓：『磨磚既然不能作鏡，那你光是枯坐禪定，又豈能成佛？』"}, {"panel": "第四格（合）", "visual": "馬祖如雷灌頂，立刻下座合掌求教。懷讓微笑指點心要。", "dialogue": "懷讓：『坐禪非關坐臥。心若不取不捨，行住坐臥皆是禪。』\n旁白：『心靈的覺醒不在外在的坐相，而在於放下執著。』"}], "audio": "audio/char_mazu.mp3"}, {"id": "baizhang", "name": "百丈懷海", "title": "制訂叢林清規祖師", "image": "images/04百丈懷海_一日不作一日不食.png", "intro": "馬祖侍者，倡導「農禪並重」，制訂《百丈清規》，以「一日不作，一日不食」的自律精神垂範後世。", "script_title": "一日不作，一日不食", "concept": "展現百丈大師對勞動與平等的崇高堅持，農禪合一。", "story": "百丈懷海大師開創叢林制度，提倡農禪並重。到了晚年，九十高齡的大師依然每天與年輕僧眾一同下田耕作。弟子們心疼大師年邁，悄悄將他的鋤頭藏了起來。到了午齋時間，大師緊閉房門拒絕進食，說道：我無德行，怎能勞煩他人養育？一日不作，一日不食。這句話成為千古名訓，道出了禪者自力更生、眾生平等的崇高風骨。", "panels": [{"panel": "第一格（起）", "visual": "年近九十歲的百丈禪師依然挽起袖子，在寺院菜園裡親自揮汗鋤地，與年輕僧眾一同勞動。", "dialogue": "弟子甲：『師父年紀這麼大了還天天出坡勞動，我們看了實在心疼！』"}, {"panel": "第二格（承）", "visual": "弟子們偷偷將百丈禪師的鋤頭藏進柴房。清晨出坡時，百丈到處尋找農具未果。", "dialogue": "百丈：『我的作具呢？誰拿走了？』\n弟子們在遠處竊笑，以為師父今天能好好休息了。"}, {"panel": "第三格（轉）", "visual": "到了午齋時間，鐘聲敲響，大家入座用餐。百丈禪師卻緊閉房門，拒絕進食。", "dialogue": "弟子（端飯叩門）：『師父，請用齋吧！』\n百丈（屋內傳來堅定聲音）：『吾無德，焉可勞於人？一日不作，一日不食！』"}, {"panel": "第四格（合）", "visual": "弟子們慚愧地送回鋤頭。次日清晨，百丈禪師又神采奕奕地拿著鋤頭站在田埂上，露出開朗笑容。", "dialogue": "旁白：『不勞動就不吃飯。這不是固執，而是禪者對生命平等與勞動自律的最高敬意。』"}], "audio": "audio/char_baizhang.mp3"}, {"id": "yixuan", "name": "臨濟義玄", "title": "開創臨濟宗祖師", "image": "images/05臨濟義玄_三度被打與臨濟一喝.png", "intro": "黃檗法嗣，以「棒喝」雷霆宗風聞名，提出「無位真人」，佛光山即屬臨濟宗法脈傳承。", "script_title": "三度被打與臨濟一喝", "concept": "展現臨濟開悟時痛徹心扉的歷程，以及斬斷妄念的金剛棒喝。", "story": "臨濟義玄大師早年在黃檗門下參學，三度請教佛法大意，三度慘遭黃檗痛打六十棒。義玄心灰意冷前往參拜大愚禪師，大愚點醒他：黃檗如此老婆心切為你，你還問有過無過！義玄當下大徹大悟，明白了佛法無多子。日後義玄開創臨濟宗，以雷霆萬鈞的當頭棒喝切斷眾人的狂心妄想，使臨濟家風傳遍天下。", "panels": [{"panel": "第一格（起）", "visual": "年輕義玄三度向黃檗問『如何是佛法大意』，三度被黃檗用藤條迎頭痛打，打得鼻青臉腫。", "dialogue": "義玄（委屈想哭）：『我只是問佛法大意，為何每次都被痛打一頓？』"}, {"panel": "第二格（承）", "visual": "義玄前往參拜大愚禪師，大愚聽完哈哈大笑，點醒黃檗的苦心。", "dialogue": "大愚：『黃檗如此婆心為你徹困，你卻還在問自己有過無過？』\n義玄（當下大悟）：『原來黃檗佛法無多子！』"}, {"panel": "第三格（轉）", "visual": "義玄開創臨濟宗後，面對前來高談闊論的傲慢學者，突然雙目圓睜，發出一聲驚天動地的巨喝：『喝——！』", "dialogue": "臨濟：『哈啊——！』整個法堂大樑震動，學者大腦瞬間一片空白。"}, {"panel": "第四格（合）", "visual": "學者呆立原地、妄念全消。臨濟微笑拂袖，陽光照在滹沱河畔，臨濟法脈自此廣布天下。", "dialogue": "旁白：『無理的痛打是深沉的慈悲，驚天的一喝斬斷一切糾纏。這就是臨濟家風。』"}], "audio": "audio/char_yixuan.mp3"}, {"id": "zongmi", "name": "圭峰宗密", "title": "為禪學判教祖師", "image": "images/06圭峰宗密_禪教本是一家.png", "intro": "華嚴宗五祖兼荷澤宗禪師。提倡「禪教一致」，系統化整合禪宗與經教，著有《禪源諸詮集》等。", "script_title": "禪教本是一家", "concept": "說明經教與禪悟不可分割，調和佛教界長期的門戶爭端。", "story": "圭峰宗密大師是華嚴宗五祖兼荷澤宗禪師。當時佛教界義學僧與禪宗僧人彼此爭執不休，宗密大師直指：經書如登山地圖，禪悟如親自登頂。沒有地圖容易迷失方向，不親自登山則地圖毫無用處。大師融通禪宗各派與大乘經典，著成《禪源諸詮集》，讓後世修行者明白禪教一致、相輔相成的真理。", "panels": [{"panel": "第一格（起）", "visual": "講堂裡，手捧厚厚經書的義學僧與盤腿打坐的禪僧爭吵不休，互不相讓。", "dialogue": "義學僧：『你們不立文字是盲修瞎練！』\n禪僧：『你們光讀死書根本不懂自性！』"}, {"panel": "第二格（承）", "visual": "圭峰宗密大師走進講堂，一手拿著佛經地圖，一手指向遠方的巍峨山峰。", "dialogue": "宗密：『經如登山地圖，禪如親自登頂。無地圖易迷路，不登山則地圖何用？』"}, {"panel": "第三格（轉）", "visual": "宗密在案前通宵達旦撰寫《禪源諸詮集》，將禪門各派與經教融會貫通，條理井然如同思維導圖。", "dialogue": "宗密：『佛說經教指引心源，祖師禪悟證實經文。禪教一致，方是正道。』"}, {"panel": "第四格（合）", "visual": "義學僧與禪僧相視一笑，共同向宗密合掌作禮，禪堂與講堂一片祥和共榮。", "dialogue": "旁白：『系統化的智慧打破了門戶壁壘，圭峰宗密為後世留下了最完整的修行導航儀。』"}], "audio": "audio/char_zongmi.mp3"}, {"id": "zonggao", "name": "大慧宗杲", "title": "力倡看話禪祖師", "image": "images/07大慧宗杲_無字大疑團.png", "intro": "臨濟宗楊岐派傳人。力倡「看話禪」，主張在「無」字公案上起疑情以達頓悟，流放嶺南梅州依然怡然度化居民。", "script_title": "無字大疑團", "concept": "說明看話禪如何透過「疑情」砸碎成見，絕後復甦大徹大悟。", "story": "大慧宗杲大師力倡看話禪。他教導學人參究趙州狗子無佛性的無字公案。學人必須在無字上激起如銅牆鐵壁般的大疑情，吃飯也疑，睡覺也疑，直到將所有的世俗分別、成見執著逼到絕境。就在鐘聲敲響的剎那，疑團粉碎，如死後復甦，照見浩瀚光明的自性本源。", "panels": [{"panel": "第一格（起）", "visual": "大慧宗杲在法堂上振臂高呼，要求弟子們老老實實參究趙州狗子無佛性的『無』字。", "dialogue": "宗杲：『眾生皆有佛性，趙州因何答「無」？給我狠狠地參！』"}, {"panel": "第二格（承）", "visual": "小沙彌走路想、吃飯想、掃地想，頭頂頂著一個巨大的『？』，所有的邏輯知識都卡在『無』字這面高牆前。", "dialogue": "小沙彌：『為什麼是無？到底是為什麼？』"}, {"panel": "第三格（轉）", "visual": "疑情積聚到極點，小沙彌感到思維完全停滯。突然，一聲清脆晨鐘敲響，『？』與高牆瞬間炸裂粉碎！", "dialogue": "小沙彌（狂喜大笑）：『啊！這個「無」是要砸碎我所有的固執與執念！』"}, {"panel": "第四格（合）", "visual": "大慧宗杲欣慰點頭。即便日後被秦檜流放瘴癘梅州，大師依然怡然自得，以禪化民。", "dialogue": "旁白：『大疑大悟，小疑小悟。看話禪的智慧，讓心靈在逆境中無拘無束。』"}], "audio": "audio/char_zonggao.mp3"}, {"id": "pangyun", "name": "龐蘊居士", "title": "中土維摩詰", "image": "images/08龐蘊居士_萬貫家財沉湘江.png", "intro": "唐代著名在家禪者。參石頭、馬祖開悟，將萬貫家財沉入湘江，全家編竹器過活，一家四人談笑生死。", "script_title": "萬貫家財沉湘江", "concept": "展現龐家居士對世俗名利的徹底放下與自在禪悅。", "story": "龐蘊居士是唐代著名的在家大士，被譽為中土維摩詰。龐居士大悟之後，將家中數萬金銀珠寶全數沉入湘江，捨棄世俗財富的束縛，與妻子兒女隱居山下，編製竹器過活。一家四人沉浸於禪悅，談笑之間或坐、或立、或臥瀟灑化去，向人間示現了超越生死的超然解脫。", "panels": [{"panel": "第一格（起）", "visual": "龐蘊站在自家豪華宅邸前，鄰居們驚訝地看著他把一箱箱金銀珠寶搬上馬車。", "dialogue": "鄰居：『龐居士，你要把家產運去哪裡？』"}, {"panel": "第二格（承）", "visual": "湘江邊，龐蘊指揮將所有金銀財寶全數倒入滾滾江水中，波浪翻騰，金光沉沒。", "dialogue": "龐蘊：『好事不如無。多一分財富便多一分牽掛，沉入江底，落得乾淨！』"}, {"panel": "第三格（轉）", "visual": "簡陋茅屋內，龐蘊與妻子、兒女圍坐編織竹器販賣度日，談笑風生，屋內洋溢著法喜。", "dialogue": "龐蘊：『難難難！十擔芝麻樹上攤！』\n靈照（笑答）：『也不難也不易，飢來吃飯睏來眠！』"}, {"panel": "第四格（合）", "visual": "一家四人談笑間出入生死，或坐或站化去，化作仙人乘風而去。", "dialogue": "旁白：『世人皆求「有」，龐翁獨求「無」。捨卻萬貫家財，換來了全家大自在。』"}], "audio": "audio/char_pangyun.mp3"}, {"id": "xuyun", "name": "虛雲和尚", "title": "復興五宗的禪行者", "image": "images/09虛雲和尚_杯子落地的清響.png", "intro": "民國四大高僧之一。世壽120歲，一身兼挑禪宗五家法脈，歷經磨難，重建無數古剎禪林。", "script_title": "杯子落地的清響", "concept": "視覺化虛雲在金山禪堂大徹大悟、狂心頓息的瞬間。", "story": "虛雲老和尚在揚州金山禪堂苦參話頭，萬念俱寂。一日夜間開水職事倒茶，沸水濺在手上，茶杯應聲落地，啪的一聲摔得粉碎。虛雲老和尚聞聲頓開大悟，留下傳世偈頌：杯子撲落地，響聲明瀝瀝，虛空粉碎也，狂心當下息！老和尚以此悟境中興五宗法脈，度生無數。", "panels": [{"panel": "第一格（起）", "visual": "揚州金山禪堂昏暗沉寂。虛雲和尚已連續數月日夜不眠參禪，萬念俱寂，唯存一念疑情。", "dialogue": "旁白：『光緒二十一年，虛雲在金山禪堂苦參，行不知行，坐不知坐。』"}, {"panel": "第二格（承）", "visual": "開水職事倒茶時，滾燙的開水不慎灑在虛雲手上。虛雲手一抖，青瓷茶杯脫手墜落。", "dialogue": "『啪嚓！』一聲脆響，茶杯在石板地上摔得粉碎。"}, {"panel": "第三格（轉）", "visual": "清脆的碎裂聲在寂靜中震盪。虛雲瞳孔放大，腦中累積的所有疑團如同虛空般瞬間崩解炸裂！", "dialogue": "虛雲（大悟）：『杯子撲落地，響聲明瀝瀝。虛空粉碎也，狂心當下息！』"}, {"panel": "第四格（合）", "visual": "虛雲面容如霽月清風。後半生他披荊斬棘，百歲高齡依然興建無數道場，續佛慧命。", "dialogue": "旁白：『一聲清響，震碎百年迷夢。狂心若歇，當下即是菩提。』"}], "audio": "audio/char_xuyun.mp3"}, {"id": "suzuki", "name": "鈴木大拙", "title": "當代禪宗推動者", "image": "images/10鈴木大拙_月光下的透明樹葉.png", "intro": "日本臨濟宗學者。赴美弘法，撰寫大量英文禪學著作，將東方禪宗智慧推向西方世界，引領全球禪學熱潮。", "script_title": "月光下的透明樹葉", "concept": "呈現開悟時萬物一體的通透感，以及禪風西渡的廣大影響。", "story": "日本近代學者鈴木大拙在圓覺寺參禪四年。一日深夜步出禪堂，清朗月光灑滿庭院，他看著月下的樹葉，整個人與樹葉、月光融為一體，感覺通體透明。大拙悟道後遠渡重洋，用英文撰寫數十部禪學經典，將東方古老的直觀智慧傳播至歐美世界，開啟了當代全球的禪學熱潮。", "panels": [{"panel": "第一格（起）", "visual": "青年鈴木大拙在鎌倉圓覺寺苦參『無』字公案多年，受盡挫折與心靈煎熬。", "dialogue": "旁白：『寒冬深夜，鈴木拖著疲憊身軀走出禪堂，茫然走在庭院中。』"}, {"panel": "第二格（承）", "visual": "一輪明月穿透雲層灑下清輝。鈴木抬頭看著庭院樹葉，樹葉在月光下竟然如同水晶般通體透明。", "dialogue": "鈴木（驚嘆）：『我看見了！就是這！樹葉是我，我是月光，萬物本自通透！』"}, {"panel": "第三格（轉）", "visual": "多年後，鈴木站在美國大學講堂上，面對滿座西方學者，微笑遞出一朵盛開的花朵。", "dialogue": "鈴木：『不用大腦分析，去聞花香、感受它的生命，這就是禪。』"}, {"panel": "第四格（合）", "visual": "西方學者紛紛若有所悟，世界各地出版著大拙的禪學著作，照亮東西方心靈。", "dialogue": "旁白：『以透明的心照亮世界，鈴木大拙讓東方的禪，成為全人類共享的心靈花園。』"}], "audio": "audio/char_suzuki.mp3"}], "quotes": [{"id": "no_merit", "name": "了無功德", "source": "菩提達摩與梁武帝", "image": "images/11梁武帝與達摩_了無功德.png", "intro": "梁武帝炫耀造寺度僧之功德，達摩直言「並無功德」，指出這只是人天小果，真正的功德是「淨智妙圓，體自空寂」的自性覺醒。", "script_title": "了無功德", "concept": "破除世人對功德福報的貪執交易心態，回歸無漏自性。", "story": "梁武帝熱心護持佛教，建寺度僧無數。他自信滿滿地問達摩祖師：朕有何功德？達摩直言：並無功德。武帝大惑不解，達摩開示道：造寺度僧只是人天福報，如影隨形並非實相。真正的功德是自性清淨、不求回報的空寂智慧。達摩拂袖而去，警醒世人切莫將修行當成算計福報的交易。", "panels": [{"panel": "第一格（起）", "visual": "金碧輝煌的宮殿上，梁武帝手捧寫滿造寺百座、度僧萬人的厚帳簿，滿臉得意地展示給達摩看。", "dialogue": "梁武帝：『朕即位以來造寺、寫經、度僧不可勝數，有何功德？』"}, {"panel": "第二格（承）", "visual": "身披破袈裟的達摩祖師神情淡然，連帳簿都沒翻，平靜地吐出四個字。", "dialogue": "達摩：『並無功德。』\n梁武帝當場笑容僵住，大臣們倒抽一口涼氣。"}, {"panel": "第三格（轉）", "visual": "梁武帝不服氣地拍案質問，達摩指著宮殿外的影子開示。", "dialogue": "梁武帝：『何以無功德？』\n達摩：『此但人天小果，如影隨形，雖有非實。淨智妙圓、體自空寂，方是真功德！』"}, {"panel": "第四格（合）", "visual": "達摩拂袖飄然而去，留下陷入沉思的梁武帝。", "dialogue": "旁白：『帶著執著的善行只是有漏福報；不求回報的慈悲，才是無上真功德。』"}], "audio": "audio/quote_no_merit.mp3"}, {"id": "constant_vs_change", "name": "以不變應萬變", "source": "道樹禪師與道士", "image": "images/12道樹禪師_以不變應萬變.png", "intro": "道樹禪師建寺與道觀為鄰，道士每日變法術騷擾，禪師以「無」字處之十餘年，道士法盡離去。禪師曰：『彼有法術，有是有盡；我無法術，無是無窮。』", "script_title": "以不變應萬變", "concept": "呈現以靜制動、以「無」克「有」的超然禪定力。", "story": "道樹禪師建寺與道觀為鄰，道士日日施展呼風喚雨的法術騷擾佛寺，年輕沙彌皆被嚇跑。唯獨道樹禪師安坐十餘年紋風不動，道士法術用盡只得放棄離去。有人請教克敵之法，禪師微笑說道：道士有法術，有是有盡；我無法術，無是無窮。以不變應萬變，無的定力自然勝過萬千紛擾。", "panels": [{"panel": "第一格（起）", "visual": "隔壁道士站在屋頂作法，天空烏雲密布、雷電交加，妖魔鬼怪幻影在佛寺上空盤旋，小沙彌嚇得四處逃竄。", "dialogue": "道士：『看我的厲害法術，把你們這群和尚通通嚇跑！』"}, {"panel": "第二格（承）", "visual": "道樹禪師安坐在禪堂中，任憑身旁電閃雷鳴、妖魔做怪，十多年來如磐石般連眼皮都沒抬過。", "dialogue": "旁白：『今天呼風喚雨，明天風馳電掣。年輕僧人都走光了，老禪師依然紋風不動。』"}, {"panel": "第三格（轉）", "visual": "道士法術用盡、累癱在地，最終只能無奈打包搬家。路人好奇前來詢問禪師勝法。", "dialogue": "路人：『道士法術高強，您用什麼法寶勝過他們的？』\n道樹：『我只有一個「無」字。』"}, {"panel": "第四格（合）", "visual": "寺院恢復鳥語花香。道樹禪師微笑開示。", "dialogue": "道樹：『他們「有」法術，有是有盡；我「無」法術，無是無窮。我不變，自能勝他萬變。』\n旁白：『外境紛擾隨它去，心如止水勝萬千。』"}], "audio": "audio/quote_constant_vs_change.mp3"}, {"id": "dry_shiitake", "name": "老僧曬香菇", "source": "日本永平寺老禪師與道元禪師", "image": "images/13道元與老禪師_老僧曬香菇.png", "intro": "道元見八十歲老禪師烈日下曬香菇，勸其代勞或避暑。老禪師答：『別人不是我』、『大太陽不曬，難道等陰雨天曬？』，點出不假手他人、活在當下的禪機。", "script_title": "老僧曬香菇", "concept": "說明修行必須親力親為，當下即是最好的修行時節。", "story": "日本永平寺中，八十歲駝背老禪師頂著酷暑烈日在庭院曬香菇。住持道元禪師心疼地勸他找人代勞或避暑。老禪師淡然回答：別人並不是我呀！大太陽天不曬香菇，難道要等陰天雨天再來曬嗎？道元禪師當下領悟：修行必須親力親為，生命中的每一個當下，就是最好的修行時節。", "panels": [{"panel": "第一格（起）", "visual": "日本永平寺中庭烈日當空。一位八十多歲駝著背的老禪師，正吃力地彎腰將竹篩上的香菇攤平晾曬，汗如雨下。", "dialogue": "旁白：『烈日炎炎，老長老汗流浹背地辛勤作務。』"}, {"panel": "第二格（承）", "visual": "住持道元禪師路過，心疼地上前攙扶並提議找年輕人代勞。", "dialogue": "道元：『長老！您年紀這麼大了，何必如此辛苦？我找人替您代勞吧！』\n老禪師（平靜回答）：『別人並不是我呀。』"}, {"panel": "第三格（轉）", "visual": "道元一愣，又指著頭頂毒日勸說避暑。", "dialogue": "道元：『那也不必挑這種大太陽的時候曬啊！』\n老禪師（微笑）：『大太陽天不曬香菇，難道要等到陰天或雨天再來曬嗎？』"}, {"panel": "第四格（合）", "visual": "道元如遭當頭棒喝，恭敬作禮後也挽起袖子一起蹲下曬香菇。", "dialogue": "旁白：『自己的修行無人能代，當下的因緣莫等明天。這就是曬香菇的無上禪機。』"}], "audio": "audio/quote_dry_shiitake.mp3"}, {"id": "own_treasure", "name": "自家寶藏", "source": "大珠慧海與馬祖道一", "image": "images/14大珠慧海與馬祖_自家寶藏.png", "intro": "大珠慧海求佛法，馬祖直斥其丟棄自家寶藏，外求無用。慧海問何為自家寶藏，馬祖曰：『即今問我者，是汝寶藏。一切具足，更無欠少，使用自在，何假外求？』", "script_title": "自家寶藏", "concept": "破除向外馳求的迷惘，點醒每個人自性中本自具足的智慧百寶箱。", "story": "大珠慧海千里迢迢尋訪馬祖求取佛法。馬祖斥責他：自家寶藏不顧，拋家散走，我這裡一無所有，求什麼佛法！慧海急問：何為我的自家寶藏？馬祖直指：現在開口問我的這個心，就是你的自家寶藏，一切具足，何須外求！慧海當下見性，不再向外奔波，回歸自心寶藏。", "panels": [{"panel": "第一格（起）", "visual": "大珠慧海風塵僕僕趕到江西，跪在馬祖面前懇求佛法。", "dialogue": "慧海：『弟子遠道而來，求祖師慈悲傳授佛法！』"}, {"panel": "第二格（承）", "visual": "馬祖怒目直斥，指著慧海。", "dialogue": "馬祖：『自家寶藏不顧，拋家散走，來我這裡討什麼？我這裡一物也無，求什麼佛法！』"}, {"panel": "第三格（轉）", "visual": "慧海惶恐叩頭，急切發問。馬祖手指直點慧海胸口。", "dialogue": "慧海：『到底什麼是弟子的自家寶藏？』\n馬祖：『現在能開口問我的這個心，就是你的自家寶藏！一切具足，何須外求！』"}, {"panel": "第四格（合）", "visual": "慧海當下大悟，身心充滿光明喜悅，恭敬頂禮。", "dialogue": "旁白：『莫如乞丐捧金碗向人乞討，回頭看清自心，你本來就是圓滿的佛。』"}], "audio": "audio/quote_own_treasure.mp3"}, {"id": "tea_rice_zen", "name": "茶飯禪", "source": "龍潭崇信與天皇道悟", "image": "images/15龍潭崇信與天皇道悟_茶飯禪.png", "intro": "崇信侍奉道悟多年未得法要，道悟曰：『汝擎茶來，吾為汝接；汝捧飯來，吾為汝受；汝和南時，吾便低頭。何處不指示心要？』，崇信當下大悟。", "script_title": "茶飯禪", "concept": "說明禪即生活，搬柴運水、端茶吃飯無非自性妙用。", "story": "龍潭崇信跟隨天皇道悟出家多年，委屈抱怨師父從未傳授修道心要。道悟禪師回答：你端茶來我為你接，你捧飯來我為你吃，你合掌時我為你點頭，哪裡不是修道心要？崇信當下大悟，明白了禪不在玄妙深奧之處，而在穿衣吃飯、日常作務的每一個當下。", "panels": [{"panel": "第一格（起）", "visual": "龍潭崇信跪在天皇道悟面前抱怨訴苦。", "dialogue": "崇信：『師父！弟子隨您出家多年，日日打柴做飯端茶，您卻從未教我修道心要！』"}, {"panel": "第二格（承）", "visual": "道悟禪師端著熱茶，露出委屈表情。", "dialogue": "道悟：『好徒弟，你真冤枉師父！自你來的那天起，我哪一天沒在指示心要給你？』"}, {"panel": "第三格（轉）", "visual": "崇信茫然不解。道悟喝了一口茶，目光溫和清澈。", "dialogue": "道悟：『你端茶來我為你接，你捧飯來我為你吃，你合掌時我便低頭點頭，哪裡不是心要？』"}, {"panel": "第四格（合）", "visual": "崇信腦海中日常點滴化為金光，頓然大悟。廚房燒水做飯瞬間充滿禪悅。", "dialogue": "旁白：『平常日用無非道，專注當下即是禪。生活的一舉一動，皆是自性流露。』"}], "audio": "audio/quote_tea_rice_zen.mp3"}, {"id": "self_liberated", "name": "自了漢", "source": "黃檗禪師與同參", "image": "images/16黃檗禪師與同參_自了漢.png", "intro": "黃檗與顯神通渡河之同參行腳，黃檗斥其顯神通渡河為「小乘自了漢」，指出「自度未足，度人才是大乘法器」。同參讚嘆黃檗真大乘器。", "script_title": "自了漢", "concept": "對比個人神通與大乘菩薩慈悲度人的胸懷格局。", "story": "黃檗禪師與一位同參行腳至溪邊，正逢山洪暴漲。同參施展神通如履平地踏水過河，回頭炫耀招手。黃檗怒斥道：你這小乘自了漢，早知你如此，我該砍斷你的腳跟！同參慚愧化去，讚嘆黃檗真大乘法器。禪宗不尚個人神通，唯重以大悲心救度苦難眾生。", "panels": [{"panel": "第一格（起）", "visual": "山間溪水暴漲、木橋斷裂。黃檗與舉止奇異的同參僧人望溪興嘆。", "dialogue": "黃檗：『溪水如此湍急，該如何渡過？』"}, {"panel": "第二格（承）", "visual": "同參哈哈大笑，提著褲腳如履平地般在水面漫步滑向對岸，回頭招手炫耀。", "dialogue": "同參：『黃檗兄，這有何難？快顯神通隨我走過來！』"}, {"panel": "第三格（轉）", "visual": "黃檗立於岸邊怒目大喝，毫無羨慕之色。", "dialogue": "黃檗：『嘿！你這小乘自了漢！早知你如此，我剛才就該砍斷你的腳跟！』"}, {"panel": "第四格（合）", "visual": "同參慚愧化作清風離去，讚嘆黃檗是大乘法器。黃檗轉身走向村莊行腳度眾。", "dialogue": "旁白：『神通救不了世間苦難，慈悲方能普渡眾生。大乘行者的心，永遠在苦難的人間。』"}], "audio": "audio/quote_self_liberated.mp3"}]};
+        let currentItem = null;
+        let currentType = 'char';
+        let currentPlaybackRate = 1.0;
+        const audio = document.getElementById('main-audio');
+        
+        function renderNav() {
+            const charNav = document.getElementById('char-nav');
+            const quoteNav = document.getElementById('quote-nav');
+            
+            data.characters.forEach((char, idx) => {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.innerHTML = `<span>${idx + 1}. ${char.name}</span><span style="font-size:0.8rem;opacity:0.7">${char.script_title}</span>`;
+                btn.onclick = () => selectItem('char', char.id);
+                btn.id = `btn-char-${char.id}`;
+                li.appendChild(btn);
+                charNav.appendChild(li);
+            });
+            
+            data.quotes.forEach((quote, idx) => {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.innerHTML = `<span>${idx + 1}. ${quote.name}</span><span style="font-size:0.8rem;opacity:0.7">四格</span>`;
+                btn.onclick = () => selectItem('quote', quote.id);
+                btn.id = `btn-quote-${quote.id}`;
+                li.appendChild(btn);
+                quoteNav.appendChild(li);
+            });
+        }
+        
+        function selectItem(type, id) {
+            // 停止當前音訊
+            stopAudio();
+            
+            document.querySelectorAll('.nav-list button').forEach(btn => btn.classList.remove('active'));
+            
+            const targetBtn = document.getElementById(`btn-${type}-${id}`);
+            if (targetBtn) targetBtn.classList.add('active');
+            
+            currentType = type;
+            if (type === 'char') {
+                currentItem = data.characters.find(c => c.id === id);
+            } else {
+                currentItem = data.quotes.find(q => q.id === id);
+            }
+            
+            renderContent(type, currentItem);
+            
+            // 載入當前音訊
+            if (currentItem.audio) {
+                audio.src = currentItem.audio;
+                audio.playbackRate = currentPlaybackRate;
+            }
+        }
+        
+        function renderContent(type, item) {
+            const showcaseCard = document.getElementById('showcase-card');
+            const isChar = type === 'char';
+            
+            showcaseCard.innerHTML = `
+                <div class="showcase-header">
+                    <div class="showcase-title-area">
+                        <h2>${item.name}</h2>
+                        <div class="subtitle">${isChar ? '【' + item.title + '】 《' + item.script_title + '》' : '【出處：' + item.source + '】 《' + item.script_title + '》'}</div>
+                    </div>
+                    <button class="btn-download-single" onclick="downloadSingleTxt()">
+                        📄 下載此篇腳本 (.txt)
+                    </button>
+                </div>
+                
+                <div class="showcase-body">
+                    <!-- 擬真真人語音播放器 -->
+                    <div class="audio-player-box">
+                        <div class="player-top-row">
+                            <div class="player-controls">
+                                <button class="btn-play-voice" id="btn-play" onclick="toggleAudio()">
+                                    ▶ 播放真人語音朗讀
+                                </button>
+                                <button class="btn-stop-voice" onclick="stopAudio()">
+                                    ⏹ 停止
+                                </button>
+                                <span class="voice-badge">✨ 台灣專業說書人聲 (Neural)</span>
+                            </div>
+                            <div class="rate-group">
+                                <span style="font-size:0.85rem;font-weight:bold;color:#795548;">語速：</span>
+                                <button class="rate-btn ${currentPlaybackRate === 0.85 ? 'active' : ''}" onclick="setPlaybackRate(0.85)">0.8x</button>
+                                <button class="rate-btn ${currentPlaybackRate === 1.0 ? 'active' : ''}" onclick="setPlaybackRate(1.0)">1.0x</button>
+                                <button class="rate-btn ${currentPlaybackRate === 1.2 ? 'active' : ''}" onclick="setPlaybackRate(1.2)">1.2x</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 進度條 -->
+                        <div class="progress-container">
+                            <span class="time-text" id="cur-time">00:00</span>
+                            <input type="range" class="progress-bar" id="audio-progress" min="0" max="100" value="0" oninput="seekAudio(this.value)">
+                            <span class="time-text" id="total-time">00:00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 漫畫大圖展示 -->
+                    <div class="comic-display-wrapper">
+                        <img src="${item.image}" alt="${item.name} 四格漫畫" onclick="openLightbox('${item.image}')" onerror="this.src='https://via.placeholder.com/800x800.png?text=%E6%BC%AB%E7%95%AB%E5%9C%96%E7%89%87%E6%BA%96%E5%82%99%E4%B8%AD'" />
+                        <div class="comic-zoom-tip">🔍 點擊漫畫圖片可放大全螢幕欣賞</div>
+                    </div>
+                    
+                    <!-- 故事讀誦文字與禪理 -->
+                    <div class="story-text-card">
+                        <h3>📜 故事朗讀與禪門智慧</h3>
+                        <p>${item.story}</p>
+                        <div class="concept-highlight">
+                            💡 <strong>核心禪機：</strong>${item.concept}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 音訊控制函數
+        function toggleAudio() {
+            const btn = document.getElementById('btn-play');
+            if (audio.paused) {
+                audio.play().then(() => {
+                    btn.innerHTML = '⏸ 暫停朗讀';
+                }).catch(err => {
+                    console.log('Audio play error, falling back to Web Speech API', err);
+                    // 備援方案
+                    fallbackSpeech();
+                });
+            } else {
+                audio.pause();
+                btn.innerHTML = '▶ 繼續播放';
+            }
+        }
+        
+        function stopAudio() {
+            audio.pause();
+            audio.currentTime = 0;
+            const btn = document.getElementById('btn-play');
+            if (btn) btn.innerHTML = '▶ 播放真人語音朗讀';
+            updateProgress();
+            
+            // 備援 Web Speech 也停止
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+        
+        function setPlaybackRate(rate) {
+            currentPlaybackRate = rate;
+            audio.playbackRate = rate;
+            document.querySelectorAll('.rate-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function seekAudio(val) {
+            if (audio.duration) {
+                audio.currentTime = (val / 100) * audio.duration;
+            }
+        }
+        
+        function updateProgress() {
+            const curTimeEl = document.getElementById('cur-time');
+            const totalTimeEl = document.getElementById('total-time');
+            const progressEl = document.getElementById('audio-progress');
+            
+            if (!curTimeEl || !totalTimeEl || !progressEl) return;
+            
+            const cur = audio.currentTime || 0;
+            const dur = audio.duration || 0;
+            
+            curTimeEl.textContent = formatTime(cur);
+            totalTimeEl.textContent = formatTime(dur);
+            
+            if (dur > 0) {
+                progressEl.value = (cur / dur) * 100;
+            } else {
+                progressEl.value = 0;
+            }
+        }
+        
+        function formatTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+        
+        audio.ontimeupdate = updateProgress;
+        audio.onloadedmetadata = updateProgress;
+        audio.onended = () => {
+            const btn = document.getElementById('btn-play');
+            if (btn) btn.innerHTML = '▶ 重新播放';
+        };
+        
+        // 備援 Web Speech API（若 MP3 尚未載入完成時使用最佳台灣女聲）
+        function fallbackSpeech() {
+            if (!('speechSynthesis' in window) || !currentItem) return;
+            window.speechSynthesis.cancel();
+            const textToRead = `${currentItem.name}。《${currentItem.script_title}》。${currentItem.story}。核心禪機：${currentItem.concept}`;
+            const ut = new SpeechSynthesisUtterance(textToRead);
+            ut.rate = currentPlaybackRate;
+            ut.lang = 'zh-TW';
+            const voices = window.speechSynthesis.getVoices();
+            const twVoice = voices.find(v => v.lang.includes('TW') || v.name.includes('Natural') || v.name.includes('HsiaoChen') || v.name.includes('Hanhan'));
+            if (twVoice) ut.voice = twVoice;
+            window.speechSynthesis.speak(ut);
+        }
+        
+        // Lightbox 放大圖片
+        function openLightbox(imgSrc) {
+            const modal = document.getElementById('lightbox');
+            const modalImg = document.getElementById('lightbox-img');
+            modal.style.display = 'flex';
+            modalImg.src = imgSrc;
+        }
+        
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+        
+        // 下載單篇腳本
+        function downloadSingleTxt() {
+            if (!currentItem) return;
+            const item = currentItem;
+            const isChar = currentType === 'char';
+            
+            let txt = "=======================================================\n";
+            txt += `  禪宗四格漫畫腳本：${item.name}\n`;
+            txt += `  作者：屏東縣後庄國小 黃朝榮老師\n`;
+            txt += "=======================================================\n\n";
+            
+            txt += `【主旨】${isChar ? '禪宗大師（' + item.title + '）' : '經典語錄（出處：' + item.source + '）'}\n`;
+            txt += `【簡介】${item.intro}\n\n`;
+            txt += `【劇本名稱】《${item.script_title}》\n`;
+            txt += `【編劇概念】${item.concept}\n\n`;
+            txt += "【故事朗讀文本】\n";
+            txt += `${item.story}\n\n`;
+            txt += "-------------------------------------------------------\n";
+            txt += "【四格畫面與對白詳解】\n";
+            txt += "-------------------------------------------------------\n\n";
+            
+            item.panels.forEach((p) => {
+                txt += `● ${p.panel}\n`;
+                txt += `  畫面描述：${p.visual}\n`;
+                txt += `  對白/旁白：${p.dialogue}\n\n`;
+            });
+            
+            txt += "=======================================================\n";
+            txt += "典籍出處：星雲大師全集 / 佛教叢書15 宗派(1) / 禪宗 / p047 肆、禪宗大師與禪門語錄\n";
+            txt += "Puti-AI 教學工具系統生成，免費分享，歡迎擴散推廣。\n";
+            
+            triggerDownload(txt, `禪宗漫畫腳本_${item.name}_${item.script_title}.txt`);
+        }
+        
+        // 下載全部腳本
+        function downloadAllTxt() {
+            let txt = "=======================================================\n";
+            txt += "  Puti-AI 禪宗大師與經典語錄 16 幅四格漫畫腳本全集\n";
+            txt += "  作者：屏東縣後庄國小 黃朝榮老師 (免費分享，歡迎推廣)\n";
+            txt += "  出處：星雲大師全集 / 佛教叢書15 宗派(1) / 禪宗\n";
+            txt += "=======================================================\n\n";
+            
+            txt += "【壹、禪宗大師篇（共 10 位）】\n";
+            txt += "-------------------------------------------------------\n\n";
+            
+            data.characters.forEach((char, index) => {
+                txt += `[${index + 1}] ${char.name}（${char.title}）\n`;
+                txt += `簡介：${char.intro}\n`;
+                txt += `劇本名稱：《${char.script_title}》\n`;
+                txt += `編劇概念：${char.concept}\n`;
+                txt += `故事文本：${char.story}\n\n`;
+                txt += "【四格分格畫面與對白】\n";
+                char.panels.forEach((p) => {
+                    txt += `● ${p.panel}\n`;
+                    txt += `  畫面：${p.visual}\n`;
+                    txt += `  對白：${p.dialogue}\n\n`;
+                });
+                txt += "-------------------------------------------------------\n\n";
+            });
+            
+            txt += "【貳、經典禪門語錄篇（共 6 則）】\n";
+            txt += "-------------------------------------------------------\n\n";
+            data.quotes.forEach((quote, index) => {
+                txt += `[${index + 1}] ${quote.name}（出處：${quote.source}）\n`;
+                txt += `簡介：${quote.intro}\n`;
+                txt += `劇本名稱：《${quote.script_title}》\n`;
+                txt += `編劇概念：${quote.concept}\n`;
+                txt += `故事文本：${quote.story}\n\n`;
+                txt += "【四格分格畫面與對白】\n";
+                quote.panels.forEach((p) => {
+                    txt += `● ${p.panel}\n`;
+                    txt += `  畫面：${p.visual}\n`;
+                    txt += `  對白：${p.dialogue}\n\n`;
+                });
+                txt += "-------------------------------------------------------\n\n";
+            });
+            
+            triggerDownload(txt, "Puti-AI_禪宗大師與語錄_16幅四格漫畫腳本全集.txt");
+        }
+        
+        function triggerDownload(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        renderNav();
+        selectItem('char', data.characters[0].id);
+    </script>
+</body>
+</html>

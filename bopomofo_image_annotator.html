@@ -14,15 +14,6 @@
   <script src="bopomofo_dict.js"></script>
 
   <style>
-    @font-face {
-      font-family: 'Iansui';
-      src: url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@main/dist/Iansui-Regular.woff2') format('woff2'),
-           url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@main/dist/Iansui-Regular.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-      font-display: swap;
-    }
-
     :root {
       --primary: #4F46E5;
       --primary-hover: #4338CA;
@@ -128,10 +119,10 @@
     .app-main {
       flex: 1;
       display: grid;
-      grid-template-columns: 430px 1fr;
+      grid-template-columns: 440px 1fr;
       gap: 1.25rem;
       padding: 1.25rem;
-      max-width: 1900px;
+      max-width: 1920px;
       margin: 0 auto;
       width: 100%;
     }
@@ -202,81 +193,56 @@
     .dropzone {
       border: 2px dashed #CBD5E1;
       border-radius: 10px;
-      padding: 1rem;
+      padding: 0.85rem;
       text-align: center;
       cursor: pointer;
       background: #F8FAFC;
       transition: all 0.2s;
     }
     .dropzone:hover { border-color: var(--primary); background: var(--primary-light); }
-    .dropzone i { font-size: 1.8rem; color: #94A3B8; margin-bottom: 0.4rem; }
+    .dropzone i { font-size: 1.6rem; color: #94A3B8; margin-bottom: 0.3rem; }
 
-    .preset-imgs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-top: 6px;
-    }
-
-    .preset-img-thumb {
-      width: 100%;
-      height: 44px;
-      border-radius: 6px;
-      object-fit: cover;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: all 0.15s;
-    }
-    .preset-img-thumb:hover { transform: scale(1.05); border-color: var(--primary); }
-
-    /* Annotations List (圖層清單) */
-    .anno-list-box {
+    /* Annotations Manager Box */
+    .anno-manager-box {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      max-height: 150px;
-      overflow-y: auto;
-      margin-bottom: 10px;
-      padding: 4px;
       background: #F1F5F9;
+      padding: 8px;
       border-radius: 8px;
+      max-height: 140px;
+      overflow-y: auto;
+      margin-top: 8px;
     }
 
-    .anno-item-row {
+    .anno-chip {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 6px 10px;
+      align-items: center;
       background: white;
-      border: 1px solid var(--border-color);
+      padding: 5px 10px;
       border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-size: 0.82rem;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
     }
 
-    .anno-item-row:hover { border-color: var(--primary); }
-    .anno-item-row.active {
+    .anno-chip:hover { border-color: var(--primary); }
+    .anno-chip.active {
       border-color: var(--primary);
       background: #EEF2FF;
       box-shadow: 0 0 0 1.5px var(--primary);
     }
 
-    .anno-item-title {
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: #1E293B;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .anno-item-del {
+    .anno-chip .del-btn {
       color: #94A3B8;
       cursor: pointer;
       padding: 2px 6px;
       border-radius: 4px;
     }
-    .anno-item-del:hover { color: #EF4444; background: #FEE2E2; }
+    .anno-chip .del-btn:hover { color: #EF4444; background: #FEE2E2; }
 
     /* Mode selector */
     .mode-switch-box {
@@ -307,35 +273,6 @@
       color: var(--primary);
       box-shadow: var(--shadow-sm);
     }
-
-    /* Quick Stamping Badges (單字蓋章小徽章) */
-    .stamp-badges-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
-      padding: 6px;
-      background: #FEF3C7;
-      border: 1px solid #FDE68A;
-      border-radius: 8px;
-    }
-
-    .stamp-badge {
-      background: white;
-      border: 1px solid #F59E0B;
-      color: #B45309;
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      user-select: none;
-      transition: all 0.15s;
-    }
-    .stamp-badge:hover { background: #F59E0B; color: white; transform: scale(1.05); }
 
     /* Canvas Work Area */
     .canvas-container-wrap {
@@ -406,24 +343,6 @@
 
     footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
     footer a:hover { text-decoration: underline; }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    .modal-card {
-      background: white;
-      border-radius: 12px;
-      width: 420px;
-      padding: 1.25rem;
-      box-shadow: var(--shadow-lg);
-    }
   </style>
 </head>
 <body>
@@ -433,7 +352,7 @@
     <div class="brand-title">
       <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
       <div>
-        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">支援原圖字旁精準補注音</span></h1>
+        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">原圖字旁隨意壓注音</span></h1>
       </div>
     </div>
     <div class="header-actions">
@@ -458,132 +377,113 @@
       <!-- Step 1: Upload Image -->
       <div class="card">
         <div class="card-title">
-          <span><i class="fa-solid fa-image"></i> 1. 載入底圖</span>
+          <span><i class="fa-solid fa-image"></i> 1. 載入底圖 (可直接 Ctrl+V 貼上圖)</span>
         </div>
         <div class="dropzone" id="dropzone">
           <i class="fa-solid fa-cloud-arrow-up"></i>
-          <p style="font-size: 0.85rem; font-weight: 600; color: #475569;">點擊或拖曳底圖至此 (或按 Ctrl+V 貼圖)</p>
+          <p style="font-size: 0.84rem; font-weight: 600; color: #475569;">點擊或拖曳底圖至此 (或按 Ctrl+V 貼圖)</p>
           <input type="file" id="fileInput" accept="image/*" style="display: none;">
-        </div>
-
-        <div style="margin-top: 8px;">
-          <span class="form-label">或選取內建範例：</span>
-          <div class="preset-imgs">
-            <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="水果拼盤" onclick="loadSampleImg(this.src)">
-            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="可愛小狗" onclick="loadSampleImg(this.src)">
-            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="閱讀讀書" onclick="loadSampleImg(this.src)">
-            <img src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="大自然森林" onclick="loadSampleImg(this.src)">
-          </div>
         </div>
       </div>
 
-      <!-- Step 2: Annotations Manager -->
-      <div class="card">
+      <!-- Step 2: Add New Bopomofo -->
+      <div class="card" style="border-left: 4px solid var(--primary);">
         <div class="card-title">
-          <span><i class="fa-solid fa-layer-group"></i> 2. 標註文字與注音 (支援多標籤同時存在)</span>
-          <button class="btn btn-primary" style="padding: 3px 10px; font-size: 0.78rem;" onclick="createNewAnnotation()">
-            <i class="fa-solid fa-plus"></i> 新增標籤
-          </button>
+          <span><i class="fa-solid fa-pen-to-square"></i> 2. 加入注音到圖片 (打字 ➔ 加入)</span>
         </div>
 
-        <!-- Mode selector: Full vs Overlay Only -->
+        <!-- Mode selector: Complete vs Overlay Only -->
         <div class="mode-switch-box">
-          <button class="mode-btn" id="modeBtnComplete" onclick="setActiveMode('complete')">
+          <button class="mode-btn" id="modeBtnComplete" onclick="setAppMode('complete')">
             <i class="fa-solid fa-font"></i> 完整模式 (國字+注音)
           </button>
-          <button class="mode-btn active" id="modeBtnOverlay" onclick="setActiveMode('bpmfOnly')" title="專門在原圖國字旁邊壓上直式注音！">
+          <button class="mode-btn active" id="modeBtnOverlay" onclick="setAppMode('bpmfOnly')" title="專門在原圖國字旁邊壓上直式注音！">
             <i class="fa-solid fa-wand-magic-sparkles"></i> 僅在原圖補注音
           </button>
         </div>
 
-        <!-- Annotations list -->
-        <span class="form-label">畫布上的所有標籤 (點選可切換編輯)：</span>
-        <div class="anno-list-box" id="annoListBox">
-          <!-- Dynamic Annotation Rows -->
-        </div>
-
-        <!-- Edit currently selected annotation -->
         <div class="form-group">
-          <label class="form-label">輸入要標註的文字 (支援多行)：</label>
-          <textarea id="inputText" class="form-control" rows="2" placeholder="輸入文字，即時轉為注音..."></textarea>
+          <label class="form-label">輸入要標註的文字（支援多行，可一次貼多句）：</label>
+          <textarea id="inputText" class="form-control" rows="3" placeholder="例如輸入：&#10;紅燈：先停下來&#10;我快要生氣了！&#10;想大叫&#10;想推人">紅燈：先停下來
+我快要生氣了！</textarea>
         </div>
 
-        <!-- Quick stamp badges for single character positioning -->
-        <div id="stampBoxSection" style="margin-bottom: 8px;">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="addCurrentInputToCanvas()">
+            <i class="fa-solid fa-plus"></i> 【＋加入注音到圖片】
+          </button>
+          <button class="btn btn-outline" style="font-size: 0.78rem;" onclick="addBatchLinesToCanvas()" title="將多行文字一次拆解成多個獨立注音標籤">
+            <i class="fa-solid fa-layer-group"></i> 批量拆解加入
+          </button>
+        </div>
+
+        <!-- Annotations List -->
+        <div style="margin-top: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="form-label" style="margin-bottom: 0;"><i class="fa-solid fa-stamp" style="color: #D97706;"></i> 單字快速蓋章 (點擊單字可直接在圖上放一顆注音)：</span>
+            <span class="form-label" style="margin-bottom: 0;">已放在圖片上的注音標籤清單：</span>
+            <button class="btn btn-outline" style="padding: 1px 6px; font-size: 0.7rem; color: #EF4444;" onclick="clearAllAnnotations()">
+              <i class="fa-solid fa-trash"></i> 全部清空
+            </button>
           </div>
-          <div class="stamp-badges-box" id="stampBadges">
-            <!-- Dynamic stamp buttons -->
-          </div>
-        </div>
-
-        <!-- Bopomofo Orientation (直式注音在字右 vs 橫式注音在字上) -->
-        <div class="row-2">
-          <div class="form-group">
-            <label class="form-label">注音符號格式：</label>
-            <select id="selectBpmfLayout" class="form-select" onchange="onLayoutChange()">
-              <option value="vertical-right" selected>直式注音 (位於國字右側)</option>
-              <option value="horizontal-top">橫式注音 (位於國字上方)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">排版走向：</label>
-            <select id="selectTextDirection" class="form-select" onchange="onDirectionChange()">
-              <option value="horizontal" selected>橫排 (國字由左至右)</option>
-              <option value="vertical">直排 (國字由上至下)</option>
-            </select>
+          <div class="anno-manager-box" id="annoChipList">
+            <!-- Dynamic chip list -->
           </div>
         </div>
 
       </div>
 
-      <!-- Step 3: Appearance Controls -->
-      <div class="card">
+      <!-- Step 3: Selected Annotation Fine-tuning -->
+      <div class="card" id="selectedCard">
         <div class="card-title">
-          <span><i class="fa-solid fa-sliders"></i> 3. 尺寸、字距與顏色對齊</span>
+          <span><i class="fa-solid fa-sliders"></i> 3. 目前選取的注音微調</span>
+          <button class="btn btn-outline" style="padding: 2px 8px; font-size: 0.75rem; color: #EF4444;" onclick="deleteActiveAnnotation()">
+            <i class="fa-solid fa-trash-can"></i> 刪除此注音
+          </button>
         </div>
 
-        <!-- Fine tuning controls -->
         <div class="row-2">
           <div class="form-group">
-            <label class="form-label">注音/文字大小 (<span id="valFontSize">36</span>px)</label>
-            <input type="range" id="inputFontSize" min="12" max="100" value="36" class="form-range" style="width: 100%;" oninput="onParamChange()">
+            <label class="form-label">注音大小 (<span id="valFontSize">36</span>px)</label>
+            <input type="range" id="inputFontSize" min="12" max="100" value="36" class="form-range" style="width: 100%;" oninput="onSelectedParamChange()">
           </div>
           <div class="form-group">
             <label class="form-label">字距拉伸 (<span id="valLetterSpacing">24</span>px)</label>
-            <input type="range" id="inputLetterSpacing" min="0" max="100" value="24" class="form-range" style="width: 100%;" oninput="onParamChange()" title="拉動滑桿可讓注音完美對齊原圖字體">
+            <input type="range" id="inputLetterSpacing" min="0" max="120" value="24" class="form-range" style="width: 100%;" oninput="onSelectedParamChange()" title="拉動滑桿讓注音完美對齊原圖字體">
           </div>
         </div>
 
         <div class="row-2">
           <div class="form-group">
-            <label class="form-label">注音顏色 (可對照原圖吸色)</label>
+            <label class="form-label">注音顏色 (對照原圖選色)</label>
             <div class="color-picker-wrap">
-              <input type="color" id="colorBpmf" value="#C0392B" onchange="onParamChange()">
+              <input type="color" id="colorBpmf" value="#C0392B" onchange="onSelectedParamChange()">
               <span id="hexBpmfText" style="font-size: 0.75rem; color: #64748B;">#C0392B</span>
             </div>
           </div>
-          <div class="form-group" id="groupTextColor">
-            <label class="form-label">國字顏色</label>
-            <div class="color-picker-wrap">
-              <input type="color" id="colorText" value="#1E293B" onchange="onParamChange()">
-            </div>
+          <div class="form-group">
+            <label class="form-label">注音位置格式：</label>
+            <select id="selectBpmfLayout" class="form-select" onchange="onSelectedParamChange()">
+              <option value="vertical-right" selected>直式注音 (在國字右側)</option>
+              <option value="horizontal-top">橫式注音 (在國字上方)</option>
+            </select>
           </div>
         </div>
 
-        <div class="row-2" id="boxStyleControls" style="display: none;">
-          <div class="form-group">
-            <label class="form-label">底框顏色與透明度</label>
-            <div class="color-picker-wrap">
-              <input type="color" id="colorBg" value="#FFFFFF" onchange="onParamChange()">
-              <input type="range" id="inputBgOpacity" min="0" max="100" value="95" style="width: 80px;" oninput="onParamChange()">
+        <div id="fullModeControls" style="display: none; margin-top: 8px;">
+          <div class="row-2">
+            <div class="form-group">
+              <label class="form-label">國字顏色</label>
+              <div class="color-picker-wrap">
+                <input type="color" id="colorText" value="#1E293B" onchange="onSelectedParamChange()">
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">外框粗細</label>
-            <input type="range" id="inputBorderWidth" min="0" max="10" value="2" class="form-range" style="width: 100%;" oninput="onParamChange()">
+            <div class="form-group">
+              <label class="form-label">背景顏色與不透明度</label>
+              <div class="color-picker-wrap">
+                <input type="color" id="colorBg" value="#FFFFFF" onchange="onSelectedParamChange()">
+                <input type="range" id="inputBgOpacity" min="0" max="100" value="95" style="width: 70px;" oninput="onSelectedParamChange()">
+              </div>
+            </div>
           </div>
         </div>
 
@@ -596,12 +496,12 @@
       <div class="canvas-toolbar">
         <div style="display: flex; gap: 8px; align-items: center;">
           <span style="font-size: 0.92rem; font-weight: 700; color: #1E293B;">
-            <i class="fa-solid fa-eye" style="color: var(--primary);"></i> 畫布預覽 (滑鼠點擊或拖曳任意注音標籤直接對齊原圖)
+            <i class="fa-solid fa-eye" style="color: var(--primary);"></i> 畫布預覽 (滑鼠點擊任意注音直接拖曳到原圖字旁對齊)
           </span>
         </div>
         <div style="display: flex; gap: 6px;">
-          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="createNewAnnotation()"><i class="fa-solid fa-plus"></i> 再加一行標註</button>
-          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="deleteSelectedAnnotation()"><i class="fa-solid fa-trash-can"></i> 刪除選取</button>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="addCurrentInputToCanvas()"><i class="fa-solid fa-plus"></i> 加一行注音</button>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="deleteActiveAnnotation()"><i class="fa-solid fa-trash-can"></i> 刪除選取</button>
         </div>
       </div>
 
@@ -610,34 +510,12 @@
       </div>
 
       <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748B;">
-        <span>💡 提示：每個標籤都是獨立的！輸入新文字不會覆蓋舊標籤，滑鼠按住注音可隨意拖曳定位。</span>
+        <span>💡 提示：輸入文字點擊「＋加入注音到圖片」，舊注音全部永久保留！點選圖上注音可隨意拖曳與拉伸字距。</span>
         <span id="canvasDimInfo">解析度：1024 x 768 px</span>
       </div>
     </section>
 
   </main>
-
-  <!-- Modal for Edit Single Char Bopomofo -->
-  <div class="modal-overlay" id="editModal">
-    <div class="modal-card">
-      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.85rem;" id="modalTitle">修改注音</h3>
-      
-      <div class="form-group">
-        <label class="form-label">選擇破音字候選讀音：</label>
-        <div id="polyphoneOptions" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;"></div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">或手動輸入注音（如 ㄒㄧㄤ、ㄌㄜˋ）：</label>
-        <input type="text" id="customBpmfInput" class="form-control">
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1rem;">
-        <button class="btn btn-outline" onclick="closeEditModal()">取消</button>
-        <button class="btn btn-primary" onclick="saveCharBpmf()">儲存更新</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Copyright Footer -->
   <footer>
@@ -646,16 +524,15 @@
     </div>
   </footer>
 
-  <!-- Core App Logic -->
+  <!-- App Logic -->
   <script>
-    // 每個獨立標註的資料結構
+    let globalMode = 'bpmfOnly'; // 'bpmfOnly' | 'complete'
     let annotations = [
       {
         id: 1,
         text: '紅燈：先停下來',
-        mode: 'bpmfOnly', // 'bpmfOnly' (僅注音) | 'complete' (國字+注音)
-        bpmfLayout: 'vertical-right', // 'vertical-right' (字右直式) | 'horizontal-top' (字上橫式)
-        direction: 'horizontal', // 'horizontal' | 'vertical'
+        mode: 'bpmfOnly',
+        bpmfLayout: 'vertical-right',
         fontSize: 38,
         letterSpacing: 26,
         lineSpacing: 18,
@@ -664,16 +541,34 @@
         bgColor: '#FFFFFF',
         bgOpacity: 0.0,
         borderWidth: 0,
-        borderColor: '#6366F1',
         x: 310,
         y: 40,
         width: 320,
         height: 60,
-        charsData: [] // [ { char: '紅', bpmf: 'ㄏㄨㄥˊ' }, ... ]
+        charsData: []
+      },
+      {
+        id: 2,
+        text: '我快要生氣了！',
+        mode: 'bpmfOnly',
+        bpmfLayout: 'vertical-right',
+        fontSize: 34,
+        letterSpacing: 22,
+        lineSpacing: 18,
+        bpmfColor: '#2C2C2C',
+        textColor: '#2C2C2C',
+        bgColor: '#FFFFFF',
+        bgOpacity: 0.0,
+        borderWidth: 0,
+        x: 350,
+        y: 125,
+        width: 300,
+        height: 50,
+        charsData: []
       }
     ];
 
-    let selectedAnnoIndex = 0;
+    let activeAnnoId = 1;
     let bgImage = null;
     let imgLoaded = false;
     let isDragging = false;
@@ -695,20 +590,18 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       document.fonts.ready.then(() => updateCanvas());
-      annotations.forEach(a => parseAnnotationText(a));
-      renderAnnoList();
-      syncFormFromSelected();
+      annotations.forEach(a => parseAnnotationChars(a));
+      renderChipList();
+      syncFormFromActive();
       loadDefaultSample();
       initEvents();
     });
 
     function getActiveAnno() {
-      if (annotations.length === 0) return null;
-      if (selectedAnnoIndex >= annotations.length) selectedAnnoIndex = annotations.length - 1;
-      return annotations[selectedAnnoIndex];
+      return annotations.find(a => a.id === activeAnnoId) || annotations[0] || null;
     }
 
-    function parseAnnotationText(anno) {
+    function parseAnnotationChars(anno) {
       const lines = anno.text.split(/\r?\n/);
       anno.charsData = lines.map(line => {
         const list = [];
@@ -721,161 +614,131 @@
       });
     }
 
-    function createNewAnnotation(initialText = '') {
+    // 核心新增按鈕：加入文字到圖片（絕不覆蓋舊注音）
+    function addCurrentInputToCanvas() {
+      const inputVal = document.getElementById('inputText').value.trim();
+      if (!inputVal) {
+        alert('請先在輸入框輸入要標註的國字文字！');
+        return;
+      }
+
       const active = getActiveAnno();
       const newId = Date.now();
-      const sampleTexts = ['我快要生氣了！', '想大叫', '想推人', '想丟東西', '深呼吸', '數到十'];
-      const nextSample = initialText || sampleTexts[annotations.length % sampleTexts.length] || '新標註文字';
-
       const newAnno = {
         id: newId,
-        text: nextSample,
-        mode: active ? active.mode : 'bpmfOnly',
+        text: inputVal,
+        mode: globalMode,
         bpmfLayout: active ? active.bpmfLayout : 'vertical-right',
-        direction: active ? active.direction : 'horizontal',
         fontSize: active ? active.fontSize : 34,
         letterSpacing: active ? active.letterSpacing : 22,
-        lineSpacing: active ? active.lineSpacing : 18,
-        bpmfColor: active ? (annotations.length === 1 ? '#2C2C2C' : active.bpmfColor) : '#C0392B',
+        lineSpacing: 18,
+        bpmfColor: active ? active.bpmfColor : '#C0392B',
         textColor: active ? active.textColor : '#1E293B',
         bgColor: '#FFFFFF',
-        bgOpacity: active && active.mode === 'complete' ? 0.95 : 0.0,
-        borderWidth: active && active.mode === 'complete' ? 2 : 0,
-        borderColor: '#6366F1',
-        x: active ? Math.min(canvas.width - 200, active.x + 20) : 200,
-        y: active ? Math.min(canvas.height - 100, active.y + 70) : 150,
+        bgOpacity: globalMode === 'complete' ? 0.95 : 0.0,
+        borderWidth: globalMode === 'complete' ? 2 : 0,
+        x: active ? Math.min(canvas.width - 200, active.x + 20) : 250,
+        y: active ? Math.min(canvas.height - 80, active.y + 60) : 200,
         width: 250,
         height: 60,
         charsData: []
       };
 
-      parseAnnotationText(newAnno);
+      parseAnnotationChars(newAnno);
       annotations.push(newAnno);
-      selectedAnnoIndex = annotations.length - 1;
+      activeAnnoId = newId;
 
-      renderAnnoList();
-      syncFormFromSelected();
+      renderChipList();
+      syncFormFromActive();
       updateCanvas();
     }
 
-    function stampSingleCharacter(char, bpmf) {
-      const active = getActiveAnno();
-      const newAnno = {
-        id: Date.now(),
-        text: char,
-        mode: 'bpmfOnly',
-        bpmfLayout: active ? active.bpmfLayout : 'vertical-right',
-        direction: 'horizontal',
-        fontSize: active ? active.fontSize : 36,
-        letterSpacing: 0,
-        lineSpacing: 18,
-        bpmfColor: active ? active.bpmfColor : '#C0392B',
-        textColor: '#1E293B',
-        bgColor: '#FFFFFF',
-        bgOpacity: 0,
-        borderWidth: 0,
-        borderColor: '#6366F1',
-        x: active ? active.x + 40 : 200,
-        y: active ? active.y : 150,
-        width: 50,
-        height: 50,
-        charsData: [[{ char, bpmf }]]
-      };
+    // 批量拆解多行文字一次全部貼到圖上
+    function addBatchLinesToCanvas() {
+      const inputVal = document.getElementById('inputText').value.trim();
+      if (!inputVal) return;
 
-      annotations.push(newAnno);
-      selectedAnnoIndex = annotations.length - 1;
-      renderAnnoList();
-      syncFormFromSelected();
-      updateCanvas();
-    }
+      const lines = inputVal.split(/\r?\n/).filter(l => l.trim().length > 0);
+      if (lines.length === 0) return;
 
-    function deleteSelectedAnnotation() {
-      if (annotations.length <= 1) {
-        alert('至少需保留一個標籤。');
-        return;
+      let startY = 60;
+      lines.forEach((lineText, idx) => {
+        const newId = Date.now() + idx;
+        const newAnno = {
+          id: newId,
+          text: lineText.trim(),
+          mode: globalMode,
+          bpmfLayout: 'vertical-right',
+          fontSize: 34,
+          letterSpacing: 22,
+          lineSpacing: 18,
+          bpmfColor: idx === 0 ? '#C0392B' : '#2C2C2C',
+          textColor: '#1E293B',
+          bgColor: '#FFFFFF',
+          bgOpacity: globalMode === 'complete' ? 0.95 : 0.0,
+          borderWidth: globalMode === 'complete' ? 2 : 0,
+          x: 300,
+          y: startY,
+          width: 250,
+          height: 50,
+          charsData: []
+        };
+        parseAnnotationChars(newAnno);
+        annotations.push(newAnno);
+        startY += 65;
+      });
+
+      if (annotations.length > 0) {
+        activeAnnoId = annotations[annotations.length - 1].id;
       }
-      annotations.splice(selectedAnnoIndex, 1);
-      selectedAnnoIndex = Math.max(0, selectedAnnoIndex - 1);
-      renderAnnoList();
-      syncFormFromSelected();
+
+      renderChipList();
+      syncFormFromActive();
       updateCanvas();
+      alert(`🎉 已成功批次新增 ${lines.length} 行注音標籤至圖片上！請用滑鼠將它們拖曳到對應字旁。`);
     }
 
-    function deleteAnnotationAt(idx, event) {
-      if (event) event.stopPropagation();
-      if (annotations.length <= 1) {
-        alert('至少需保留一個標籤。');
-        return;
-      }
-      annotations.splice(idx, 1);
-      if (selectedAnnoIndex >= annotations.length) selectedAnnoIndex = annotations.length - 1;
-      renderAnnoList();
-      syncFormFromSelected();
-      updateCanvas();
-    }
-
-    function renderAnnoList() {
-      const container = document.getElementById('annoListBox');
+    function renderChipList() {
+      const container = document.getElementById('annoChipList');
       container.innerHTML = '';
 
-      annotations.forEach((anno, idx) => {
-        const row = document.createElement('div');
-        row.className = `anno-item-row ${idx === selectedAnnoIndex ? 'active' : ''}`;
-        row.onclick = () => {
-          selectedAnnoIndex = idx;
-          renderAnnoList();
-          syncFormFromSelected();
+      if (annotations.length === 0) {
+        container.innerHTML = '<span style="font-size:0.75rem; color:#94A3B8; padding:4px;">目前圖片上沒有任何注音標籤</span>';
+        return;
+      }
+
+      annotations.forEach(anno => {
+        const chip = document.createElement('div');
+        chip.className = `anno-chip ${anno.id === activeAnnoId ? 'active' : ''}`;
+        chip.onclick = () => {
+          activeAnnoId = anno.id;
+          renderChipList();
+          syncFormFromActive();
           updateCanvas();
         };
 
-        const previewText = anno.text.split('\n')[0].substring(0, 10) || `標籤 #${idx + 1}`;
-        row.innerHTML = `
-          <div class="anno-item-title">
-            <i class="fa-solid ${anno.mode === 'bpmfOnly' ? 'fa-sparkles' : 'fa-font'}" style="color:${anno.bpmfColor};"></i>
+        const previewText = anno.text.split('\n')[0].substring(0, 10) || '注音標籤';
+        chip.innerHTML = `
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${anno.bpmfColor};"></span>
             <span>${previewText}</span>
           </div>
-          <div class="anno-item-del" onclick="deleteAnnotationAt(${idx}, event)" title="刪除此標籤">
-            <i class="fa-solid fa-trash-can"></i>
-          </div>
+          <span class="del-btn" onclick="deleteAnnotationById(${anno.id}, event)" title="刪除此注音">
+            <i class="fa-solid fa-xmark"></i>
+          </span>
         `;
-        container.appendChild(row);
+        container.appendChild(chip);
       });
-
-      renderStampBadges();
     }
 
-    function renderStampBadges() {
+    function syncFormFromActive() {
       const active = getActiveAnno();
-      const container = document.getElementById('stampBadges');
-      container.innerHTML = '';
-      if (!active) return;
-
-      const flatChars = [];
-      active.charsData.forEach(line => {
-        line.forEach(c => {
-          if (c.bpmf) flatChars.push(c);
-        });
-      });
-
-      if (flatChars.length === 0) {
-        container.innerHTML = '<span style="font-size:0.75rem; color:#92400E;">請在上方輸入文字以產生單字蓋章按鈕</span>';
+      if (!active) {
+        document.getElementById('selectedCard').style.display = 'none';
         return;
       }
+      document.getElementById('selectedCard').style.display = 'block';
 
-      flatChars.forEach(item => {
-        const btn = document.createElement('div');
-        btn.className = 'stamp-badge';
-        btn.innerHTML = `<span>${item.char}</span> <span style="color:#DC2626; font-size:0.7rem;">${item.bpmf}</span>`;
-        btn.onclick = () => stampSingleCharacter(item.char, item.bpmf);
-        container.appendChild(btn);
-      });
-    }
-
-    function syncFormFromSelected() {
-      const active = getActiveAnno();
-      if (!active) return;
-
-      document.getElementById('inputText').value = active.text;
       document.getElementById('inputFontSize').value = active.fontSize;
       document.getElementById('valFontSize').textContent = active.fontSize;
       document.getElementById('inputLetterSpacing').value = active.letterSpacing;
@@ -884,35 +747,12 @@
       document.getElementById('hexBpmfText').textContent = active.bpmfColor;
       document.getElementById('colorText').value = active.textColor;
       document.getElementById('selectBpmfLayout').value = active.bpmfLayout || 'vertical-right';
-      document.getElementById('selectTextDirection').value = active.direction || 'horizontal';
-
-      document.getElementById('modeBtnComplete').classList.toggle('active', active.mode === 'complete');
-      document.getElementById('modeBtnOverlay').classList.toggle('active', active.mode === 'bpmfOnly');
 
       const isComplete = active.mode === 'complete';
-      document.getElementById('groupTextColor').style.display = isComplete ? 'block' : 'none';
-      document.getElementById('boxStyleControls').style.display = isComplete ? 'grid' : 'none';
-
-      renderStampBadges();
+      document.getElementById('fullModeControls').style.display = isComplete ? 'block' : 'none';
     }
 
-    function setActiveMode(mode) {
-      const active = getActiveAnno();
-      if (!active) return;
-      active.mode = mode;
-      if (mode === 'bpmfOnly') {
-        active.bgOpacity = 0;
-        active.borderWidth = 0;
-      } else {
-        active.bgOpacity = 0.95;
-        active.borderWidth = 2;
-      }
-      syncFormFromSelected();
-      renderAnnoList();
-      updateCanvas();
-    }
-
-    function onParamChange() {
+    function onSelectedParamChange() {
       const active = getActiveAnno();
       if (!active) return;
 
@@ -920,38 +760,65 @@
       active.letterSpacing = parseInt(document.getElementById('inputLetterSpacing').value, 10);
       active.bpmfColor = document.getElementById('colorBpmf').value;
       document.getElementById('hexBpmfText').textContent = active.bpmfColor;
+      active.bpmfLayout = document.getElementById('selectBpmfLayout').value;
       active.textColor = document.getElementById('colorText').value;
       active.bgColor = document.getElementById('colorBg').value;
       active.bgOpacity = parseInt(document.getElementById('inputBgOpacity').value, 10) / 100;
-      active.borderWidth = parseInt(document.getElementById('inputBorderWidth').value, 10);
 
       document.getElementById('valFontSize').textContent = active.fontSize;
       document.getElementById('valLetterSpacing').textContent = active.letterSpacing;
 
+      renderChipList();
       updateCanvas();
     }
 
-    function onLayoutChange() {
+    function setAppMode(mode) {
+      globalMode = mode;
+      document.getElementById('modeBtnComplete').classList.toggle('active', mode === 'complete');
+      document.getElementById('modeBtnOverlay').classList.toggle('active', mode === 'bpmfOnly');
+
       const active = getActiveAnno();
-      if (!active) return;
-      active.bpmfLayout = document.getElementById('selectBpmfLayout').value;
+      if (active) {
+        active.mode = mode;
+        active.bgOpacity = mode === 'complete' ? 0.95 : 0.0;
+        active.borderWidth = mode === 'complete' ? 2 : 0;
+        syncFormFromActive();
+        updateCanvas();
+      }
+    }
+
+    function deleteActiveAnnotation() {
+      if (annotations.length === 0) return;
+      annotations = annotations.filter(a => a.id !== activeAnnoId);
+      if (annotations.length > 0) {
+        activeAnnoId = annotations[annotations.length - 1].id;
+      } else {
+        activeAnnoId = null;
+      }
+      renderChipList();
+      syncFormFromActive();
       updateCanvas();
     }
 
-    function onDirectionChange() {
-      const active = getActiveAnno();
-      if (!active) return;
-      active.direction = document.getElementById('selectTextDirection').value;
+    function deleteAnnotationById(id, event) {
+      if (event) event.stopPropagation();
+      annotations = annotations.filter(a => a.id !== id);
+      if (activeAnnoId === id) {
+        activeAnnoId = annotations.length > 0 ? annotations[annotations.length - 1].id : null;
+      }
+      renderChipList();
+      syncFormFromActive();
       updateCanvas();
     }
 
-    function onTextInputChange() {
-      const active = getActiveAnno();
-      if (!active) return;
-      active.text = document.getElementById('inputText').value;
-      parseAnnotationText(active);
-      renderAnnoList();
-      updateCanvas();
+    function clearAllAnnotations() {
+      if (confirm('確定要清空圖片上所有的注音標籤嗎？')) {
+        annotations = [];
+        activeAnnoId = null;
+        renderChipList();
+        syncFormFromActive();
+        updateCanvas();
+      }
     }
 
     function decomposeBpmf(bpmfStr) {
@@ -982,24 +849,22 @@
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
       }
 
-      // 繪製所有標籤
-      annotations.forEach((anno, idx) => {
-        drawAnnotation(anno, idx === selectedAnnoIndex);
+      annotations.forEach(anno => {
+        drawSingleAnnotation(anno, anno.id === activeAnnoId);
       });
     }
 
-    function drawAnnotation(anno, isSelected) {
+    function drawSingleAnnotation(anno, isSelected) {
       const isBpmfOnly = anno.mode === 'bpmfOnly';
       const isHorizontalBpmf = anno.bpmfLayout === 'horizontal-top';
       const fontSize = anno.fontSize;
       const bpmfSize = Math.max(11, Math.round(fontSize * 0.38));
       const bpmfWidth = bpmfSize + 6;
-      
-      // 計算單字寬高
+
       let cellWidth = isBpmfOnly ? (isHorizontalBpmf ? fontSize : bpmfWidth) : (fontSize + bpmfWidth);
       let cellHeight = isBpmfOnly ? (isHorizontalBpmf ? bpmfSize + 4 : fontSize) : (fontSize + 8);
-      const paddingX = isBpmfOnly ? 4 : 20;
-      const paddingY = isBpmfOnly ? 4 : 14;
+      const paddingX = isBpmfOnly ? 4 : 18;
+      const paddingY = isBpmfOnly ? 4 : 12;
 
       const lines = anno.charsData.length > 0 ? anno.charsData : [[]];
       const numLines = lines.length;
@@ -1024,16 +889,8 @@
       if (maxLineWidth === 0) maxLineWidth = cellWidth * 2;
       if (maxLineHeight === 0) maxLineHeight = cellHeight;
 
-      let totalWidth = 0;
-      let totalHeight = 0;
-
-      if (anno.direction === 'horizontal') {
-        totalWidth = maxLineWidth + paddingX * 2;
-        totalHeight = numLines * cellHeight + (numLines - 1) * anno.lineSpacing + paddingY * 2;
-      } else {
-        totalWidth = numLines * cellWidth + (numLines - 1) * anno.lineSpacing + paddingX * 2;
-        totalHeight = maxLineHeight + paddingY * 2;
-      }
+      const totalWidth = maxLineWidth + paddingX * 2;
+      const totalHeight = numLines * cellHeight + (numLines - 1) * anno.lineSpacing + paddingY * 2;
 
       anno.width = totalWidth;
       anno.height = totalHeight;
@@ -1041,22 +898,18 @@
       const bx = anno.x;
       const by = anno.y;
 
-      // 繪製背景底框 (完整模式)
       if (!isBpmfOnly && (anno.bgOpacity > 0 || anno.borderWidth > 0)) {
         ctx.save();
         ctx.fillStyle = hexToRgba(anno.bgColor, anno.bgOpacity);
-        ctx.strokeStyle = anno.borderColor;
+        ctx.strokeStyle = '#6366F1';
         ctx.lineWidth = anno.borderWidth;
-
-        const r = 12;
         ctx.beginPath();
-        ctx.roundRect(bx, by, totalWidth, totalHeight, r);
+        ctx.roundRect(bx, by, totalWidth, totalHeight, 10);
         if (anno.bgOpacity > 0) ctx.fill();
         if (anno.borderWidth > 0) ctx.stroke();
         ctx.restore();
       }
 
-      // 如果是選取中標籤，畫出藍色輔助對齊框
       if (isSelected) {
         ctx.save();
         ctx.strokeStyle = '#4F46E5';
@@ -1066,7 +919,6 @@
         ctx.restore();
       }
 
-      // 繪製文字與注音
       lines.forEach((lineChars, lineIdx) => {
         let curX = bx + paddingX;
         let curY = by + paddingY + lineIdx * (cellHeight + anno.lineSpacing);
@@ -1075,18 +927,17 @@
           const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:()（）]/.test(item.char);
           const w = isPunc ? (isBpmfOnly ? 0 : fontSize * 0.6) : cellWidth;
 
-          drawSingleChar(item.char, item.bpmf, curX, curY, fontSize, bpmfSize, bpmfWidth, isPunc, anno);
+          drawCharGlyph(item.char, item.bpmf, curX, curY, fontSize, bpmfSize, bpmfWidth, isPunc, anno);
           curX += w + anno.letterSpacing;
         });
       });
     }
 
-    function drawSingleChar(char, bpmfStr, x, y, fontSize, bpmfSize, bpmfWidth, isPunc, anno) {
+    function drawCharGlyph(char, bpmfStr, x, y, fontSize, bpmfSize, bpmfWidth, isPunc, anno) {
       ctx.save();
       const isBpmfOnly = anno.mode === 'bpmfOnly';
       const isHorizontalBpmf = anno.bpmfLayout === 'horizontal-top';
 
-      // 1. 繪製國字 (非純注音模式)
       if (!isBpmfOnly) {
         ctx.font = `bold ${fontSize}px "DFKai-SB", "BiauKai", "Noto Sans TC", sans-serif`;
         ctx.textAlign = isPunc ? 'center' : 'left';
@@ -1096,7 +947,6 @@
         ctx.fillText(char, charDrawX, isHorizontalBpmf ? (y + bpmfSize + 2) : y);
       }
 
-      // 2. 繪製注音
       if (!isPunc && bpmfStr && bpmfStr.trim()) {
         const { symbols, tone, isLight } = decomposeBpmf(bpmfStr);
         ctx.fillStyle = anno.bpmfColor;
@@ -1104,12 +954,10 @@
         ctx.textBaseline = 'middle';
 
         if (isHorizontalBpmf) {
-          // 橫式注音 (在國字上方橫排)
           ctx.font = `bold ${bpmfSize}px "Noto Sans TC", "DFKai-SB", sans-serif`;
           const bpmfText = (isLight ? '˙' : '') + symbols.join('') + (tone ? tone : '');
           ctx.fillText(bpmfText, x + (isBpmfOnly ? fontSize * 0.4 : fontSize * 0.5), y + bpmfSize * 0.5);
         } else {
-          // 直式注音 (在國字右側直排)
           ctx.font = `bold ${bpmfSize}px "Noto Sans TC", "DFKai-SB", sans-serif`;
           const bpmfX = isBpmfOnly ? x : (x + fontSize + 2);
           const symbolCount = symbols.length;
@@ -1154,7 +1002,6 @@
     function initEvents() {
       const dropzone = document.getElementById('dropzone');
       const fileInput = document.getElementById('fileInput');
-      const inputText = document.getElementById('inputText');
 
       dropzone.onclick = () => fileInput.click();
       fileInput.onchange = (e) => {
@@ -1168,7 +1015,7 @@
       };
 
       window.addEventListener('paste', (e) => {
-        if (document.activeElement === inputText) return;
+        if (document.activeElement === document.getElementById('inputText')) return;
         const items = e.clipboardData?.items;
         if (items) {
           for (let i = 0; i < items.length; i++) {
@@ -1180,11 +1027,7 @@
         }
       });
 
-      inputText.addEventListener('input', onTextInputChange);
-      inputText.addEventListener('keyup', onTextInputChange);
-      inputText.addEventListener('change', onTextInputChange);
-
-      // Canvas Dragging & Selecting
+      // Canvas Dragging
       canvas.addEventListener('mousedown', (e) => {
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
@@ -1200,13 +1043,13 @@
             mouseY >= a.y - 8 &&
             mouseY <= a.y + a.height + 8
           ) {
-            selectedAnnoIndex = i;
+            activeAnnoId = a.id;
             isDragging = true;
             dragOffsetX = mouseX - a.x;
             dragOffsetY = mouseY - a.y;
             canvas.style.cursor = 'grabbing';
-            renderAnnoList();
-            syncFormFromSelected();
+            renderChipList();
+            syncFormFromActive();
             updateCanvas();
             return;
           }
@@ -1270,20 +1113,6 @@
         updateCanvas();
       };
       img.src = "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=1200&q=80";
-    }
-
-    function loadSampleImg(url) {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        bgImage = img;
-        imgLoaded = true;
-        canvas.width = img.naturalWidth || 1024;
-        canvas.height = img.naturalHeight || 768;
-        document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
-        updateCanvas();
-      };
-      img.src = url;
     }
 
     function downloadImage() {

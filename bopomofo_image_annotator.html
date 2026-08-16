@@ -128,10 +128,10 @@
     .app-main {
       flex: 1;
       display: grid;
-      grid-template-columns: 450px 1fr;
+      grid-template-columns: 460px 1fr;
       gap: 1.25rem;
       padding: 1.25rem;
-      max-width: 1940px;
+      max-width: 1960px;
       margin: 0 auto;
       width: 100%;
     }
@@ -219,7 +219,7 @@
       background: #F1F5F9;
       padding: 8px;
       border-radius: 8px;
-      max-height: 130px;
+      max-height: 120px;
       overflow-y: auto;
       margin-top: 8px;
     }
@@ -287,6 +287,55 @@
       box-shadow: var(--shadow-sm);
     }
 
+    /* Bopomofo Polyphone Character Grid */
+    .char-pinyin-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 8px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .char-unit {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 3px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 44px;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      transition: all 0.15s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .char-unit .char-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0F172A;
+    }
+
+    .char-unit .char-bpmf {
+      font-size: 0.75rem;
+      color: #DC2626;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .char-unit:hover {
+      border-color: var(--primary);
+      background: #EEF2FF;
+      transform: translateY(-1px);
+    }
+
     /* Canvas Work Area */
     .canvas-container-wrap {
       display: flex;
@@ -344,6 +393,25 @@
       background: none;
     }
 
+    /* Polyphone Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: 12px;
+      width: 440px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-lg);
+    }
+
     footer {
       background: #FFFFFF;
       border-top: 1px solid var(--border-color);
@@ -365,7 +433,7 @@
     <div class="brand-title">
       <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
       <div>
-        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">支援純文字無背景/無框線</span></h1>
+        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">多音字點選切換 / 完整注音全字庫</span></h1>
       </div>
     </div>
     <div class="header-actions">
@@ -390,7 +458,7 @@
       <!-- Step 1: Upload Image -->
       <div class="card">
         <div class="card-title">
-          <span><i class="fa-solid fa-image"></i> 1. 載入底圖</span>
+          <span><i class="fa-solid fa-image"></i> 1. 載入底圖 (支援 Ctrl+V 貼圖)</span>
         </div>
         <div class="dropzone" id="dropzone">
           <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -439,7 +507,7 @@
         <!-- Annotations List -->
         <div style="margin-top: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="form-label" style="margin-bottom: 0;">圖片上的注音標籤清單：</span>
+            <span class="form-label" style="margin-bottom: 0;">圖片上的標籤清單（點選切換）：</span>
             <button class="btn btn-outline" style="padding: 1px 6px; font-size: 0.7rem; color: #EF4444;" onclick="clearAllAnnotations()">
               <i class="fa-solid fa-trash"></i> 全部清空
             </button>
@@ -451,13 +519,25 @@
 
       </div>
 
-      <!-- Step 3: Selected Annotation Fine-tuning -->
+      <!-- Step 3: Selected Annotation Fine-tuning & Polyphone Editor -->
       <div class="card" id="selectedCard">
         <div class="card-title">
-          <span><i class="fa-solid fa-sliders"></i> 3. 目前選取的文字與注音微調</span>
+          <span><i class="fa-solid fa-sliders"></i> 3. 目前選取的文字與破音字校正</span>
           <button class="btn btn-outline" style="padding: 2px 8px; font-size: 0.75rem; color: #EF4444;" onclick="deleteActiveAnnotation()">
             <i class="fa-solid fa-trash-can"></i> 刪除此標籤
           </button>
+        </div>
+
+        <!-- Polyphone Character Tiles Editor (核心點選改破音字功能) -->
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" style="margin-bottom: 0; color: var(--primary); font-weight: 700;">
+              <i class="fa-solid fa-hand-pointer"></i> 點擊單字方塊可切換「多音字/破音字」：
+            </label>
+          </div>
+          <div class="char-pinyin-grid" id="charPinyinGrid">
+            <!-- Dynamic character tiles with bopomofo -->
+          </div>
         </div>
 
         <!-- Font Family & Weight -->
@@ -488,8 +568,8 @@
             <input type="range" id="inputFontSize" min="12" max="120" value="42" class="form-range" style="width: 100%;" oninput="onSelectedParamChange()">
           </div>
           <div class="form-group">
-            <label class="form-label">字距 (<span id="valLetterSpacing">12</span>px)</label>
-            <input type="range" id="inputLetterSpacing" min="0" max="100" value="12" class="form-range" style="width: 100%;" oninput="onSelectedParamChange()">
+            <label class="form-label">字距拉伸 (<span id="valLetterSpacing">12</span>px)</label>
+            <input type="range" id="inputLetterSpacing" min="0" max="120" value="12" class="form-range" style="width: 100%;" oninput="onSelectedParamChange()">
           </div>
         </div>
 
@@ -551,12 +631,35 @@
       </div>
 
       <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748B;">
-        <span>💡 提示：點擊「純文字無框無底」即可產生無背景無框線的乾淨注音文字！滑鼠點選圖上文字可隨意拖曳。</span>
+        <span>💡 提示：點擊左側「單字方塊」即可快速切換破音字！在圖上按住滑鼠可隨意拖動文字或注音。</span>
         <span id="canvasDimInfo">解析度：1024 x 768 px</span>
       </div>
     </section>
 
   </main>
+
+  <!-- Modal for Edit Single Char Polyphone Bopomofo (多音字彈窗) -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.85rem;" id="modalTitle">修改「字」的注音</h3>
+      
+      <div class="form-group">
+        <label class="form-label">選擇教育部辭典多音字（點選即切換）：</label>
+        <div id="polyphoneOptions" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">或手動輸入注音與聲調（如 ㄒㄧㄤ、˙ㄉㄜ）：</label>
+        <input type="text" id="customBpmfInput" class="form-control" placeholder="手動輸入注音...">
+        <p style="font-size: 0.72rem; color: #94A3B8; margin-top: 4px;">聲調可直接輸入：ˊ (二聲)、ˇ (三聲)、ˋ (四聲)、˙ (輕聲)</p>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1rem;">
+        <button class="btn btn-outline" onclick="closeEditModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveCharBpmf()">儲存更新</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Copyright Footer -->
   <footer>
@@ -575,13 +678,13 @@
       'heiti': '"Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif'
     };
 
-    let globalMode = 'pureText'; // 'pureText' (無框無底國字+注音) | 'complete' (有底框/氣泡) | 'bpmfOnly' (純注音無國字)
+    let globalMode = 'pureText'; // 'pureText' | 'complete' | 'bpmfOnly'
 
     let annotations = [
       {
         id: 1,
         text: '香甜可口的水果\n多吃水果好健康',
-        mode: 'pureText', // 'pureText' | 'complete' | 'bpmfOnly'
+        mode: 'pureText',
         bpmfLayout: 'vertical-right',
         fontFamilyKey: 'kaiti',
         cardStyle: 'bubble',
@@ -607,6 +710,7 @@
     let isDragging = false;
     let dragOffsetX = 0;
     let dragOffsetY = 0;
+    let editingCharTarget = null; // { lineIdx, charIdx }
 
     const canvas = document.getElementById('stageCanvas');
     const ctx = canvas.getContext('2d');
@@ -769,6 +873,83 @@
       });
     }
 
+    // 渲染破音字單字方塊清單
+    function renderCharPinyinTiles() {
+      const active = getActiveAnno();
+      const grid = document.getElementById('charPinyinGrid');
+      grid.innerHTML = '';
+
+      if (!active || !active.charsData || active.charsData.length === 0) {
+        grid.innerHTML = '<span style="font-size:0.75rem; color:#94A3B8;">無單字資料</span>';
+        return;
+      }
+
+      active.charsData.forEach((lineList, lIdx) => {
+        lineList.forEach((item, cIdx) => {
+          if (/[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:()（）]/.test(item.char)) return;
+
+          const tile = document.createElement('div');
+          tile.className = 'char-unit';
+          tile.onclick = () => openPolyphoneModal(lIdx, cIdx);
+          tile.innerHTML = `
+            <div class="char-bpmf">${item.bpmf || '&nbsp;'}</div>
+            <div class="char-text">${item.char}</div>
+          `;
+          grid.appendChild(tile);
+        });
+      });
+    }
+
+    // 彈出多音字切換彈窗
+    function openPolyphoneModal(lineIdx, charIdx) {
+      const active = getActiveAnno();
+      if (!active) return;
+
+      editingCharTarget = { lineIdx, charIdx };
+      const item = active.charsData[lineIdx][charIdx];
+      document.getElementById('modalTitle').textContent = `修改「${item.char}」的注音讀音`;
+      document.getElementById('customBpmfInput').value = item.bpmf;
+
+      const polyBox = document.getElementById('polyphoneOptions');
+      polyBox.innerHTML = '';
+
+      const candidates = getCharBpmfList(item.char);
+      if (candidates && candidates.length > 0 && candidates[0] !== '') {
+        candidates.forEach(bpmfOption => {
+          const btn = document.createElement('button');
+          btn.className = `btn ${item.bpmf === bpmfOption ? 'btn-primary' : 'btn-outline'}`;
+          btn.style.padding = '5px 12px';
+          btn.style.fontSize = '0.85rem';
+          btn.textContent = `${item.char} (${bpmfOption})`;
+          btn.onclick = () => {
+            document.getElementById('customBpmfInput').value = bpmfOption;
+            saveCharBpmf();
+          };
+          polyBox.appendChild(btn);
+        });
+      } else {
+        polyBox.innerHTML = '<span style="font-size:0.8rem; color:#94A3B8;">無字典多音字，可直接在下方手動輸入注音</span>';
+      }
+
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    function saveCharBpmf() {
+      const active = getActiveAnno();
+      if (active && editingCharTarget) {
+        const { lineIdx, charIdx } = editingCharTarget;
+        const newBpmf = document.getElementById('customBpmfInput').value.trim();
+        active.charsData[lineIdx][charIdx].bpmf = newBpmf;
+        renderCharPinyinTiles();
+        updateCanvas();
+      }
+      closeEditModal();
+    }
+
     function syncFormFromActive() {
       const active = getActiveAnno();
       if (!active) {
@@ -790,7 +971,6 @@
       document.getElementById('valOpacity').textContent = Math.round((active.bgOpacity || 0) * 100);
       if (active.cardStyle) document.getElementById('selectCardStyle').value = active.cardStyle;
 
-      // Update Mode button active states
       document.getElementById('modeBtnPureText').classList.toggle('active', active.mode === 'pureText');
       document.getElementById('modeBtnCard').classList.toggle('active', active.mode === 'complete');
       document.getElementById('modeBtnOverlay').classList.toggle('active', active.mode === 'bpmfOnly');
@@ -800,6 +980,8 @@
       document.getElementById('groupTextColor').style.display = isBpmfOnly ? 'none' : 'block';
       document.getElementById('fontControlsRow').style.display = isBpmfOnly ? 'none' : 'grid';
       document.getElementById('fullModeControls').style.display = isCardMode ? 'block' : 'none';
+
+      renderCharPinyinTiles();
     }
 
     function onSelectedParamChange() {
@@ -923,7 +1105,6 @@
 
     function drawSingleAnnotation(anno, isSelected) {
       const isBpmfOnly = anno.mode === 'bpmfOnly';
-      const isPureText = anno.mode === 'pureText';
       const isCardMode = anno.mode === 'complete';
       const isHorizontalBpmf = anno.bpmfLayout === 'horizontal-top';
       const fontSize = anno.fontSize;
@@ -967,7 +1148,7 @@
       const bx = anno.x;
       const by = anno.y;
 
-      // 繪製卡片底框 (僅在 complete 模式且透明度 > 0)
+      // 繪製卡片底框
       if (isCardMode && (anno.bgOpacity > 0 || anno.borderWidth > 0)) {
         ctx.save();
         if (anno.cardStyle === 'chalkboard') {
@@ -1009,7 +1190,6 @@
         ctx.restore();
       }
 
-      // 如果是選取中標籤，畫出輔助藍色虛線框
       if (isSelected) {
         ctx.save();
         ctx.strokeStyle = '#4F46E5';
@@ -1019,7 +1199,6 @@
         ctx.restore();
       }
 
-      // 繪製國字與注音
       lines.forEach((lineChars, lineIdx) => {
         let curX = bx + paddingX;
         let curY = by + paddingY + lineIdx * (cellHeight + anno.lineSpacing);
@@ -1040,7 +1219,6 @@
       const isHorizontalBpmf = anno.bpmfLayout === 'horizontal-top';
       const chosenFont = FONT_MAP[anno.fontFamilyKey] || FONT_MAP['kaiti'];
 
-      // 1. 繪製國字 (非純注音模式)
       if (!isBpmfOnly) {
         ctx.font = `bold ${fontSize}px ${chosenFont}`;
         ctx.textAlign = isPunc ? 'center' : 'left';
@@ -1050,7 +1228,6 @@
         ctx.fillText(char, charDrawX, isHorizontalBpmf ? (y + bpmfSize + 2) : y);
       }
 
-      // 2. 繪製注音
       if (!isPunc && bpmfStr && bpmfStr.trim()) {
         const { symbols, tone, isLight } = decomposeBpmf(bpmfStr);
         ctx.fillStyle = anno.bpmfColor;

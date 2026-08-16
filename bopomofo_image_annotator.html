@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puti-AI | 國小教材圖片注音排版產生器 (AI生圖加注音神器)</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&family=Noto+Serif+TC:wght@600;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- 引入完整的 20,902 國字教育部標準注音全字庫 -->
+  <script src="bopomofo_dict.js"></script>
+
+  <style>
+    /* 引入開源芫荽體 (Iansui WebFont) */
+    @font-face {
+      font-family: 'Iansui';
+      src: url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@main/dist/Iansui-Regular.woff2') format('woff2'),
+           url('https://cdn.jsdelivr.net/gh/ButTaiwan/iansui@main/dist/Iansui-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --primary: #4F46E5;
+      --primary-hover: #4338CA;
+      --primary-light: #EEF2FF;
+      --accent: #F59E0B;
+      --accent-light: #FEF3C7;
+      --success: #10B981;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --bg-main: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --border-color: #E2E8F0;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      color: white;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+    }
+
+    .brand-title h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #0F172A;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title .badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid #C7D2FE;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-outline {
+      background: white;
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-outline:hover {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    /* Main Container */
+    .app-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      max-width: 1820px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (max-width: 1024px) {
+      .app-main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar controls */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title i {
+      color: var(--primary);
+      margin-right: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control, .form-select, textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      background: #FFFFFF;
+      outline: none;
+      transition: border 0.15s;
+    }
+
+    .form-control:focus, .form-select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    }
+
+    /* Image upload box */
+    .dropzone {
+      border: 2px dashed #CBD5E1;
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+      cursor: pointer;
+      background: #F8FAFC;
+      transition: all 0.2s;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .dropzone i {
+      font-size: 2rem;
+      color: #94A3B8;
+      margin-bottom: 0.5rem;
+    }
+
+    .preset-imgs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .preset-img-thumb {
+      width: 100%;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .preset-img-thumb:hover {
+      transform: scale(1.05);
+      border-color: var(--primary);
+    }
+
+    /* Bopomofo Editor Section */
+    .lines-pinyin-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+      max-height: 190px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .line-pinyin-row {
+      background: #F1F5F9;
+      border-radius: 8px;
+      padding: 6px 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      border: 1px solid #E2E8F0;
+    }
+
+    .line-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #CBD5E1;
+      user-select: none;
+    }
+
+    .char-unit {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 3px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 44px;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .char-unit .char-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0F172A;
+    }
+
+    .char-unit .char-bpmf {
+      font-size: 0.75rem;
+      color: #DC2626;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .char-unit:hover {
+      border-color: var(--primary);
+      background: #EEF2FF;
+      transform: translateY(-1px);
+    }
+
+    /* Style Presets Grid */
+    .style-presets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .style-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      background: #FAFAFA;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .style-card:hover {
+      border-color: var(--primary);
+      background: white;
+    }
+
+    .style-card.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Canvas Work Area */
+    .canvas-container-wrap {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .canvas-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .canvas-viewport {
+      flex: 1;
+      min-height: 520px;
+      background: repeating-conic-gradient(#E2E8F0 0% 25%, #F8FAFC 0% 50%) 50% / 20px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+    }
+
+    #stageCanvas {
+      max-width: 100%;
+      max-height: 70vh;
+      box-shadow: var(--shadow-lg);
+      border-radius: 4px;
+      cursor: crosshair;
+    }
+
+    /* Range and switch controls */
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .color-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-picker-wrap input[type="color"] {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 0;
+      background: none;
+    }
+
+    /* Footer / Copyright */
+    footer {
+      background: #FFFFFF;
+      border-top: 1px solid var(--border-color);
+      padding: 1.25rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: 12px;
+      width: 440px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-title">
+      <div class="brand-icon">
+        <i class="fa-solid fa-shapes"></i>
+      </div>
+      <div>
+        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">支援標楷體/芫荽體/圓體/明體</span></h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" id="btnCopyImg" title="複製圖片到剪貼簿，可直接貼到 Word/PPT/Canva">
+        <i class="fa-regular fa-copy"></i> 複製圖片
+      </button>
+      <button class="btn btn-primary" id="btnDownloadImg">
+        <i class="fa-solid fa-download"></i> 匯出高畫質圖
+      </button>
+      <button class="btn btn-success" id="btnDownloadOverlayOnly" title="只匯出透明注音文字框PNG">
+        <i class="fa-solid fa-layer-group"></i> 僅匯出透明注音PNG
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Grid -->
+  <main class="app-main">
+    
+    <!-- Sidebar Settings -->
+    <aside class="sidebar">
+      
+      <!-- Step 1: Upload Image -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-image"></i> 1. 載入底圖 (AI生成圖)</span>
+        </div>
+        <div class="dropzone" id="dropzone">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <p style="font-size: 0.88rem; font-weight: 600; color: #475569;">點擊或拖曳圖片至此</p>
+          <p style="font-size: 0.75rem; color: #94A3B8; margin-top: 4px;">支援 PNG, JPG, WebP 格式 (支援 Ctrl+V 貼上)</p>
+          <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        </div>
+
+        <div style="margin-top: 10px;">
+          <span class="form-label">或選取內建 AI 低年級教學範例圖：</span>
+          <div class="preset-imgs">
+            <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="水果拼盤" onclick="loadSampleImg(this.src, '生成無文字的圖片\n自由打字，自動注音')">
+            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="可愛小狗" onclick="loadSampleImg(this.src, '可愛的小狗搖尾巴\n陪我一起去散步')">
+            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="閱讀讀書" onclick="loadSampleImg(this.src, '大家一起來看書\n學到好多新知識')">
+            <img src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="大自然森林" onclick="loadSampleImg(this.src, '大自然真美麗\n綠色樹木空氣好')">
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Content & Font Settings -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-font"></i> 2. 文字與字體設定</span>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">輸入國字文字 (按 Enter 即換行)：</label>
+          <textarea id="inputText" class="form-control" rows="3" placeholder="輸入任意國字，即時自動轉換注音...">生成無文字的圖片
+自由打字，自動注音</textarea>
+        </div>
+
+        <!-- 字體選擇器 (Font Family Selection) -->
+        <div class="row-2">
+          <div class="form-group">
+            <label class="form-label"><i class="fa-solid fa-pen-fancy"></i> 國文字體選擇：</label>
+            <select id="selectFontFamily" class="form-select" onchange="onFontChange()">
+              <option value="kaiti" selected>🌸 教育部標準楷書 / 標楷體</option>
+              <option value="iansui">🌿 芫荽體 (開源硬筆手寫體)</option>
+              <option value="yuanti">🎈 可愛圓體 / 丸圓體</option>
+              <option value="mingti">📖 新細明體 / 典雅明體</option>
+              <option value="heiti">⚡ 現代黑體 / 無襯線體</option>
+              <option value="custom">📁 上傳本機字型 (.ttf / .otf)...</option>
+            </select>
+            <input type="file" id="fontFileInput" accept=".ttf,.otf,.woff,.woff2" style="display: none;" onchange="loadCustomFont(event)">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">文字字重 (粗細)：</label>
+            <select id="selectFontWeight" class="form-select" onchange="updateCanvas()">
+              <option value="normal">標準 (Normal)</option>
+              <option value="bold" selected>粗體 (Bold)</option>
+              <option value="900">特粗 (Extra Bold)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" style="margin-bottom:0;">點擊單字可自訂破音字/聲調：</label>
+            <span style="font-size:0.72rem; color:var(--primary); cursor:pointer;" onclick="showBpmfHelp()"><i class="fa-regular fa-circle-question"></i> 注音說明</span>
+          </div>
+          <div class="lines-pinyin-container" id="linesContainer">
+            <!-- Dynamic multi-line character tiles -->
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label class="form-label">排版方向：</label>
+            <div style="display: flex; gap: 8px; margin-top: 4px;">
+              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="radio" name="textDirection" value="horizontal" checked onchange="updateCanvas()"> 橫排 (從上到下)
+              </label>
+              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="radio" name="textDirection" value="vertical" onchange="updateCanvas()"> 直排 (從右到左)
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">每行對齊方式：</label>
+            <div style="display: flex; gap: 8px; margin-top: 4px;">
+              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="radio" name="textAlign" value="center" checked onchange="updateCanvas()"> 置中
+              </label>
+              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="radio" name="textAlign" value="left" onchange="updateCanvas()"> 靠前
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Step 3: Card Styles & Themes -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-palette"></i> 3. 標籤樣式與外觀</span>
+        </div>
+
+        <div class="style-presets">
+          <div class="style-card active" onclick="applyPresetStyle('bubble')">
+            <i class="fa-regular fa-comment-dots"></i> 對話泡泡
+          </div>
+          <div class="style-card" onclick="applyPresetStyle('badge')">
+            <i class="fa-solid fa-tags"></i> 圓角標籤
+          </div>
+          <div class="style-card" onclick="applyPresetStyle('outline')">
+            <i class="fa-solid fa-pen-nib"></i> 純字描邊
+          </div>
+          <div class="style-card" onclick="applyPresetStyle('chalkboard')">
+            <i class="fa-solid fa-chalkboard"></i> 綠黑板
+          </div>
+          <div class="style-card" onclick="applyPresetStyle('paper')">
+            <i class="fa-solid fa-note-sticky"></i> 便條紙
+          </div>
+          <div class="style-card" onclick="applyPresetStyle('pure')">
+            <i class="fa-solid fa-font"></i> 簡約透明
+          </div>
+        </div>
+
+        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--border-color);">
+
+        <!-- Fine tuning controls -->
+        <div class="row-3">
+          <div class="form-group">
+            <label class="form-label">字體大小 (<span id="valFontSize">42</span>px)</label>
+            <input type="range" id="inputFontSize" min="18" max="100" value="42" class="form-range" style="width: 100%;" oninput="updateCanvas()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">字距 (<span id="valLetterSpacing">10</span>px)</label>
+            <input type="range" id="inputLetterSpacing" min="2" max="30" value="10" class="form-range" style="width: 100%;" oninput="updateCanvas()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">行距 (<span id="valLineSpacing">18</span>px)</label>
+            <input type="range" id="inputLineSpacing" min="4" max="60" value="18" class="form-range" style="width: 100%;" oninput="updateCanvas()">
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label class="form-label">國字顏色</label>
+            <div class="color-picker-wrap">
+              <input type="color" id="colorText" value="#1E293B" onchange="updateCanvas()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">注音顏色</label>
+            <div class="color-picker-wrap">
+              <input type="color" id="colorBpmf" value="#DC2626" onchange="updateCanvas()">
+            </div>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label class="form-label">框背景顏色</label>
+            <div class="color-picker-wrap">
+              <input type="color" id="colorBg" value="#FFFFFF" onchange="updateCanvas()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">背景不透明度 (<span id="valOpacity">95</span>%)</label>
+            <input type="range" id="inputBgOpacity" min="0" max="100" value="95" class="form-range" style="width: 100%;" oninput="updateCanvas()">
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label class="form-label">邊框粗細 (<span id="valBorderWidth">3</span>px)</label>
+            <input type="range" id="inputBorderWidth" min="0" max="15" value="3" class="form-range" style="width: 100%;" oninput="updateCanvas()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">邊框顏色</label>
+            <div class="color-picker-wrap">
+              <input type="color" id="colorBorder" value="#6366F1" onchange="updateCanvas()">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- Canvas Preview Area -->
+    <section class="canvas-container-wrap">
+      <div class="canvas-toolbar">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span style="font-size: 0.95rem; font-weight: 700; color: #1E293B;">
+            <i class="fa-solid fa-eye" style="color: var(--primary);"></i> 畫布預覽 (可滑鼠拖曳文字框調整位置)
+          </span>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="alignBox('top')"><i class="fa-solid fa-arrow-up"></i> 靠頂部</button>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="alignBox('center')"><i class="fa-solid fa-arrows-to-dot"></i> 置中</button>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="alignBox('bottom')"><i class="fa-solid fa-arrow-down"></i> 靠底部</button>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="resetPos()"><i class="fa-solid fa-rotate-left"></i> 重設位置</button>
+        </div>
+      </div>
+
+      <div class="canvas-viewport" id="viewport">
+        <canvas id="stageCanvas" width="1024" height="768"></canvas>
+      </div>
+
+      <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748B;">
+        <span>💡 提示：支援標楷體、芫荽體、圓體、細明體自由切換！在畫布上按住滑鼠左鍵可任意拖曳。</span>
+        <span id="canvasDimInfo">解析度：1024 x 768 px</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal for Edit Single Char Bopomofo -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;" id="modalTitle">修改「字」的注音</h3>
+      
+      <div class="form-group">
+        <label class="form-label">選擇讀音（破音字候選）：</label>
+        <div id="polyphoneOptions" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">或自訂注音符號（如 ㄒㄧㄤ、ㄌㄜˋ）：</label>
+        <input type="text" id="customBpmfInput" class="form-control" placeholder="輸入注音與聲調...">
+        <p style="font-size: 0.72rem; color: #94A3B8; margin-top: 4px;">聲調可直接輸入：ˊ (二聲)、ˇ (三聲)、ˋ (四聲)、˙ (輕聲，如 ˙ㄉㄜ 或 ㄉㄜ˙)</p>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem;">
+        <button class="btn btn-outline" onclick="closeEditModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveCharBpmf()">儲存更新</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copyright Footer -->
+  <footer>
+    <div>
+      屏東縣後庄國小黃朝榮老師作品，免費分享，歡迎擴散推廣，嚴禁商用與任何侵權、不尊重著作權的行為，更多 Puti-AI 教學工具 <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank" rel="noopener noreferrer">點此前往(https://padlet.com/clongwh/puti_ai_tools)</a>
+    </div>
+  </footer>
+
+  <!-- App Logic -->
+  <script>
+    // 支援字體列表
+    const FONT_MAP = {
+      'kaiti': '"DFKai-SB", "BiauKai", "TW-Kai", "KaiTi", "STKaiti", serif',
+      'iansui': '"Iansui", "DFKai-SB", "Zen Maru Gothic", cursive, sans-serif',
+      'yuanti': '"Zen Maru Gothic", "Yuanti TC", "Microsoft JhengHei UI", "STHeiti", sans-serif',
+      'mingti': '"PMingLiU", "MingTi", "Noto Serif TC", "Songti TC", serif',
+      'heiti': '"Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif',
+      'custom': '"CustomLoadedFont", sans-serif'
+    };
+
+    // 狀態管理
+    const state = {
+      image: null,
+      imgLoaded: false,
+      rawText: '生成無文字的圖片\n自由打字，自動注音',
+      linesData: [],
+      selectedTarget: null,
+      direction: 'horizontal',
+      textAlign: 'center',
+      stylePreset: 'bubble',
+      fontFamilyKey: 'kaiti', // kaiti | iansui | yuanti | mingti | heiti | custom
+      fontWeight: 'bold',
+      fontSize: 42,
+      letterSpacing: 10,
+      lineSpacing: 18,
+      textColor: '#1E293B',
+      bpmfColor: '#DC2626',
+      bgColor: '#FFFFFF',
+      bgOpacity: 0.95,
+      borderWidth: 3,
+      borderColor: '#6366F1',
+      boxX: 100,
+      boxY: 100,
+      boxWidth: 400,
+      boxHeight: 180,
+      isDragging: false,
+      dragOffsetX: 0,
+      dragOffsetY: 0
+    };
+
+    const canvas = document.getElementById('stageCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 取得字元的注音 (優先從完整 2 萬字注音字典查詢)
+    function getCharBpmfList(char) {
+      if (/[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:]/.test(char)) {
+        return [''];
+      }
+      if (window.BOPOMOFO_FULL_DICT && window.BOPOMOFO_FULL_DICT[char]) {
+        return window.BOPOMOFO_FULL_DICT[char];
+      }
+      return [''];
+    }
+
+    // 初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      // 預先載入字體
+      document.fonts.ready.then(() => {
+        updateCanvas();
+      });
+
+      parseInputText();
+      loadDefaultSample();
+      initEvents();
+    });
+
+    function onFontChange() {
+      const val = document.getElementById('selectFontFamily').value;
+      if (val === 'custom') {
+        document.getElementById('fontFileInput').click();
+      } else {
+        state.fontFamilyKey = val;
+        updateCanvas();
+      }
+    }
+
+    // 上傳自訂本機字型
+    function loadCustomFont(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const fontData = event.target.result;
+        const customFont = new FontFace('CustomLoadedFont', fontData);
+        await customFont.load();
+        document.fonts.add(customFont);
+        state.fontFamilyKey = 'custom';
+        alert(`🎉 已成功載入自訂字型：${file.name}`);
+        updateCanvas();
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function loadDefaultSample() {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        state.image = img;
+        state.imgLoaded = true;
+        canvas.width = img.naturalWidth || 1024;
+        canvas.height = img.naturalHeight || 768;
+        document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
+        
+        alignBox('bottom');
+        updateCanvas();
+      };
+      img.src = "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=1200&q=80";
+    }
+
+    function loadSampleImg(url, sampleText) {
+      if (sampleText) {
+        document.getElementById('inputText').value = sampleText;
+      }
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        state.image = img;
+        state.imgLoaded = true;
+        canvas.width = img.naturalWidth || 1024;
+        canvas.height = img.naturalHeight || 768;
+        document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
+        parseInputText();
+        alignBox('bottom');
+        updateCanvas();
+      };
+      img.src = url;
+    }
+
+    // 智能多行文字注音解析
+    function parseInputText() {
+      const raw = document.getElementById('inputText').value;
+      state.rawText = raw;
+      
+      const lines = raw.split(/\r?\n/);
+      
+      state.linesData = lines.map(line => {
+        const charList = [];
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          const bpmfList = getCharBpmfList(ch);
+          const bpmf = bpmfList[0] || '';
+          charList.push({ char: ch, bpmf: bpmf });
+        }
+        return charList;
+      });
+
+      renderMultiLineTiles();
+      updateCanvas();
+    }
+
+    // 渲染多行單字小方塊
+    function renderMultiLineTiles() {
+      const container = document.getElementById('linesContainer');
+      container.innerHTML = '';
+
+      state.linesData.forEach((lineChars, lIdx) => {
+        if (lineChars.length === 0) return;
+
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'line-pinyin-row';
+
+        const label = document.createElement('span');
+        label.className = 'line-label';
+        label.textContent = `第 ${lIdx + 1} 行`;
+        rowDiv.appendChild(label);
+
+        lineChars.forEach((item, cIdx) => {
+          const unit = document.createElement('div');
+          unit.className = 'char-unit';
+          unit.onclick = () => openEditModal(lIdx, cIdx);
+          unit.innerHTML = `
+            <div class="char-bpmf">${item.bpmf || '&nbsp;'}</div>
+            <div class="char-text">${item.char}</div>
+          `;
+          rowDiv.appendChild(unit);
+        });
+
+        container.appendChild(rowDiv);
+      });
+    }
+
+    // 破音字編輯彈窗
+    function openEditModal(lineIdx, charIdx) {
+      state.selectedTarget = { lineIdx, charIdx };
+      const item = state.linesData[lineIdx][charIdx];
+      document.getElementById('modalTitle').textContent = `修改「${item.char}」的注音 (第 ${lineIdx + 1} 行)`;
+      document.getElementById('customBpmfInput').value = item.bpmf;
+
+      const polyContainer = document.getElementById('polyphoneOptions');
+      polyContainer.innerHTML = '';
+      const list = getCharBpmfList(item.char);
+      if (list && list.length > 0 && list[0] !== '') {
+        list.forEach(p => {
+          const btn = document.createElement('button');
+          btn.className = 'btn btn-outline';
+          btn.style.padding = '4px 10px';
+          btn.style.fontSize = '0.85rem';
+          btn.textContent = `${item.char} (${p})`;
+          btn.onclick = () => {
+            document.getElementById('customBpmfInput').value = p;
+          };
+          polyContainer.appendChild(btn);
+        });
+      } else {
+        polyContainer.innerHTML = '<span style="font-size:0.8rem; color:#94A3B8;">無更多讀音，可直接在下方手動輸入</span>';
+      }
+
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    function saveCharBpmf() {
+      if (state.selectedTarget) {
+        const { lineIdx, charIdx } = state.selectedTarget;
+        const val = document.getElementById('customBpmfInput').value.trim();
+        state.linesData[lineIdx][charIdx].bpmf = val;
+        renderMultiLineTiles();
+        updateCanvas();
+      }
+      closeEditModal();
+    }
+
+    function showBpmfHelp() {
+      alert("注音輸入小提示：\n1. 聲調可直接輸入：ˊ (二聲)、ˇ (三聲)、ˋ (四聲)。\n2. 輕聲請置於前方，如：˙ㄉㄜ 或 ㄉㄜ˙\n3. 結合韻直接連寫，如：ㄒㄧㄤ、ㄍㄨㄛˇ\n4. 支援多行輸入：在文字框按 Enter 即可換行排版！");
+    }
+
+    // 樣式預設切換
+    function applyPresetStyle(preset) {
+      state.stylePreset = preset;
+      document.querySelectorAll('.style-card').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      if (preset === 'bubble') {
+        state.textColor = '#1E293B';
+        state.bpmfColor = '#DC2626';
+        state.bgColor = '#FFFFFF';
+        state.bgOpacity = 0.95;
+        state.borderWidth = 3;
+        state.borderColor = '#6366F1';
+      } else if (preset === 'badge') {
+        state.textColor = '#FFFFFF';
+        state.bpmfColor = '#FEF08A';
+        state.bgColor = '#4F46E5';
+        state.bgOpacity = 0.92;
+        state.borderWidth = 0;
+        state.borderColor = '#FFFFFF';
+      } else if (preset === 'outline') {
+        state.textColor = '#FFFFFF';
+        state.bpmfColor = '#FDE047';
+        state.bgColor = '#000000';
+        state.bgOpacity = 0.0;
+        state.borderWidth = 6;
+        state.borderColor = '#1E293B';
+      } else if (preset === 'chalkboard') {
+        state.textColor = '#FFFFFF';
+        state.bpmfColor = '#FBBF24';
+        state.bgColor = '#064E3B';
+        state.bgOpacity = 0.95;
+        state.borderWidth = 4;
+        state.borderColor = '#B45309';
+      } else if (preset === 'paper') {
+        state.textColor = '#334155';
+        state.bpmfColor = '#EA580C';
+        state.bgColor = '#FEF9C3';
+        state.bgOpacity = 0.96;
+        state.borderWidth = 2;
+        state.borderColor = '#F59E0B';
+      } else if (preset === 'pure') {
+        state.textColor = '#0F172A';
+        state.bpmfColor = '#DC2626';
+        state.bgColor = '#FFFFFF';
+        state.bgOpacity = 0.0;
+        state.borderWidth = 0;
+        state.borderColor = '#000000';
+      }
+
+      document.getElementById('colorText').value = state.textColor;
+      document.getElementById('colorBpmf').value = state.bpmfColor;
+      document.getElementById('colorBg').value = state.bgColor;
+      document.getElementById('inputBgOpacity').value = Math.round(state.bgOpacity * 100);
+      document.getElementById('valOpacity').textContent = Math.round(state.bgOpacity * 100);
+      document.getElementById('inputBorderWidth').value = state.borderWidth;
+      document.getElementById('valBorderWidth').textContent = state.borderWidth;
+      document.getElementById('colorBorder').value = state.borderColor;
+
+      updateCanvas();
+    }
+
+    // 核心注音符號拆解（聲母、介音、韻母、聲調、輕聲）
+    function decomposeBpmf(bpmfStr) {
+      if (!bpmfStr) return { symbols: [], tone: '', isLight: false };
+      let str = bpmfStr.trim();
+      let isLight = false;
+      let tone = '';
+
+      if (str.startsWith('˙') || str.endsWith('˙')) {
+        isLight = true;
+        str = str.replace(/˙/g, '');
+      }
+
+      const toneMatch = str.match(/[ˊˇˋ]/);
+      if (toneMatch) {
+        tone = toneMatch[0];
+        str = str.replace(/[ˊˇˋ]/g, '');
+      }
+
+      const symbols = str.split('');
+      return { symbols, tone, isLight };
+    }
+
+    // 畫布即時渲染
+    function updateCanvas(overlayOnly = false) {
+      state.fontSize = parseInt(document.getElementById('inputFontSize').value, 10);
+      state.letterSpacing = parseInt(document.getElementById('inputLetterSpacing').value, 10);
+      state.lineSpacing = parseInt(document.getElementById('inputLineSpacing').value, 10);
+      state.textColor = document.getElementById('colorText').value;
+      state.bpmfColor = document.getElementById('colorBpmf').value;
+      state.bgColor = document.getElementById('colorBg').value;
+      state.bgOpacity = parseInt(document.getElementById('inputBgOpacity').value, 10) / 100;
+      state.borderWidth = parseInt(document.getElementById('inputBorderWidth').value, 10);
+      state.borderColor = document.getElementById('colorBorder').value;
+      state.direction = document.querySelector('input[name="textDirection"]:checked').value;
+      state.textAlign = document.querySelector('input[name="textAlign"]:checked').value;
+      state.fontWeight = document.getElementById('selectFontWeight').value;
+
+      document.getElementById('valFontSize').textContent = state.fontSize;
+      document.getElementById('valLetterSpacing').textContent = state.letterSpacing;
+      document.getElementById('valLineSpacing').textContent = state.lineSpacing;
+      document.getElementById('valOpacity').textContent = Math.round(state.bgOpacity * 100);
+      document.getElementById('valBorderWidth').textContent = state.borderWidth;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!overlayOnly && state.imgLoaded && state.image) {
+        ctx.drawImage(state.image, 0, 0, canvas.width, canvas.height);
+      }
+
+      const fontSize = state.fontSize;
+      const bpmfSize = Math.max(11, Math.round(fontSize * 0.36));
+      const bpmfWidth = bpmfSize + 6;
+      const charWidth = fontSize + bpmfWidth;
+      const charHeight = fontSize + 8;
+      const paddingX = 26;
+      const paddingY = 20;
+
+      const displayLines = state.linesData.length > 0 ? state.linesData : [[]];
+      const numLines = displayLines.length;
+
+      let maxLineWidth = 0;
+      let maxLineHeight = 0;
+
+      displayLines.forEach(line => {
+        let lineW = 0;
+        let lineH = 0;
+        line.forEach((item, idx) => {
+          const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:]/.test(item.char);
+          const w = isPunc ? (fontSize * 0.6) : charWidth;
+          const h = charHeight;
+          lineW += w + (idx > 0 ? state.letterSpacing : 0);
+          lineH += h + (idx > 0 ? state.letterSpacing : 0);
+        });
+        if (lineW > maxLineWidth) maxLineWidth = lineW;
+        if (lineH > maxLineHeight) maxLineHeight = lineH;
+      });
+
+      if (maxLineWidth === 0) maxLineWidth = charWidth * 3;
+      if (maxLineHeight === 0) maxLineHeight = charHeight;
+
+      let totalBoxWidth = 0;
+      let totalBoxHeight = 0;
+
+      if (state.direction === 'horizontal') {
+        totalBoxWidth = maxLineWidth + paddingX * 2;
+        totalBoxHeight = numLines * charHeight + (numLines - 1) * state.lineSpacing + paddingY * 2;
+      } else {
+        totalBoxWidth = numLines * charWidth + (numLines - 1) * state.lineSpacing + paddingX * 2;
+        totalBoxHeight = maxLineHeight + paddingY * 2;
+      }
+
+      state.boxWidth = totalBoxWidth;
+      state.boxHeight = totalBoxHeight;
+
+      if (state.boxY + totalBoxHeight > canvas.height - 10) {
+        state.boxY = Math.max(10, canvas.height - totalBoxHeight - 30);
+      }
+      if (state.boxX + totalBoxWidth > canvas.width - 10) {
+        state.boxX = Math.max(10, canvas.width - totalBoxWidth - 30);
+      }
+
+      const bx = state.boxX;
+      const by = state.boxY;
+
+      if (state.bgOpacity > 0 || state.borderWidth > 0) {
+        ctx.save();
+        ctx.fillStyle = hexToRgba(state.bgColor, state.bgOpacity);
+        ctx.strokeStyle = state.borderColor;
+        ctx.lineWidth = state.borderWidth;
+
+        const r = 16;
+        ctx.beginPath();
+        ctx.roundRect(bx, by, totalBoxWidth, totalBoxHeight, r);
+        if (state.bgOpacity > 0) {
+          ctx.shadowColor = 'rgba(0,0,0,0.15)';
+          ctx.shadowBlur = 12;
+          ctx.shadowOffsetY = 4;
+          ctx.fill();
+        }
+        ctx.shadowColor = 'transparent';
+        if (state.borderWidth > 0) {
+          ctx.stroke();
+        }
+
+        if (state.stylePreset === 'bubble') {
+          ctx.beginPath();
+          const tailX = bx + totalBoxWidth * 0.25;
+          const tailY = by + totalBoxHeight;
+          ctx.moveTo(tailX, tailY);
+          ctx.lineTo(tailX - 12, tailY + 18);
+          ctx.lineTo(tailX + 18, tailY);
+          ctx.fillStyle = hexToRgba(state.bgColor, state.bgOpacity);
+          ctx.fill();
+          if (state.borderWidth > 0) {
+            ctx.strokeStyle = state.borderColor;
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      // 繪製每一行的文字與注音
+      displayLines.forEach((lineChars, lineIdx) => {
+        let currentLineWidth = 0;
+        lineChars.forEach((item, idx) => {
+          const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:]/.test(item.char);
+          const w = isPunc ? (fontSize * 0.6) : charWidth;
+          currentLineWidth += w + (idx > 0 ? state.letterSpacing : 0);
+        });
+
+        if (state.direction === 'horizontal') {
+          let curX = bx + paddingX;
+          if (state.textAlign === 'center') {
+            curX = bx + (totalBoxWidth - currentLineWidth) / 2;
+          }
+          const curY = by + paddingY + lineIdx * (charHeight + state.lineSpacing);
+
+          lineChars.forEach((item, cIdx) => {
+            const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:]/.test(item.char);
+            const w = isPunc ? (fontSize * 0.6) : charWidth;
+            drawSingleCharWithBpmf(item.char, item.bpmf, curX, curY, fontSize, bpmfSize, bpmfWidth, isPunc);
+            curX += w + state.letterSpacing;
+          });
+
+        } else {
+          const colX = bx + totalBoxWidth - paddingX - (lineIdx + 1) * charWidth - lineIdx * state.lineSpacing;
+          let curY = by + paddingY;
+          if (state.textAlign === 'center') {
+            curY = by + (totalBoxHeight - maxLineHeight) / 2;
+          }
+
+          lineChars.forEach((item, cIdx) => {
+            const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:]/.test(item.char);
+            const h = charHeight;
+            drawSingleCharWithBpmf(item.char, item.bpmf, colX, curY, fontSize, bpmfSize, bpmfWidth, isPunc);
+            curY += h + state.letterSpacing;
+          });
+        }
+      });
+    }
+
+    // 繪製單個「國字 + 直式注音 + 聲調定位」
+    function drawSingleCharWithBpmf(char, bpmfStr, x, y, fontSize, bpmfSize, bpmfWidth, isPunc) {
+      ctx.save();
+
+      // 取得字型設定
+      const chosenFont = FONT_MAP[state.fontFamilyKey] || FONT_MAP['kaiti'];
+
+      // 1. 繪製國字或標點符號
+      ctx.font = `${state.fontWeight} ${fontSize}px ${chosenFont}`;
+      ctx.textAlign = isPunc ? 'center' : 'left';
+      ctx.textBaseline = 'top';
+
+      const charDrawX = isPunc ? (x + fontSize * 0.3) : x;
+
+      if (state.stylePreset === 'outline' && state.borderWidth > 0) {
+        ctx.lineWidth = state.borderWidth * 2;
+        ctx.strokeStyle = state.borderColor;
+        ctx.strokeText(char, charDrawX, y);
+      }
+
+      ctx.fillStyle = state.textColor;
+      ctx.fillText(char, charDrawX, y);
+
+      // 2. 繪製右側直式注音 (注音預設使用標準清爽字體)
+      if (!isPunc && bpmfStr && bpmfStr.trim()) {
+        const { symbols, tone, isLight } = decomposeBpmf(bpmfStr);
+        const bpmfX = x + fontSize + 2;
+        const symbolCount = symbols.length;
+        
+        ctx.font = `bold ${bpmfSize}px "Noto Sans TC", "Zen Maru Gothic", "DFKai-SB", sans-serif`;
+        ctx.fillStyle = state.bpmfColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        let topOffset = y + 2;
+        if (isLight) {
+          ctx.fillText('˙', bpmfX + bpmfSize / 2, topOffset + 4);
+          topOffset += bpmfSize * 0.6;
+        }
+
+        const availHeight = fontSize - (isLight ? bpmfSize * 0.6 : 0);
+        const step = availHeight / Math.max(1, symbolCount);
+
+        symbols.forEach((sym, sIdx) => {
+          const symY = topOffset + (sIdx + 0.5) * step;
+          
+          if (state.stylePreset === 'outline' && state.borderWidth > 0) {
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = state.borderColor;
+            ctx.strokeText(sym, bpmfX + bpmfSize / 2, symY);
+          }
+          ctx.fillText(sym, bpmfX + bpmfSize / 2, symY);
+        });
+
+        if (tone) {
+          const toneX = bpmfX + bpmfSize + 1;
+          const lastSymY = topOffset + (symbolCount - 0.5) * step;
+          const toneY = symbolCount === 1 ? (y + fontSize * 0.35) : (lastSymY - 2);
+
+          if (state.stylePreset === 'outline' && state.borderWidth > 0) {
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = state.borderColor;
+            ctx.strokeText(tone, toneX, toneY);
+          }
+          ctx.fillText(tone, toneX, toneY);
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function hexToRgba(hex, alpha) {
+      let c;
+      if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+        c = hex.substring(1).split('');
+        if (c.length === 3) {
+          c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c = '0x' + c.join('');
+        return `rgba(${[(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',')},${alpha})`;
+      }
+      return hex;
+    }
+
+    function alignBox(pos) {
+      if (pos === 'top') {
+        state.boxX = Math.round((canvas.width - state.boxWidth) / 2);
+        state.boxY = 40;
+      } else if (pos === 'center') {
+        state.boxX = Math.round((canvas.width - state.boxWidth) / 2);
+        state.boxY = Math.round((canvas.height - state.boxHeight) / 2);
+      } else if (pos === 'bottom') {
+        state.boxX = Math.round((canvas.width - state.boxWidth) / 2);
+        state.boxY = Math.max(10, canvas.height - state.boxHeight - 40);
+      }
+      updateCanvas();
+    }
+
+    function resetPos() {
+      alignBox('bottom');
+    }
+
+    function initEvents() {
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('fileInput');
+      const inputText = document.getElementById('inputText');
+
+      dropzone.onclick = () => fileInput.click();
+      fileInput.onchange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+          readFile(e.target.files[0]);
+        }
+      };
+
+      dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('dragover'); };
+      dropzone.ondragleave = () => dropzone.classList.remove('dragover');
+      dropzone.ondrop = (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          readFile(e.dataTransfer.files[0]);
+        }
+      };
+
+      window.addEventListener('paste', (e) => {
+        if (document.activeElement === inputText) return;
+
+        const items = e.clipboardData?.items;
+        if (items) {
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+              const file = items[i].getAsFile();
+              readFile(file);
+              break;
+            }
+          }
+        }
+      });
+
+      inputText.addEventListener('input', parseInputText);
+      inputText.addEventListener('keyup', parseInputText);
+      inputText.addEventListener('change', parseInputText);
+      inputText.addEventListener('paste', () => setTimeout(parseInputText, 50));
+
+      canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+
+        if (
+          mouseX >= state.boxX &&
+          mouseX <= state.boxX + state.boxWidth &&
+          mouseY >= state.boxY &&
+          mouseY <= state.boxY + state.boxHeight + 20
+        ) {
+          state.isDragging = true;
+          state.dragOffsetX = mouseX - state.boxX;
+          state.dragOffsetY = mouseY - state.boxY;
+          canvas.style.cursor = 'grabbing';
+        }
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!state.isDragging) return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+
+        state.boxX = Math.round(mouseX - state.dragOffsetX);
+        state.boxY = Math.round(mouseY - state.dragOffsetY);
+        updateCanvas();
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (state.isDragging) {
+          state.isDragging = false;
+          canvas.style.cursor = 'crosshair';
+        }
+      });
+
+      document.getElementById('btnDownloadImg').onclick = downloadImage;
+      document.getElementById('btnCopyImg').onclick = copyImageToClipboard;
+      document.getElementById('btnDownloadOverlayOnly').onclick = downloadOverlayOnly;
+    }
+
+    function readFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          state.image = img;
+          state.imgLoaded = true;
+          canvas.width = img.naturalWidth || 1024;
+          canvas.height = img.naturalHeight || 768;
+          document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
+          alignBox('bottom');
+          updateCanvas();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function downloadImage() {
+      updateCanvas(false);
+      const link = document.createElement('a');
+      link.download = `Puti-AI_教材圖片注音_${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function downloadOverlayOnly() {
+      updateCanvas(true);
+      const link = document.createElement('a');
+      link.download = `Puti-AI_透明注音圖層_${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      setTimeout(() => updateCanvas(false), 300);
+    }
+
+    async function copyImageToClipboard() {
+      updateCanvas(false);
+      try {
+        canvas.toBlob(async (blob) => {
+          const item = new ClipboardItem({ 'image/png': blob });
+          await navigator.clipboard.write([item]);
+          alert('🎉 圖片已成功複製至剪貼簿！可直接至 Word、PPT、Canva 按 Ctrl+V 貼上！');
+        });
+      } catch (err) {
+        alert('複製失敗，請直接點選「匯出高畫質圖」下載。');
+      }
+    }
+  </script>
+</body>
+</html>

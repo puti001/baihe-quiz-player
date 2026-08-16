@@ -29,6 +29,7 @@
       --primary-light: #EEF2FF;
       --accent: #F59E0B;
       --accent-light: #FEF3C7;
+      --danger: #EF4444;
       --success: #10B981;
       --text-main: #1E293B;
       --text-muted: #64748B;
@@ -40,11 +41,7 @@
       --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -58,7 +55,7 @@
     header {
       background: #FFFFFF;
       border-bottom: 1px solid var(--border-color);
-      padding: 0.85rem 1.5rem;
+      padding: 0.75rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -68,27 +65,23 @@
       z-index: 50;
     }
 
-    .brand-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .brand-title { display: flex; align-items: center; gap: 12px; }
 
     .brand-icon {
       background: linear-gradient(135deg, #6366F1, #8B5CF6);
       color: white;
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
     }
 
     .brand-title h1 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: #0F172A;
       display: flex;
@@ -106,19 +99,15 @@
       border: 1px solid #C7D2FE;
     }
 
-    .header-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+    .header-actions { display: flex; gap: 8px; align-items: center; }
 
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 16px;
+      padding: 7px 14px;
       border-radius: 8px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s ease;
@@ -126,106 +115,78 @@
       text-decoration: none;
     }
 
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); }
 
-    .btn-outline {
-      background: white;
-      border-color: var(--border-color);
-      color: var(--text-main);
-    }
-    .btn-outline:hover {
-      background: #F1F5F9;
-      border-color: #CBD5E1;
-    }
+    .btn-outline { background: white; border-color: var(--border-color); color: var(--text-main); }
+    .btn-outline:hover { background: #F1F5F9; border-color: #CBD5E1; }
 
-    .btn-success {
-      background: var(--success);
-      color: white;
-    }
-    .btn-success:hover {
-      background: #059669;
-    }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #059669; }
 
     /* Main Container */
     .app-main {
       flex: 1;
       display: grid;
-      grid-template-columns: 440px 1fr;
-      gap: 1.5rem;
-      padding: 1.5rem;
-      max-width: 1860px;
+      grid-template-columns: 430px 1fr;
+      gap: 1.25rem;
+      padding: 1.25rem;
+      max-width: 1900px;
       margin: 0 auto;
       width: 100%;
     }
 
     @media (max-width: 1024px) {
-      .app-main {
-        grid-template-columns: 1fr;
-      }
+      .app-main { grid-template-columns: 1fr; }
     }
 
     /* Sidebar controls */
     .sidebar {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
-      height: calc(100vh - 120px);
+      gap: 1rem;
+      height: calc(100vh - 110px);
       overflow-y: auto;
-      padding-right: 6px;
+      padding-right: 4px;
     }
 
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 1.25rem;
+      padding: 1.1rem;
       box-shadow: var(--shadow-sm);
     }
 
     .card-title {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: #334155;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .card-title i {
-      color: var(--primary);
-      margin-right: 6px;
-    }
+    .card-title i { color: var(--primary); margin-right: 6px; }
 
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group:last-child {
-      margin-bottom: 0;
-    }
+    .form-group { margin-bottom: 0.85rem; }
+    .form-group:last-child { margin-bottom: 0; }
 
     .form-label {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-muted);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.35rem;
     }
 
     .form-control, .form-select, textarea {
       width: 100%;
-      padding: 8px 12px;
+      padding: 7px 10px;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-main);
       background: #FFFFFF;
       outline: none;
@@ -241,181 +202,83 @@
     .dropzone {
       border: 2px dashed #CBD5E1;
       border-radius: 10px;
-      padding: 1.2rem;
+      padding: 1rem;
       text-align: center;
       cursor: pointer;
       background: #F8FAFC;
       transition: all 0.2s;
     }
-
-    .dropzone:hover, .dropzone.dragover {
-      border-color: var(--primary);
-      background: var(--primary-light);
-    }
-
-    .dropzone i {
-      font-size: 2rem;
-      color: #94A3B8;
-      margin-bottom: 0.5rem;
-    }
+    .dropzone:hover { border-color: var(--primary); background: var(--primary-light); }
+    .dropzone i { font-size: 1.8rem; color: #94A3B8; margin-bottom: 0.4rem; }
 
     .preset-imgs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .preset-img-thumb {
       width: 100%;
-      height: 48px;
+      height: 44px;
       border-radius: 6px;
       object-fit: cover;
       cursor: pointer;
       border: 2px solid transparent;
       transition: all 0.15s;
     }
+    .preset-img-thumb:hover { transform: scale(1.05); border-color: var(--primary); }
 
-    .preset-img-thumb:hover {
-      transform: scale(1.05);
-      border-color: var(--primary);
-    }
-
-    /* Layer Tabs */
-    .layer-manager-box {
-      background: #F8FAFC;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 8px;
-      margin-bottom: 12px;
-    }
-
-    .layer-tabs-list {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 8px;
-    }
-
-    .layer-tab-btn {
-      padding: 4px 10px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      border-radius: 6px;
-      background: white;
-      border: 1px solid #CBD5E1;
-      color: #475569;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .layer-tab-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* Bopomofo Editor Section */
-    .lines-pinyin-container {
+    /* Annotations List (圖層清單) */
+    .anno-list-box {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-top: 8px;
-      max-height: 160px;
+      max-height: 150px;
       overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .line-pinyin-row {
+      margin-bottom: 10px;
+      padding: 4px;
       background: #F1F5F9;
       border-radius: 8px;
-      padding: 6px 8px;
+    }
+
+    .anno-item-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
       align-items: center;
-      border: 1px solid #E2E8F0;
-    }
-
-    .line-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--primary);
-      background: white;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid #CBD5E1;
-      user-select: none;
-    }
-
-    .char-unit {
+      justify-content: space-between;
+      padding: 6px 10px;
       background: white;
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 3px 6px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 42px;
       cursor: pointer;
-      position: relative;
-      user-select: none;
       transition: all 0.15s;
     }
 
-    .char-unit .char-text {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #0F172A;
-    }
-
-    .char-unit .char-bpmf {
-      font-size: 0.75rem;
-      color: #DC2626;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-
-    .char-unit:hover {
+    .anno-item-row:hover { border-color: var(--primary); }
+    .anno-item-row.active {
       border-color: var(--primary);
       background: #EEF2FF;
+      box-shadow: 0 0 0 1.5px var(--primary);
     }
 
-    /* Style Presets Grid */
-    .style-presets {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    .anno-item-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
       gap: 6px;
     }
 
-    .style-card {
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 8px 4px;
-      text-align: center;
+    .anno-item-del {
+      color: #94A3B8;
       cursor: pointer;
-      background: #FAFAFA;
-      font-size: 0.8rem;
-      font-weight: 600;
-      transition: all 0.15s;
+      padding: 2px 6px;
+      border-radius: 4px;
     }
+    .anno-item-del:hover { color: #EF4444; background: #FEE2E2; }
 
-    .style-card:hover {
-      border-color: var(--primary);
-      background: white;
-    }
-
-    .style-card.active {
-      border-color: var(--primary);
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-
-    /* Mode selector (Complete vs Annotate Only) */
+    /* Mode selector */
     .mode-switch-box {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -423,13 +286,13 @@
       background: #F1F5F9;
       padding: 4px;
       border-radius: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .mode-btn {
-      padding: 8px 10px;
+      padding: 7px 8px;
       border-radius: 6px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       text-align: center;
       cursor: pointer;
@@ -445,6 +308,35 @@
       box-shadow: var(--shadow-sm);
     }
 
+    /* Quick Stamping Badges (單字蓋章小徽章) */
+    .stamp-badges-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 6px;
+      background: #FEF3C7;
+      border: 1px solid #FDE68A;
+      border-radius: 8px;
+    }
+
+    .stamp-badge {
+      background: white;
+      border: 1px solid #F59E0B;
+      color: #B45309;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      user-select: none;
+      transition: all 0.15s;
+    }
+    .stamp-badge:hover { background: #F59E0B; color: white; transform: scale(1.05); }
+
     /* Canvas Work Area */
     .canvas-container-wrap {
       display: flex;
@@ -452,7 +344,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 1.25rem;
+      padding: 1.1rem;
       box-shadow: var(--shadow-sm);
       position: relative;
     }
@@ -461,7 +353,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
       flex-wrap: wrap;
       gap: 8px;
     }
@@ -482,33 +374,19 @@
 
     #stageCanvas {
       max-width: 100%;
-      max-height: 70vh;
+      max-height: 72vh;
       box-shadow: var(--shadow-lg);
       border-radius: 4px;
-      cursor: crosshair;
+      cursor: default;
     }
 
-    .row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
 
-    .row-3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-    }
-
-    .color-picker-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .color-picker-wrap { display: flex; align-items: center; gap: 6px; }
     .color-picker-wrap input[type="color"] {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -519,23 +397,16 @@
     footer {
       background: #FFFFFF;
       border-top: 1px solid var(--border-color);
-      padding: 1.25rem 2rem;
+      padding: 1rem 2rem;
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    footer a:hover {
-      text-decoration: underline;
-    }
+    footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    footer a:hover { text-decoration: underline; }
 
-    /* Modal */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -549,8 +420,8 @@
     .modal-card {
       background: white;
       border-radius: 12px;
-      width: 440px;
-      padding: 1.5rem;
+      width: 420px;
+      padding: 1.25rem;
       box-shadow: var(--shadow-lg);
     }
   </style>
@@ -560,11 +431,9 @@
   <!-- Header -->
   <header>
     <div class="brand-title">
-      <div class="brand-icon">
-        <i class="fa-solid fa-shapes"></i>
-      </div>
+      <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
       <div>
-        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">原圖補注音 / 多標註圖層</span></h1>
+        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">支援原圖字旁精準補注音</span></h1>
       </div>
     </div>
     <div class="header-actions">
@@ -589,209 +458,132 @@
       <!-- Step 1: Upload Image -->
       <div class="card">
         <div class="card-title">
-          <span><i class="fa-solid fa-image"></i> 1. 載入底圖 (原圖/海報)</span>
+          <span><i class="fa-solid fa-image"></i> 1. 載入底圖</span>
         </div>
         <div class="dropzone" id="dropzone">
           <i class="fa-solid fa-cloud-arrow-up"></i>
-          <p style="font-size: 0.88rem; font-weight: 600; color: #475569;">點擊或拖曳圖片至此</p>
-          <p style="font-size: 0.75rem; color: #94A3B8; margin-top: 4px;">支援 PNG, JPG, WebP (支援 Ctrl+V 貼上)</p>
+          <p style="font-size: 0.85rem; font-weight: 600; color: #475569;">點擊或拖曳底圖至此 (或按 Ctrl+V 貼圖)</p>
           <input type="file" id="fileInput" accept="image/*" style="display: none;">
         </div>
 
-        <div style="margin-top: 10px;">
-          <span class="form-label">或選取情境示範圖（含紅燈停情緒卡）：</span>
+        <div style="margin-top: 8px;">
+          <span class="form-label">或選取內建範例：</span>
           <div class="preset-imgs">
-            <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="水果拼盤" onclick="loadSampleImg(this.src, '香甜可口的水果\n多吃水果好健康')">
-            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="可愛小狗" onclick="loadSampleImg(this.src, '可愛的小狗搖尾巴\n陪我一起去散步')">
-            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="閱讀讀書" onclick="loadSampleImg(this.src, '大家一起來看書\n學到好多新知識')">
-            <img src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="大自然森林" onclick="loadSampleImg(this.src, '大自然真美麗\n綠色樹木空氣好')">
+            <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="水果拼盤" onclick="loadSampleImg(this.src)">
+            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="可愛小狗" onclick="loadSampleImg(this.src)">
+            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="閱讀讀書" onclick="loadSampleImg(this.src)">
+            <img src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=300&q=80" class="preset-img-thumb" title="大自然森林" onclick="loadSampleImg(this.src)">
           </div>
         </div>
       </div>
 
-      <!-- Step 2: Content & Annotation Mode -->
+      <!-- Step 2: Annotations Manager -->
       <div class="card">
         <div class="card-title">
-          <span><i class="fa-solid fa-layer-group"></i> 2. 注音標註與圖層管理</span>
-          <button class="btn btn-outline" style="padding: 2px 8px; font-size: 0.75rem;" onclick="addNewLayer()">
+          <span><i class="fa-solid fa-layer-group"></i> 2. 標註文字與注音 (支援多標籤同時存在)</span>
+          <button class="btn btn-primary" style="padding: 3px 10px; font-size: 0.78rem;" onclick="createNewAnnotation()">
             <i class="fa-solid fa-plus"></i> 新增標籤
           </button>
         </div>
 
-        <!-- Mode Toggle: Complete (Word+Bpmf) vs Overlay Only (Bpmf Only) -->
+        <!-- Mode selector: Full vs Overlay Only -->
         <div class="mode-switch-box">
-          <button class="mode-btn active" id="modeBtnComplete" onclick="setRenderMode('complete')">
-            <i class="fa-solid fa-font"></i> 完整國字+注音
+          <button class="mode-btn" id="modeBtnComplete" onclick="setActiveMode('complete')">
+            <i class="fa-solid fa-font"></i> 完整模式 (國字+注音)
           </button>
-          <button class="mode-btn" id="modeBtnOverlay" onclick="setRenderMode('bpmfOnly')" title="專門用來在原圖既有文字旁壓上直式注音！">
-            <i class="fa-solid fa-sparkles"></i> 僅在原圖補注音
+          <button class="mode-btn active" id="modeBtnOverlay" onclick="setActiveMode('bpmfOnly')" title="專門在原圖國字旁邊壓上直式注音！">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> 僅在原圖補注音
           </button>
         </div>
 
-        <!-- Layer Selector Tabs -->
-        <div class="layer-manager-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="font-size: 0.75rem; font-weight: 700; color: #475569;">選擇目前編輯的標籤：</span>
-            <button id="btnDeleteLayer" class="btn btn-outline" style="padding: 1px 6px; font-size: 0.7rem; color: #DC2626;" onclick="deleteCurrentLayer()">
-              <i class="fa-solid fa-trash-can"></i> 刪除此標籤
-            </button>
-          </div>
-          <div class="layer-tabs-list" id="layerTabs">
-            <!-- Dynamic layer tabs -->
-          </div>
+        <!-- Annotations list -->
+        <span class="form-label">畫布上的所有標籤 (點選可切換編輯)：</span>
+        <div class="anno-list-box" id="annoListBox">
+          <!-- Dynamic Annotation Rows -->
         </div>
-        
+
+        <!-- Edit currently selected annotation -->
         <div class="form-group">
-          <label class="form-label">輸入要標示的文字 (按 Enter 換行)：</label>
-          <textarea id="inputText" class="form-control" rows="2" placeholder="輸入文字，即時轉換注音..."></textarea>
+          <label class="form-label">輸入要標註的文字 (支援多行)：</label>
+          <textarea id="inputText" class="form-control" rows="2" placeholder="輸入文字，即時轉為注音..."></textarea>
         </div>
 
-        <!-- Font Family & Weight -->
-        <div class="row-2" id="fontControlsRow">
-          <div class="form-group">
-            <label class="form-label"><i class="fa-solid fa-pen-fancy"></i> 國文字體：</label>
-            <select id="selectFontFamily" class="form-select" onchange="onFontChange()">
-              <option value="kaiti" selected>🌸 標楷體 / 標準楷書</option>
-              <option value="iansui">🌿 芫荽體 (硬筆手寫)</option>
-              <option value="yuanti">🎈 可愛圓體</option>
-              <option value="mingti">📖 新細明體</option>
-              <option value="heiti">⚡ 現代黑體</option>
-              <option value="custom">📁 上傳本機字型...</option>
-            </select>
-            <input type="file" id="fontFileInput" accept=".ttf,.otf,.woff,.woff2" style="display: none;" onchange="loadCustomFont(event)">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">文字字重：</label>
-            <select id="selectFontWeight" class="form-select" onchange="updateCanvas()">
-              <option value="normal">標準 (Normal)</option>
-              <option value="bold" selected>粗體 (Bold)</option>
-              <option value="900">特粗 (Extra Bold)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
+        <!-- Quick stamp badges for single character positioning -->
+        <div id="stampBoxSection" style="margin-bottom: 8px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <label class="form-label" style="margin-bottom:0;">點擊單字可校正讀音：</label>
-            <span style="font-size:0.72rem; color:var(--primary); cursor:pointer;" onclick="showBpmfHelp()"><i class="fa-regular fa-circle-question"></i> 注音格式</span>
+            <span class="form-label" style="margin-bottom: 0;"><i class="fa-solid fa-stamp" style="color: #D97706;"></i> 單字快速蓋章 (點擊單字可直接在圖上放一顆注音)：</span>
           </div>
-          <div class="lines-pinyin-container" id="linesContainer">
-            <!-- Dynamic multi-line character tiles -->
+          <div class="stamp-badges-box" id="stampBadges">
+            <!-- Dynamic stamp buttons -->
           </div>
         </div>
 
+        <!-- Bopomofo Orientation (直式注音在字右 vs 橫式注音在字上) -->
         <div class="row-2">
           <div class="form-group">
-            <label class="form-label">排版方向：</label>
-            <div style="display: flex; gap: 8px; margin-top: 4px;">
-              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                <input type="radio" name="textDirection" value="horizontal" checked onchange="updateCanvas()"> 橫排 (從上到下)
-              </label>
-              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                <input type="radio" name="textDirection" value="vertical" onchange="updateCanvas()"> 直排 (從右到左)
-              </label>
-            </div>
+            <label class="form-label">注音符號格式：</label>
+            <select id="selectBpmfLayout" class="form-select" onchange="onLayoutChange()">
+              <option value="vertical-right" selected>直式注音 (位於國字右側)</option>
+              <option value="horizontal-top">橫式注音 (位於國字上方)</option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label class="form-label">對齊方式：</label>
-            <div style="display: flex; gap: 8px; margin-top: 4px;">
-              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                <input type="radio" name="textAlign" value="center" checked onchange="updateCanvas()"> 置中
-              </label>
-              <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                <input type="radio" name="textAlign" value="left" onchange="updateCanvas()"> 靠前
-              </label>
-            </div>
+            <label class="form-label">排版走向：</label>
+            <select id="selectTextDirection" class="form-select" onchange="onDirectionChange()">
+              <option value="horizontal" selected>橫排 (國字由左至右)</option>
+              <option value="vertical">直排 (國字由上至下)</option>
+            </select>
           </div>
         </div>
 
       </div>
 
-      <!-- Step 3: Card Styles & Themes -->
+      <!-- Step 3: Appearance Controls -->
       <div class="card">
         <div class="card-title">
-          <span><i class="fa-solid fa-palette"></i> 3. 樣式與細部微調</span>
+          <span><i class="fa-solid fa-sliders"></i> 3. 尺寸、字距與顏色對齊</span>
         </div>
-
-        <div class="style-presets" id="stylePresetsContainer">
-          <div class="style-card active" onclick="applyPresetStyle('bubble')">
-            <i class="fa-regular fa-comment-dots"></i> 對話泡泡
-          </div>
-          <div class="style-card" onclick="applyPresetStyle('badge')">
-            <i class="fa-solid fa-tags"></i> 圓角標籤
-          </div>
-          <div class="style-card" onclick="applyPresetStyle('outline')">
-            <i class="fa-solid fa-pen-nib"></i> 純字描邊
-          </div>
-          <div class="style-card" onclick="applyPresetStyle('chalkboard')">
-            <i class="fa-solid fa-chalkboard"></i> 綠黑板
-          </div>
-          <div class="style-card" onclick="applyPresetStyle('paper')">
-            <i class="fa-solid fa-note-sticky"></i> 便條紙
-          </div>
-          <div class="style-card" onclick="applyPresetStyle('pure')">
-            <i class="fa-solid fa-font"></i> 簡約透明
-          </div>
-        </div>
-
-        <hr style="margin: 12px 0; border: none; border-top: 1px solid var(--border-color);">
 
         <!-- Fine tuning controls -->
-        <div class="row-3">
+        <div class="row-2">
           <div class="form-group">
-            <label class="form-label">字體大小 (<span id="valFontSize">42</span>px)</label>
-            <input type="range" id="inputFontSize" min="14" max="120" value="42" class="form-range" style="width: 100%;" oninput="updateCanvas()">
+            <label class="form-label">注音/文字大小 (<span id="valFontSize">36</span>px)</label>
+            <input type="range" id="inputFontSize" min="12" max="100" value="36" class="form-range" style="width: 100%;" oninput="onParamChange()">
           </div>
           <div class="form-group">
-            <label class="form-label">字距 (<span id="valLetterSpacing">10</span>px)</label>
-            <input type="range" id="inputLetterSpacing" min="0" max="60" value="10" class="form-range" style="width: 100%;" oninput="updateCanvas()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">行距 (<span id="valLineSpacing">18</span>px)</label>
-            <input type="range" id="inputLineSpacing" min="4" max="80" value="18" class="form-range" style="width: 100%;" oninput="updateCanvas()">
+            <label class="form-label">字距拉伸 (<span id="valLetterSpacing">24</span>px)</label>
+            <input type="range" id="inputLetterSpacing" min="0" max="100" value="24" class="form-range" style="width: 100%;" oninput="onParamChange()" title="拉動滑桿可讓注音完美對齊原圖字體">
           </div>
         </div>
 
         <div class="row-2">
+          <div class="form-group">
+            <label class="form-label">注音顏色 (可對照原圖吸色)</label>
+            <div class="color-picker-wrap">
+              <input type="color" id="colorBpmf" value="#C0392B" onchange="onParamChange()">
+              <span id="hexBpmfText" style="font-size: 0.75rem; color: #64748B;">#C0392B</span>
+            </div>
+          </div>
           <div class="form-group" id="groupTextColor">
             <label class="form-label">國字顏色</label>
             <div class="color-picker-wrap">
-              <input type="color" id="colorText" value="#1E293B" onchange="updateCanvas()">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">注音顏色 (可對照原圖字色)</label>
-            <div class="color-picker-wrap">
-              <input type="color" id="colorBpmf" value="#DC2626" onchange="updateCanvas()">
+              <input type="color" id="colorText" value="#1E293B" onchange="onParamChange()">
             </div>
           </div>
         </div>
 
-        <div class="row-2" id="bgControlRows">
+        <div class="row-2" id="boxStyleControls" style="display: none;">
           <div class="form-group">
-            <label class="form-label">框背景顏色</label>
+            <label class="form-label">底框顏色與透明度</label>
             <div class="color-picker-wrap">
-              <input type="color" id="colorBg" value="#FFFFFF" onchange="updateCanvas()">
+              <input type="color" id="colorBg" value="#FFFFFF" onchange="onParamChange()">
+              <input type="range" id="inputBgOpacity" min="0" max="100" value="95" style="width: 80px;" oninput="onParamChange()">
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">背景不透明度 (<span id="valOpacity">95</span>%)</label>
-            <input type="range" id="inputBgOpacity" min="0" max="100" value="95" class="form-range" style="width: 100%;" oninput="updateCanvas()">
-          </div>
-        </div>
-
-        <div class="row-2" id="borderControlRows">
-          <div class="form-group">
-            <label class="form-label">邊框粗細 (<span id="valBorderWidth">3</span>px)</label>
-            <input type="range" id="inputBorderWidth" min="0" max="15" value="3" class="form-range" style="width: 100%;" oninput="updateCanvas()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">邊框顏色</label>
-            <div class="color-picker-wrap">
-              <input type="color" id="colorBorder" value="#6366F1" onchange="updateCanvas()">
-            </div>
+            <label class="form-label">外框粗細</label>
+            <input type="range" id="inputBorderWidth" min="0" max="10" value="2" class="form-range" style="width: 100%;" oninput="onParamChange()">
           </div>
         </div>
 
@@ -803,15 +595,13 @@
     <section class="canvas-container-wrap">
       <div class="canvas-toolbar">
         <div style="display: flex; gap: 8px; align-items: center;">
-          <span style="font-size: 0.95rem; font-weight: 700; color: #1E293B;">
-            <i class="fa-solid fa-eye" style="color: var(--primary);"></i> 畫布預覽 (點選或拖曳任意注音標籤直接對齊原圖字旁)
+          <span style="font-size: 0.92rem; font-weight: 700; color: #1E293B;">
+            <i class="fa-solid fa-eye" style="color: var(--primary);"></i> 畫布預覽 (滑鼠點擊或拖曳任意注音標籤直接對齊原圖)
           </span>
         </div>
         <div style="display: flex; gap: 6px;">
-          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="alignBox('top')"><i class="fa-solid fa-arrow-up"></i> 靠頂部</button>
-          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="alignBox('center')"><i class="fa-solid fa-arrows-to-dot"></i> 置中</button>
-          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="alignBox('bottom')"><i class="fa-solid fa-arrow-down"></i> 靠底部</button>
-          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="resetPos()"><i class="fa-solid fa-rotate-left"></i> 重設位置</button>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="createNewAnnotation()"><i class="fa-solid fa-plus"></i> 再加一行標註</button>
+          <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8rem;" onclick="deleteSelectedAnnotation()"><i class="fa-solid fa-trash-can"></i> 刪除選取</button>
         </div>
       </div>
 
@@ -820,7 +610,7 @@
       </div>
 
       <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748B;">
-        <span>💡 提示：切換到「僅在原圖補注音」，滑鼠拖動注音字串即可完美對齊原圖文字！支援多個標籤獨立定位。</span>
+        <span>💡 提示：每個標籤都是獨立的！輸入新文字不會覆蓋舊標籤，滑鼠按住注音可隨意拖曳定位。</span>
         <span id="canvasDimInfo">解析度：1024 x 768 px</span>
       </div>
     </section>
@@ -830,20 +620,19 @@
   <!-- Modal for Edit Single Char Bopomofo -->
   <div class="modal-overlay" id="editModal">
     <div class="modal-card">
-      <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;" id="modalTitle">修改「字」的注音</h3>
+      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.85rem;" id="modalTitle">修改注音</h3>
       
       <div class="form-group">
-        <label class="form-label">選擇讀音（破音字候選）：</label>
-        <div id="polyphoneOptions" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;"></div>
+        <label class="form-label">選擇破音字候選讀音：</label>
+        <div id="polyphoneOptions" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;"></div>
       </div>
 
       <div class="form-group">
-        <label class="form-label">或自訂注音符號（如 ㄒㄧㄤ、ㄌㄜˋ）：</label>
-        <input type="text" id="customBpmfInput" class="form-control" placeholder="輸入注音與聲調...">
-        <p style="font-size: 0.72rem; color: #94A3B8; margin-top: 4px;">聲調可直接輸入：ˊ (二聲)、ˇ (三聲)、ˋ (四聲)、˙ (輕聲，如 ˙ㄉㄜ 或 ㄉㄜ˙)</p>
+        <label class="form-label">或手動輸入注音（如 ㄒㄧㄤ、ㄌㄜˋ）：</label>
+        <input type="text" id="customBpmfInput" class="form-control">
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem;">
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1rem;">
         <button class="btn btn-outline" onclick="closeEditModal()">取消</button>
         <button class="btn btn-primary" onclick="saveCharBpmf()">儲存更新</button>
       </div>
@@ -857,78 +646,39 @@
     </div>
   </footer>
 
-  <!-- App Logic -->
+  <!-- Core App Logic -->
   <script>
-    const FONT_MAP = {
-      'kaiti': '"DFKai-SB", "BiauKai", "TW-Kai", "KaiTi", "STKaiti", serif',
-      'iansui': '"Iansui", "DFKai-SB", "Zen Maru Gothic", cursive, sans-serif',
-      'yuanti': '"Zen Maru Gothic", "Yuanti TC", "Microsoft JhengHei UI", "STHeiti", sans-serif',
-      'mingti': '"PMingLiU", "MingTi", "Noto Serif TC", "Songti TC", serif',
-      'heiti': '"Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif',
-      'custom': '"CustomLoadedFont", sans-serif'
-    };
-
-    // 全域多圖層架構
-    let appLayers = [
+    // 每個獨立標註的資料結構
+    let annotations = [
       {
         id: 1,
-        name: '標籤 1',
-        mode: 'bpmfOnly', // 'complete' | 'bpmfOnly' (預設原圖補注音模式)
-        rawText: '紅燈：先停下來',
-        linesData: [],
-        direction: 'horizontal',
-        textAlign: 'left',
-        stylePreset: 'pure',
-        fontFamilyKey: 'kaiti',
-        fontWeight: 'bold',
+        text: '紅燈：先停下來',
+        mode: 'bpmfOnly', // 'bpmfOnly' (僅注音) | 'complete' (國字+注音)
+        bpmfLayout: 'vertical-right', // 'vertical-right' (字右直式) | 'horizontal-top' (字上橫式)
+        direction: 'horizontal', // 'horizontal' | 'vertical'
         fontSize: 38,
-        letterSpacing: 22,
+        letterSpacing: 26,
         lineSpacing: 18,
-        textColor: '#C0392B',
         bpmfColor: '#C0392B',
+        textColor: '#C0392B',
         bgColor: '#FFFFFF',
         bgOpacity: 0.0,
         borderWidth: 0,
         borderColor: '#6366F1',
-        boxX: 300,
-        boxY: 50,
-        boxWidth: 200,
-        boxHeight: 50
-      },
-      {
-        id: 2,
-        name: '標籤 2',
-        mode: 'bpmfOnly',
-        rawText: '我快要生氣了！',
-        linesData: [],
-        direction: 'horizontal',
-        textAlign: 'left',
-        stylePreset: 'pure',
-        fontFamilyKey: 'kaiti',
-        fontWeight: 'bold',
-        fontSize: 34,
-        letterSpacing: 20,
-        lineSpacing: 18,
-        textColor: '#2C2C2C',
-        bpmfColor: '#2C2C2C',
-        bgColor: '#FFFFFF',
-        bgOpacity: 0.0,
-        borderWidth: 0,
-        borderColor: '#6366F1',
-        boxX: 360,
-        boxY: 130,
-        boxWidth: 200,
-        boxHeight: 50
+        x: 310,
+        y: 40,
+        width: 320,
+        height: 60,
+        charsData: [] // [ { char: '紅', bpmf: 'ㄏㄨㄥˊ' }, ... ]
       }
     ];
 
-    let activeLayerIndex = 0;
+    let selectedAnnoIndex = 0;
     let bgImage = null;
     let imgLoaded = false;
-    let draggingLayerIndex = null;
+    let isDragging = false;
     let dragOffsetX = 0;
     let dragOffsetY = 0;
-    let selectedCharTarget = null;
 
     const canvas = document.getElementById('stageCanvas');
     const ctx = canvas.getContext('2d');
@@ -945,359 +695,262 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       document.fonts.ready.then(() => updateCanvas());
-      appLayers.forEach(layer => parseLayerText(layer));
-      renderLayerTabs();
-      loadActiveLayerToForm();
+      annotations.forEach(a => parseAnnotationText(a));
+      renderAnnoList();
+      syncFormFromSelected();
       loadDefaultSample();
       initEvents();
     });
 
-    function getCurrentLayer() {
-      return appLayers[activeLayerIndex] || appLayers[0];
+    function getActiveAnno() {
+      if (annotations.length === 0) return null;
+      if (selectedAnnoIndex >= annotations.length) selectedAnnoIndex = annotations.length - 1;
+      return annotations[selectedAnnoIndex];
     }
 
-    function setRenderMode(mode) {
-      const cur = getCurrentLayer();
-      cur.mode = mode;
-      
-      document.getElementById('modeBtnComplete').classList.toggle('active', mode === 'complete');
-      document.getElementById('modeBtnOverlay').classList.toggle('active', mode === 'bpmfOnly');
-
-      if (mode === 'bpmfOnly') {
-        cur.bgOpacity = 0;
-        cur.borderWidth = 0;
-        cur.stylePreset = 'pure';
-        document.getElementById('bgControlRows').style.display = 'none';
-        document.getElementById('borderControlRows').style.display = 'none';
-        document.getElementById('groupTextColor').style.display = 'none';
-        document.getElementById('stylePresetsContainer').style.display = 'none';
-      } else {
-        document.getElementById('bgControlRows').style.display = 'grid';
-        document.getElementById('borderControlRows').style.display = 'grid';
-        document.getElementById('groupTextColor').style.display = 'block';
-        document.getElementById('stylePresetsContainer').style.display = 'grid';
-      }
-
-      loadActiveLayerToForm();
-      updateCanvas();
-    }
-
-    function renderLayerTabs() {
-      const container = document.getElementById('layerTabs');
-      container.innerHTML = '';
-
-      appLayers.forEach((l, idx) => {
-        const btn = document.createElement('button');
-        btn.className = `layer-tab-btn ${idx === activeLayerIndex ? 'active' : ''}`;
-        const previewText = l.rawText.split('\n')[0].substring(0, 5) || `標籤 ${idx + 1}`;
-        btn.innerHTML = `<i class="fa-solid ${l.mode === 'bpmfOnly' ? 'fa-sparkles' : 'fa-font'}"></i> ${previewText}`;
-        btn.onclick = () => {
-          activeLayerIndex = idx;
-          renderLayerTabs();
-          loadActiveLayerToForm();
-          updateCanvas();
-        };
-        container.appendChild(btn);
-      });
-
-      document.getElementById('btnDeleteLayer').style.display = appLayers.length > 1 ? 'inline-flex' : 'none';
-    }
-
-    function addNewLayer() {
-      const newId = appLayers.length + 1;
-      const cur = getCurrentLayer();
-      const newLayer = {
-        id: newId,
-        name: `標籤 ${newId}`,
-        mode: cur.mode || 'bpmfOnly',
-        rawText: '想大叫',
-        linesData: [],
-        direction: cur.direction || 'horizontal',
-        textAlign: 'left',
-        stylePreset: cur.stylePreset || 'pure',
-        fontFamilyKey: cur.fontFamilyKey || 'kaiti',
-        fontWeight: 'bold',
-        fontSize: cur.fontSize || 34,
-        letterSpacing: cur.letterSpacing || 20,
-        lineSpacing: cur.lineSpacing || 18,
-        textColor: cur.textColor || '#1E293B',
-        bpmfColor: cur.bpmfColor || '#DC2626',
-        bgColor: '#FFFFFF',
-        bgOpacity: cur.mode === 'bpmfOnly' ? 0 : 0.95,
-        borderWidth: cur.mode === 'bpmfOnly' ? 0 : 3,
-        borderColor: '#6366F1',
-        boxX: Math.round(canvas.width * 0.3),
-        boxY: Math.min(canvas.height - 100, cur.boxY + 70),
-        boxWidth: 200,
-        boxHeight: 60
-      };
-
-      parseLayerText(newLayer);
-      appLayers.push(newLayer);
-      activeLayerIndex = appLayers.length - 1;
-      renderLayerTabs();
-      loadActiveLayerToForm();
-      updateCanvas();
-    }
-
-    function deleteCurrentLayer() {
-      if (appLayers.length <= 1) return;
-      appLayers.splice(activeLayerIndex, 1);
-      activeLayerIndex = Math.max(0, activeLayerIndex - 1);
-      renderLayerTabs();
-      loadActiveLayerToForm();
-      updateCanvas();
-    }
-
-    function loadActiveLayerToForm() {
-      const cur = getCurrentLayer();
-      document.getElementById('inputText').value = cur.rawText;
-      document.getElementById('inputFontSize').value = cur.fontSize;
-      document.getElementById('inputLetterSpacing').value = cur.letterSpacing;
-      document.getElementById('inputLineSpacing').value = cur.lineSpacing;
-      document.getElementById('colorText').value = cur.textColor;
-      document.getElementById('colorBpmf').value = cur.bpmfColor;
-      document.getElementById('colorBg').value = cur.bgColor;
-      document.getElementById('inputBgOpacity').value = Math.round(cur.bgOpacity * 100);
-      document.getElementById('inputBorderWidth').value = cur.borderWidth;
-      document.getElementById('colorBorder').value = cur.borderColor;
-      document.getElementById('selectFontFamily').value = cur.fontFamilyKey;
-      document.getElementById('selectFontWeight').value = cur.fontWeight;
-
-      document.querySelector(`input[name="textDirection"][value="${cur.direction}"]`).checked = true;
-      document.querySelector(`input[name="textAlign"][value="${cur.textAlign}"]`).checked = true;
-
-      document.getElementById('modeBtnComplete').classList.toggle('active', cur.mode === 'complete');
-      document.getElementById('modeBtnOverlay').classList.toggle('active', cur.mode === 'bpmfOnly');
-
-      if (cur.mode === 'bpmfOnly') {
-        document.getElementById('bgControlRows').style.display = 'none';
-        document.getElementById('borderControlRows').style.display = 'none';
-        document.getElementById('groupTextColor').style.display = 'none';
-        document.getElementById('stylePresetsContainer').style.display = 'none';
-      } else {
-        document.getElementById('bgControlRows').style.display = 'grid';
-        document.getElementById('borderControlRows').style.display = 'grid';
-        document.getElementById('groupTextColor').style.display = 'block';
-        document.getElementById('stylePresetsContainer').style.display = 'grid';
-      }
-
-      renderMultiLineTiles();
-    }
-
-    function parseLayerText(layer) {
-      const lines = layer.rawText.split(/\r?\n/);
-      layer.linesData = lines.map(line => {
-        const charList = [];
+    function parseAnnotationText(anno) {
+      const lines = anno.text.split(/\r?\n/);
+      anno.charsData = lines.map(line => {
+        const list = [];
         for (let i = 0; i < line.length; i++) {
           const ch = line[i];
-          const bpmfList = getCharBpmfList(ch);
-          const bpmf = bpmfList[0] || '';
-          charList.push({ char: ch, bpmf: bpmf });
+          const bList = getCharBpmfList(ch);
+          list.push({ char: ch, bpmf: bList[0] || '' });
         }
-        return charList;
+        return list;
       });
+    }
+
+    function createNewAnnotation(initialText = '') {
+      const active = getActiveAnno();
+      const newId = Date.now();
+      const sampleTexts = ['我快要生氣了！', '想大叫', '想推人', '想丟東西', '深呼吸', '數到十'];
+      const nextSample = initialText || sampleTexts[annotations.length % sampleTexts.length] || '新標註文字';
+
+      const newAnno = {
+        id: newId,
+        text: nextSample,
+        mode: active ? active.mode : 'bpmfOnly',
+        bpmfLayout: active ? active.bpmfLayout : 'vertical-right',
+        direction: active ? active.direction : 'horizontal',
+        fontSize: active ? active.fontSize : 34,
+        letterSpacing: active ? active.letterSpacing : 22,
+        lineSpacing: active ? active.lineSpacing : 18,
+        bpmfColor: active ? (annotations.length === 1 ? '#2C2C2C' : active.bpmfColor) : '#C0392B',
+        textColor: active ? active.textColor : '#1E293B',
+        bgColor: '#FFFFFF',
+        bgOpacity: active && active.mode === 'complete' ? 0.95 : 0.0,
+        borderWidth: active && active.mode === 'complete' ? 2 : 0,
+        borderColor: '#6366F1',
+        x: active ? Math.min(canvas.width - 200, active.x + 20) : 200,
+        y: active ? Math.min(canvas.height - 100, active.y + 70) : 150,
+        width: 250,
+        height: 60,
+        charsData: []
+      };
+
+      parseAnnotationText(newAnno);
+      annotations.push(newAnno);
+      selectedAnnoIndex = annotations.length - 1;
+
+      renderAnnoList();
+      syncFormFromSelected();
+      updateCanvas();
+    }
+
+    function stampSingleCharacter(char, bpmf) {
+      const active = getActiveAnno();
+      const newAnno = {
+        id: Date.now(),
+        text: char,
+        mode: 'bpmfOnly',
+        bpmfLayout: active ? active.bpmfLayout : 'vertical-right',
+        direction: 'horizontal',
+        fontSize: active ? active.fontSize : 36,
+        letterSpacing: 0,
+        lineSpacing: 18,
+        bpmfColor: active ? active.bpmfColor : '#C0392B',
+        textColor: '#1E293B',
+        bgColor: '#FFFFFF',
+        bgOpacity: 0,
+        borderWidth: 0,
+        borderColor: '#6366F1',
+        x: active ? active.x + 40 : 200,
+        y: active ? active.y : 150,
+        width: 50,
+        height: 50,
+        charsData: [[{ char, bpmf }]]
+      };
+
+      annotations.push(newAnno);
+      selectedAnnoIndex = annotations.length - 1;
+      renderAnnoList();
+      syncFormFromSelected();
+      updateCanvas();
+    }
+
+    function deleteSelectedAnnotation() {
+      if (annotations.length <= 1) {
+        alert('至少需保留一個標籤。');
+        return;
+      }
+      annotations.splice(selectedAnnoIndex, 1);
+      selectedAnnoIndex = Math.max(0, selectedAnnoIndex - 1);
+      renderAnnoList();
+      syncFormFromSelected();
+      updateCanvas();
+    }
+
+    function deleteAnnotationAt(idx, event) {
+      if (event) event.stopPropagation();
+      if (annotations.length <= 1) {
+        alert('至少需保留一個標籤。');
+        return;
+      }
+      annotations.splice(idx, 1);
+      if (selectedAnnoIndex >= annotations.length) selectedAnnoIndex = annotations.length - 1;
+      renderAnnoList();
+      syncFormFromSelected();
+      updateCanvas();
+    }
+
+    function renderAnnoList() {
+      const container = document.getElementById('annoListBox');
+      container.innerHTML = '';
+
+      annotations.forEach((anno, idx) => {
+        const row = document.createElement('div');
+        row.className = `anno-item-row ${idx === selectedAnnoIndex ? 'active' : ''}`;
+        row.onclick = () => {
+          selectedAnnoIndex = idx;
+          renderAnnoList();
+          syncFormFromSelected();
+          updateCanvas();
+        };
+
+        const previewText = anno.text.split('\n')[0].substring(0, 10) || `標籤 #${idx + 1}`;
+        row.innerHTML = `
+          <div class="anno-item-title">
+            <i class="fa-solid ${anno.mode === 'bpmfOnly' ? 'fa-sparkles' : 'fa-font'}" style="color:${anno.bpmfColor};"></i>
+            <span>${previewText}</span>
+          </div>
+          <div class="anno-item-del" onclick="deleteAnnotationAt(${idx}, event)" title="刪除此標籤">
+            <i class="fa-solid fa-trash-can"></i>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      renderStampBadges();
+    }
+
+    function renderStampBadges() {
+      const active = getActiveAnno();
+      const container = document.getElementById('stampBadges');
+      container.innerHTML = '';
+      if (!active) return;
+
+      const flatChars = [];
+      active.charsData.forEach(line => {
+        line.forEach(c => {
+          if (c.bpmf) flatChars.push(c);
+        });
+      });
+
+      if (flatChars.length === 0) {
+        container.innerHTML = '<span style="font-size:0.75rem; color:#92400E;">請在上方輸入文字以產生單字蓋章按鈕</span>';
+        return;
+      }
+
+      flatChars.forEach(item => {
+        const btn = document.createElement('div');
+        btn.className = 'stamp-badge';
+        btn.innerHTML = `<span>${item.char}</span> <span style="color:#DC2626; font-size:0.7rem;">${item.bpmf}</span>`;
+        btn.onclick = () => stampSingleCharacter(item.char, item.bpmf);
+        container.appendChild(btn);
+      });
+    }
+
+    function syncFormFromSelected() {
+      const active = getActiveAnno();
+      if (!active) return;
+
+      document.getElementById('inputText').value = active.text;
+      document.getElementById('inputFontSize').value = active.fontSize;
+      document.getElementById('valFontSize').textContent = active.fontSize;
+      document.getElementById('inputLetterSpacing').value = active.letterSpacing;
+      document.getElementById('valLetterSpacing').textContent = active.letterSpacing;
+      document.getElementById('colorBpmf').value = active.bpmfColor;
+      document.getElementById('hexBpmfText').textContent = active.bpmfColor;
+      document.getElementById('colorText').value = active.textColor;
+      document.getElementById('selectBpmfLayout').value = active.bpmfLayout || 'vertical-right';
+      document.getElementById('selectTextDirection').value = active.direction || 'horizontal';
+
+      document.getElementById('modeBtnComplete').classList.toggle('active', active.mode === 'complete');
+      document.getElementById('modeBtnOverlay').classList.toggle('active', active.mode === 'bpmfOnly');
+
+      const isComplete = active.mode === 'complete';
+      document.getElementById('groupTextColor').style.display = isComplete ? 'block' : 'none';
+      document.getElementById('boxStyleControls').style.display = isComplete ? 'grid' : 'none';
+
+      renderStampBadges();
+    }
+
+    function setActiveMode(mode) {
+      const active = getActiveAnno();
+      if (!active) return;
+      active.mode = mode;
+      if (mode === 'bpmfOnly') {
+        active.bgOpacity = 0;
+        active.borderWidth = 0;
+      } else {
+        active.bgOpacity = 0.95;
+        active.borderWidth = 2;
+      }
+      syncFormFromSelected();
+      renderAnnoList();
+      updateCanvas();
+    }
+
+    function onParamChange() {
+      const active = getActiveAnno();
+      if (!active) return;
+
+      active.fontSize = parseInt(document.getElementById('inputFontSize').value, 10);
+      active.letterSpacing = parseInt(document.getElementById('inputLetterSpacing').value, 10);
+      active.bpmfColor = document.getElementById('colorBpmf').value;
+      document.getElementById('hexBpmfText').textContent = active.bpmfColor;
+      active.textColor = document.getElementById('colorText').value;
+      active.bgColor = document.getElementById('colorBg').value;
+      active.bgOpacity = parseInt(document.getElementById('inputBgOpacity').value, 10) / 100;
+      active.borderWidth = parseInt(document.getElementById('inputBorderWidth').value, 10);
+
+      document.getElementById('valFontSize').textContent = active.fontSize;
+      document.getElementById('valLetterSpacing').textContent = active.letterSpacing;
+
+      updateCanvas();
+    }
+
+    function onLayoutChange() {
+      const active = getActiveAnno();
+      if (!active) return;
+      active.bpmfLayout = document.getElementById('selectBpmfLayout').value;
+      updateCanvas();
+    }
+
+    function onDirectionChange() {
+      const active = getActiveAnno();
+      if (!active) return;
+      active.direction = document.getElementById('selectTextDirection').value;
+      updateCanvas();
     }
 
     function onTextInputChange() {
-      const cur = getCurrentLayer();
-      cur.rawText = document.getElementById('inputText').value;
-      parseLayerText(cur);
-      renderLayerTabs();
-      renderMultiLineTiles();
-      updateCanvas();
-    }
-
-    function onFontChange() {
-      const val = document.getElementById('selectFontFamily').value;
-      if (val === 'custom') {
-        document.getElementById('fontFileInput').click();
-      } else {
-        getCurrentLayer().fontFamilyKey = val;
-        updateCanvas();
-      }
-    }
-
-    function loadCustomFont(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const fontData = event.target.result;
-        const customFont = new FontFace('CustomLoadedFont', fontData);
-        await customFont.load();
-        document.fonts.add(customFont);
-        getCurrentLayer().fontFamilyKey = 'custom';
-        alert(`🎉 已成功載入自訂字型：${file.name}`);
-        updateCanvas();
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-    function loadDefaultSample() {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        bgImage = img;
-        imgLoaded = true;
-        canvas.width = img.naturalWidth || 1024;
-        canvas.height = img.naturalHeight || 768;
-        document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
-        updateCanvas();
-      };
-      img.src = "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=1200&q=80";
-    }
-
-    function loadSampleImg(url, sampleText) {
-      if (sampleText) {
-        getCurrentLayer().rawText = sampleText;
-        parseLayerText(getCurrentLayer());
-        loadActiveLayerToForm();
-      }
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        bgImage = img;
-        imgLoaded = true;
-        canvas.width = img.naturalWidth || 1024;
-        canvas.height = img.naturalHeight || 768;
-        document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
-        updateCanvas();
-      };
-      img.src = url;
-    }
-
-    function renderMultiLineTiles() {
-      const cur = getCurrentLayer();
-      const container = document.getElementById('linesContainer');
-      container.innerHTML = '';
-
-      cur.linesData.forEach((lineChars, lIdx) => {
-        if (lineChars.length === 0) return;
-
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'line-pinyin-row';
-
-        const label = document.createElement('span');
-        label.className = 'line-label';
-        label.textContent = `第 ${lIdx + 1} 行`;
-        rowDiv.appendChild(label);
-
-        lineChars.forEach((item, cIdx) => {
-          const unit = document.createElement('div');
-          unit.className = 'char-unit';
-          unit.onclick = () => openEditModal(lIdx, cIdx);
-          unit.innerHTML = `
-            <div class="char-bpmf">${item.bpmf || '&nbsp;'}</div>
-            <div class="char-text">${item.char}</div>
-          `;
-          rowDiv.appendChild(unit);
-        });
-
-        container.appendChild(rowDiv);
-      });
-    }
-
-    function openEditModal(lineIdx, charIdx) {
-      selectedCharTarget = { lineIdx, charIdx };
-      const cur = getCurrentLayer();
-      const item = cur.linesData[lineIdx][charIdx];
-      document.getElementById('modalTitle').textContent = `修改「${item.char}」的注音 (第 ${lineIdx + 1} 行)`;
-      document.getElementById('customBpmfInput').value = item.bpmf;
-
-      const polyContainer = document.getElementById('polyphoneOptions');
-      polyContainer.innerHTML = '';
-      const list = getCharBpmfList(item.char);
-      if (list && list.length > 0 && list[0] !== '') {
-        list.forEach(p => {
-          const btn = document.createElement('button');
-          btn.className = 'btn btn-outline';
-          btn.style.padding = '4px 10px';
-          btn.style.fontSize = '0.85rem';
-          btn.textContent = `${item.char} (${p})`;
-          btn.onclick = () => {
-            document.getElementById('customBpmfInput').value = p;
-          };
-          polyContainer.appendChild(btn);
-        });
-      } else {
-        polyContainer.innerHTML = '<span style="font-size:0.8rem; color:#94A3B8;">無更多讀音，可直接在下方手動輸入</span>';
-      }
-
-      document.getElementById('editModal').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-      document.getElementById('editModal').style.display = 'none';
-    }
-
-    function saveCharBpmf() {
-      if (selectedCharTarget) {
-        const cur = getCurrentLayer();
-        const { lineIdx, charIdx } = selectedCharTarget;
-        const val = document.getElementById('customBpmfInput').value.trim();
-        cur.linesData[lineIdx][charIdx].bpmf = val;
-        renderMultiLineTiles();
-        updateCanvas();
-      }
-      closeEditModal();
-    }
-
-    function showBpmfHelp() {
-      alert("注音輸入小提示：\n1. 聲調可直接輸入：ˊ (二聲)、ˇ (三聲)、ˋ (四聲)。\n2. 輕聲請置於前方，如：˙ㄉㄜ 或 ㄉㄜ˙\n3. 結合韻直接連寫，如：ㄒㄧㄤ、ㄍㄨㄛˇ\n4. 在原圖補注音模式下，只會顯示純注音符號，方便直接對齊原圖字的右側！");
-    }
-
-    function applyPresetStyle(preset) {
-      const cur = getCurrentLayer();
-      cur.stylePreset = preset;
-      document.querySelectorAll('.style-card').forEach(c => c.classList.remove('active'));
-      event.currentTarget.classList.add('active');
-
-      if (preset === 'bubble') {
-        cur.textColor = '#1E293B';
-        cur.bpmfColor = '#DC2626';
-        cur.bgColor = '#FFFFFF';
-        cur.bgOpacity = 0.95;
-        cur.borderWidth = 3;
-        cur.borderColor = '#6366F1';
-      } else if (preset === 'badge') {
-        cur.textColor = '#FFFFFF';
-        cur.bpmfColor = '#FEF08A';
-        cur.bgColor = '#4F46E5';
-        cur.bgOpacity = 0.92;
-        cur.borderWidth = 0;
-        cur.borderColor = '#FFFFFF';
-      } else if (preset === 'outline') {
-        cur.textColor = '#FFFFFF';
-        cur.bpmfColor = '#FDE047';
-        cur.bgColor = '#000000';
-        cur.bgOpacity = 0.0;
-        cur.borderWidth = 6;
-        cur.borderColor = '#1E293B';
-      } else if (preset === 'chalkboard') {
-        cur.textColor = '#FFFFFF';
-        cur.bpmfColor = '#FBBF24';
-        cur.bgColor = '#064E3B';
-        cur.bgOpacity = 0.95;
-        cur.borderWidth = 4;
-        cur.borderColor = '#B45309';
-      } else if (preset === 'paper') {
-        cur.textColor = '#334155';
-        cur.bpmfColor = '#EA580C';
-        cur.bgColor = '#FEF9C3';
-        cur.bgOpacity = 0.96;
-        cur.borderWidth = 2;
-        cur.borderColor = '#F59E0B';
-      } else if (preset === 'pure') {
-        cur.textColor = '#0F172A';
-        cur.bpmfColor = '#DC2626';
-        cur.bgColor = '#FFFFFF';
-        cur.bgOpacity = 0.0;
-        cur.borderWidth = 0;
-        cur.borderColor = '#000000';
-      }
-
-      loadActiveLayerToForm();
+      const active = getActiveAnno();
+      if (!active) return;
+      active.text = document.getElementById('inputText').value;
+      parseAnnotationText(active);
+      renderAnnoList();
       updateCanvas();
     }
 
@@ -1323,229 +976,164 @@
     }
 
     function updateCanvas(overlayOnly = false) {
-      const cur = getCurrentLayer();
-      cur.fontSize = parseInt(document.getElementById('inputFontSize').value, 10);
-      cur.letterSpacing = parseInt(document.getElementById('inputLetterSpacing').value, 10);
-      cur.lineSpacing = parseInt(document.getElementById('inputLineSpacing').value, 10);
-      cur.textColor = document.getElementById('colorText').value;
-      cur.bpmfColor = document.getElementById('colorBpmf').value;
-      cur.bgColor = document.getElementById('colorBg').value;
-      cur.bgOpacity = parseInt(document.getElementById('inputBgOpacity').value, 10) / 100;
-      cur.borderWidth = parseInt(document.getElementById('inputBorderWidth').value, 10);
-      cur.borderColor = document.getElementById('colorBorder').value;
-      cur.direction = document.querySelector('input[name="textDirection"]:checked').value;
-      cur.textAlign = document.querySelector('input[name="textAlign"]:checked').value;
-      cur.fontWeight = document.getElementById('selectFontWeight').value;
-
-      document.getElementById('valFontSize').textContent = cur.fontSize;
-      document.getElementById('valLetterSpacing').textContent = cur.letterSpacing;
-      document.getElementById('valLineSpacing').textContent = cur.lineSpacing;
-      document.getElementById('valOpacity').textContent = Math.round(cur.bgOpacity * 100);
-      document.getElementById('valBorderWidth').textContent = cur.borderWidth;
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (!overlayOnly && imgLoaded && bgImage) {
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
       }
 
-      // 依序繪製所有標註圖層
-      appLayers.forEach((layer, lIndex) => {
-        drawLayerOnCanvas(layer, lIndex === activeLayerIndex);
+      // 繪製所有標籤
+      annotations.forEach((anno, idx) => {
+        drawAnnotation(anno, idx === selectedAnnoIndex);
       });
     }
 
-    function drawLayerOnCanvas(layer, isSelected) {
-      const isBpmfOnly = layer.mode === 'bpmfOnly';
-      const fontSize = layer.fontSize;
+    function drawAnnotation(anno, isSelected) {
+      const isBpmfOnly = anno.mode === 'bpmfOnly';
+      const isHorizontalBpmf = anno.bpmfLayout === 'horizontal-top';
+      const fontSize = anno.fontSize;
       const bpmfSize = Math.max(11, Math.round(fontSize * 0.38));
       const bpmfWidth = bpmfSize + 6;
-      const charWidth = isBpmfOnly ? bpmfWidth : (fontSize + bpmfWidth);
-      const charHeight = fontSize + 8;
-      const paddingX = isBpmfOnly ? 6 : 24;
-      const paddingY = isBpmfOnly ? 4 : 18;
+      
+      // 計算單字寬高
+      let cellWidth = isBpmfOnly ? (isHorizontalBpmf ? fontSize : bpmfWidth) : (fontSize + bpmfWidth);
+      let cellHeight = isBpmfOnly ? (isHorizontalBpmf ? bpmfSize + 4 : fontSize) : (fontSize + 8);
+      const paddingX = isBpmfOnly ? 4 : 20;
+      const paddingY = isBpmfOnly ? 4 : 14;
 
-      const displayLines = layer.linesData.length > 0 ? layer.linesData : [[]];
-      const numLines = displayLines.length;
+      const lines = anno.charsData.length > 0 ? anno.charsData : [[]];
+      const numLines = lines.length;
 
       let maxLineWidth = 0;
       let maxLineHeight = 0;
 
-      displayLines.forEach(line => {
+      lines.forEach(line => {
         let lineW = 0;
         let lineH = 0;
         line.forEach((item, idx) => {
           const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:()（）]/.test(item.char);
-          const w = isPunc ? (isBpmfOnly ? 0 : fontSize * 0.6) : charWidth;
-          const h = charHeight;
-          lineW += w + (idx > 0 ? layer.letterSpacing : 0);
-          lineH += h + (idx > 0 ? layer.letterSpacing : 0);
+          const w = isPunc ? (isBpmfOnly ? 0 : fontSize * 0.6) : cellWidth;
+          const h = cellHeight;
+          lineW += w + (idx > 0 ? anno.letterSpacing : 0);
+          lineH += h + (idx > 0 ? anno.letterSpacing : 0);
         });
         if (lineW > maxLineWidth) maxLineWidth = lineW;
         if (lineH > maxLineHeight) maxLineHeight = lineH;
       });
 
-      if (maxLineWidth === 0) maxLineWidth = charWidth * 3;
-      if (maxLineHeight === 0) maxLineHeight = charHeight;
+      if (maxLineWidth === 0) maxLineWidth = cellWidth * 2;
+      if (maxLineHeight === 0) maxLineHeight = cellHeight;
 
-      let totalBoxWidth = 0;
-      let totalBoxHeight = 0;
+      let totalWidth = 0;
+      let totalHeight = 0;
 
-      if (layer.direction === 'horizontal') {
-        totalBoxWidth = maxLineWidth + paddingX * 2;
-        totalBoxHeight = numLines * charHeight + (numLines - 1) * layer.lineSpacing + paddingY * 2;
+      if (anno.direction === 'horizontal') {
+        totalWidth = maxLineWidth + paddingX * 2;
+        totalHeight = numLines * cellHeight + (numLines - 1) * anno.lineSpacing + paddingY * 2;
       } else {
-        totalBoxWidth = numLines * charWidth + (numLines - 1) * layer.lineSpacing + paddingX * 2;
-        totalBoxHeight = maxLineHeight + paddingY * 2;
+        totalWidth = numLines * cellWidth + (numLines - 1) * anno.lineSpacing + paddingX * 2;
+        totalHeight = maxLineHeight + paddingY * 2;
       }
 
-      layer.boxWidth = totalBoxWidth;
-      layer.boxHeight = totalBoxHeight;
+      anno.width = totalWidth;
+      anno.height = totalHeight;
 
-      const bx = layer.boxX;
-      const by = layer.boxY;
+      const bx = anno.x;
+      const by = anno.y;
 
-      // 繪製背景框 (完整模式)
-      if (!isBpmfOnly && (layer.bgOpacity > 0 || layer.borderWidth > 0)) {
+      // 繪製背景底框 (完整模式)
+      if (!isBpmfOnly && (anno.bgOpacity > 0 || anno.borderWidth > 0)) {
         ctx.save();
-        ctx.fillStyle = hexToRgba(layer.bgColor, layer.bgOpacity);
-        ctx.strokeStyle = layer.borderColor;
-        ctx.lineWidth = layer.borderWidth;
+        ctx.fillStyle = hexToRgba(anno.bgColor, anno.bgOpacity);
+        ctx.strokeStyle = anno.borderColor;
+        ctx.lineWidth = anno.borderWidth;
 
-        const r = 16;
+        const r = 12;
         ctx.beginPath();
-        ctx.roundRect(bx, by, totalBoxWidth, totalBoxHeight, r);
-        if (layer.bgOpacity > 0) {
-          ctx.shadowColor = 'rgba(0,0,0,0.15)';
-          ctx.shadowBlur = 12;
-          ctx.shadowOffsetY = 4;
-          ctx.fill();
-        }
-        ctx.shadowColor = 'transparent';
-        if (layer.borderWidth > 0) {
-          ctx.stroke();
-        }
-
-        if (layer.stylePreset === 'bubble') {
-          ctx.beginPath();
-          const tailX = bx + totalBoxWidth * 0.25;
-          const tailY = by + totalBoxHeight;
-          ctx.moveTo(tailX, tailY);
-          ctx.lineTo(tailX - 12, tailY + 18);
-          ctx.lineTo(tailX + 18, tailY);
-          ctx.fillStyle = hexToRgba(layer.bgColor, layer.bgOpacity);
-          ctx.fill();
-          if (layer.borderWidth > 0) {
-            ctx.strokeStyle = layer.borderColor;
-            ctx.stroke();
-          }
-        }
+        ctx.roundRect(bx, by, totalWidth, totalHeight, r);
+        if (anno.bgOpacity > 0) ctx.fill();
+        if (anno.borderWidth > 0) ctx.stroke();
         ctx.restore();
       }
 
-      // 如果是選取狀態，繪製虛線輔助框
+      // 如果是選取中標籤，畫出藍色輔助對齊框
       if (isSelected) {
         ctx.save();
         ctx.strokeStyle = '#4F46E5';
         ctx.lineWidth = 1.5;
         ctx.setLineDash([4, 4]);
-        ctx.strokeRect(bx - 2, by - 2, totalBoxWidth + 4, totalBoxHeight + 4);
+        ctx.strokeRect(bx - 3, by - 3, totalWidth + 6, totalHeight + 6);
         ctx.restore();
       }
 
       // 繪製文字與注音
-      displayLines.forEach((lineChars, lineIdx) => {
-        let currentLineWidth = 0;
-        lineChars.forEach((item, idx) => {
+      lines.forEach((lineChars, lineIdx) => {
+        let curX = bx + paddingX;
+        let curY = by + paddingY + lineIdx * (cellHeight + anno.lineSpacing);
+
+        lineChars.forEach((item, cIdx) => {
           const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:()（）]/.test(item.char);
-          const w = isPunc ? (isBpmfOnly ? 0 : fontSize * 0.6) : charWidth;
-          currentLineWidth += w + (idx > 0 ? layer.letterSpacing : 0);
+          const w = isPunc ? (isBpmfOnly ? 0 : fontSize * 0.6) : cellWidth;
+
+          drawSingleChar(item.char, item.bpmf, curX, curY, fontSize, bpmfSize, bpmfWidth, isPunc, anno);
+          curX += w + anno.letterSpacing;
         });
-
-        if (layer.direction === 'horizontal') {
-          let curX = bx + paddingX;
-          if (layer.textAlign === 'center') {
-            curX = bx + (totalBoxWidth - currentLineWidth) / 2;
-          }
-          const curY = by + paddingY + lineIdx * (charHeight + layer.lineSpacing);
-
-          lineChars.forEach((item, cIdx) => {
-            const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:()（）]/.test(item.char);
-            const w = isPunc ? (isBpmfOnly ? 0 : fontSize * 0.6) : charWidth;
-            drawCharItem(item.char, item.bpmf, curX, curY, fontSize, bpmfSize, bpmfWidth, isPunc, layer);
-            curX += w + layer.letterSpacing;
-          });
-
-        } else {
-          const colX = bx + totalBoxWidth - paddingX - (lineIdx + 1) * charWidth - lineIdx * layer.lineSpacing;
-          let curY = by + paddingY;
-          if (layer.textAlign === 'center') {
-            curY = by + (totalBoxHeight - maxLineHeight) / 2;
-          }
-
-          lineChars.forEach((item, cIdx) => {
-            const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:()（）]/.test(item.char);
-            const h = charHeight;
-            drawCharItem(item.char, item.bpmf, colX, curY, fontSize, bpmfSize, bpmfWidth, isPunc, layer);
-            curY += h + layer.letterSpacing;
-          });
-        }
       });
     }
 
-    function drawCharItem(char, bpmfStr, x, y, fontSize, bpmfSize, bpmfWidth, isPunc, layer) {
+    function drawSingleChar(char, bpmfStr, x, y, fontSize, bpmfSize, bpmfWidth, isPunc, anno) {
       ctx.save();
-      const isBpmfOnly = layer.mode === 'bpmfOnly';
-      const chosenFont = FONT_MAP[layer.fontFamilyKey] || FONT_MAP['kaiti'];
+      const isBpmfOnly = anno.mode === 'bpmfOnly';
+      const isHorizontalBpmf = anno.bpmfLayout === 'horizontal-top';
 
-      // 1. 繪製國字 (如果不是純注音模式)
+      // 1. 繪製國字 (非純注音模式)
       if (!isBpmfOnly) {
-        ctx.font = `${layer.fontWeight} ${fontSize}px ${chosenFont}`;
+        ctx.font = `bold ${fontSize}px "DFKai-SB", "BiauKai", "Noto Sans TC", sans-serif`;
         ctx.textAlign = isPunc ? 'center' : 'left';
         ctx.textBaseline = 'top';
-
+        ctx.fillStyle = anno.textColor;
         const charDrawX = isPunc ? (x + fontSize * 0.3) : x;
-
-        if (layer.stylePreset === 'outline' && layer.borderWidth > 0) {
-          ctx.lineWidth = layer.borderWidth * 2;
-          ctx.strokeStyle = layer.borderColor;
-          ctx.strokeText(char, charDrawX, y);
-        }
-
-        ctx.fillStyle = layer.textColor;
-        ctx.fillText(char, charDrawX, y);
+        ctx.fillText(char, charDrawX, isHorizontalBpmf ? (y + bpmfSize + 2) : y);
       }
 
-      // 2. 繪製右側直式注音
+      // 2. 繪製注音
       if (!isPunc && bpmfStr && bpmfStr.trim()) {
         const { symbols, tone, isLight } = decomposeBpmf(bpmfStr);
-        const bpmfX = isBpmfOnly ? x : (x + fontSize + 2);
-        const symbolCount = symbols.length;
-        
-        ctx.font = `bold ${bpmfSize}px "Noto Sans TC", "Zen Maru Gothic", "DFKai-SB", sans-serif`;
-        ctx.fillStyle = layer.bpmfColor;
+        ctx.fillStyle = anno.bpmfColor;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        let topOffset = y + 2;
-        if (isLight) {
-          ctx.fillText('˙', bpmfX + bpmfSize / 2, topOffset + 4);
-          topOffset += bpmfSize * 0.6;
-        }
+        if (isHorizontalBpmf) {
+          // 橫式注音 (在國字上方橫排)
+          ctx.font = `bold ${bpmfSize}px "Noto Sans TC", "DFKai-SB", sans-serif`;
+          const bpmfText = (isLight ? '˙' : '') + symbols.join('') + (tone ? tone : '');
+          ctx.fillText(bpmfText, x + (isBpmfOnly ? fontSize * 0.4 : fontSize * 0.5), y + bpmfSize * 0.5);
+        } else {
+          // 直式注音 (在國字右側直排)
+          ctx.font = `bold ${bpmfSize}px "Noto Sans TC", "DFKai-SB", sans-serif`;
+          const bpmfX = isBpmfOnly ? x : (x + fontSize + 2);
+          const symbolCount = symbols.length;
 
-        const availHeight = fontSize - (isLight ? bpmfSize * 0.6 : 0);
-        const step = availHeight / Math.max(1, symbolCount);
+          let topOffset = y + 2;
+          if (isLight) {
+            ctx.fillText('˙', bpmfX + bpmfSize / 2, topOffset + 3);
+            topOffset += bpmfSize * 0.6;
+          }
 
-        symbols.forEach((sym, sIdx) => {
-          const symY = topOffset + (sIdx + 0.5) * step;
-          ctx.fillText(sym, bpmfX + bpmfSize / 2, symY);
-        });
+          const availHeight = fontSize - (isLight ? bpmfSize * 0.6 : 0);
+          const step = availHeight / Math.max(1, symbolCount);
 
-        if (tone) {
-          const toneX = bpmfX + bpmfSize + 1;
-          const lastSymY = topOffset + (symbolCount - 0.5) * step;
-          const toneY = symbolCount === 1 ? (y + fontSize * 0.35) : (lastSymY - 2);
-          ctx.fillText(tone, toneX, toneY);
+          symbols.forEach((sym, sIdx) => {
+            const symY = topOffset + (sIdx + 0.5) * step;
+            ctx.fillText(sym, bpmfX + bpmfSize / 2, symY);
+          });
+
+          if (tone) {
+            const toneX = bpmfX + bpmfSize + 1;
+            const lastSymY = topOffset + (symbolCount - 0.5) * step;
+            const toneY = symbolCount === 1 ? (y + fontSize * 0.35) : (lastSymY - 2);
+            ctx.fillText(tone, toneX, toneY);
+          }
         }
       }
 
@@ -1556,32 +1144,11 @@
       let c;
       if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
         c = hex.substring(1).split('');
-        if (c.length === 3) {
-          c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-        }
+        if (c.length === 3) c = [c[0], c[0], c[1], c[1], c[2], c[2]];
         c = '0x' + c.join('');
         return `rgba(${[(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',')},${alpha})`;
       }
       return hex;
-    }
-
-    function alignBox(pos) {
-      const cur = getCurrentLayer();
-      if (pos === 'top') {
-        cur.boxX = Math.round((canvas.width - cur.boxWidth) / 2);
-        cur.boxY = 40;
-      } else if (pos === 'center') {
-        cur.boxX = Math.round((canvas.width - cur.boxWidth) / 2);
-        cur.boxY = Math.round((canvas.height - cur.boxHeight) / 2);
-      } else if (pos === 'bottom') {
-        cur.boxX = Math.round((canvas.width - cur.boxWidth) / 2);
-        cur.boxY = Math.max(10, canvas.height - cur.boxHeight - 40);
-      }
-      updateCanvas();
-    }
-
-    function resetPos() {
-      alignBox('bottom');
     }
 
     function initEvents() {
@@ -1591,19 +1158,13 @@
 
       dropzone.onclick = () => fileInput.click();
       fileInput.onchange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-          readFile(e.target.files[0]);
-        }
+        if (e.target.files && e.target.files[0]) readFile(e.target.files[0]);
       };
 
-      dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('dragover'); };
-      dropzone.ondragleave = () => dropzone.classList.remove('dragover');
+      dropzone.ondragover = (e) => { e.preventDefault(); };
       dropzone.ondrop = (e) => {
         e.preventDefault();
-        dropzone.classList.remove('dragover');
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-          readFile(e.dataTransfer.files[0]);
-        }
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]);
       };
 
       window.addEventListener('paste', (e) => {
@@ -1612,8 +1173,7 @@
         if (items) {
           for (let i = 0; i < items.length; i++) {
             if (items[i].type.indexOf('image') !== -1) {
-              const file = items[i].getAsFile();
-              readFile(file);
+              readFile(items[i].getAsFile());
               break;
             }
           }
@@ -1623,8 +1183,8 @@
       inputText.addEventListener('input', onTextInputChange);
       inputText.addEventListener('keyup', onTextInputChange);
       inputText.addEventListener('change', onTextInputChange);
-      inputText.addEventListener('paste', () => setTimeout(onTextInputChange, 50));
 
+      // Canvas Dragging & Selecting
       canvas.addEventListener('mousedown', (e) => {
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
@@ -1632,22 +1192,21 @@
         const mouseX = (e.clientX - rect.left) * scaleX;
         const mouseY = (e.clientY - rect.top) * scaleY;
 
-        // 從最上層圖層開始檢查點擊
-        for (let i = appLayers.length - 1; i >= 0; i--) {
-          const l = appLayers[i];
+        for (let i = annotations.length - 1; i >= 0; i--) {
+          const a = annotations[i];
           if (
-            mouseX >= l.boxX - 10 &&
-            mouseX <= l.boxX + l.boxWidth + 10 &&
-            mouseY >= l.boxY - 10 &&
-            mouseY <= l.boxY + l.boxHeight + 10
+            mouseX >= a.x - 8 &&
+            mouseX <= a.x + a.width + 8 &&
+            mouseY >= a.y - 8 &&
+            mouseY <= a.y + a.height + 8
           ) {
-            activeLayerIndex = i;
-            draggingLayerIndex = i;
-            dragOffsetX = mouseX - l.boxX;
-            dragOffsetY = mouseY - l.boxY;
+            selectedAnnoIndex = i;
+            isDragging = true;
+            dragOffsetX = mouseX - a.x;
+            dragOffsetY = mouseY - a.y;
             canvas.style.cursor = 'grabbing';
-            renderLayerTabs();
-            loadActiveLayerToForm();
+            renderAnnoList();
+            syncFormFromSelected();
             updateCanvas();
             return;
           }
@@ -1655,23 +1214,25 @@
       });
 
       window.addEventListener('mousemove', (e) => {
-        if (draggingLayerIndex === null) return;
+        if (!isDragging) return;
+        const active = getActiveAnno();
+        if (!active) return;
+
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
         const mouseX = (e.clientX - rect.left) * scaleX;
         const mouseY = (e.clientY - rect.top) * scaleY;
 
-        const l = appLayers[draggingLayerIndex];
-        l.boxX = Math.round(mouseX - dragOffsetX);
-        l.boxY = Math.round(mouseY - dragOffsetY);
+        active.x = Math.round(mouseX - dragOffsetX);
+        active.y = Math.round(mouseY - dragOffsetY);
         updateCanvas();
       });
 
       window.addEventListener('mouseup', () => {
-        if (draggingLayerIndex !== null) {
-          draggingLayerIndex = null;
-          canvas.style.cursor = 'crosshair';
+        if (isDragging) {
+          isDragging = false;
+          canvas.style.cursor = 'default';
         }
       });
 
@@ -1697,10 +1258,38 @@
       reader.readAsDataURL(file);
     }
 
+    function loadDefaultSample() {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        bgImage = img;
+        imgLoaded = true;
+        canvas.width = img.naturalWidth || 1024;
+        canvas.height = img.naturalHeight || 768;
+        document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
+        updateCanvas();
+      };
+      img.src = "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=1200&q=80";
+    }
+
+    function loadSampleImg(url) {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        bgImage = img;
+        imgLoaded = true;
+        canvas.width = img.naturalWidth || 1024;
+        canvas.height = img.naturalHeight || 768;
+        document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
+        updateCanvas();
+      };
+      img.src = url;
+    }
+
     function downloadImage() {
       updateCanvas(false);
       const link = document.createElement('a');
-      link.download = `Puti-AI_教材圖片注音_${Date.now()}.png`;
+      link.download = `Puti-AI_注音教材_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     }

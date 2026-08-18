@@ -131,7 +131,7 @@
       grid-template-columns: 460px 1fr;
       gap: 1.25rem;
       padding: 1.25rem;
-      max-width: 1960px;
+      max-width: 1980px;
       margin: 0 auto;
       width: 100%;
     }
@@ -287,7 +287,7 @@
       box-shadow: var(--shadow-sm);
     }
 
-    /* Bopomofo Polyphone Character Grid */
+    /* Bopomofo Polyphone & Individual Character Tiles */
     .char-pinyin-grid {
       display: flex;
       flex-wrap: wrap;
@@ -305,11 +305,11 @@
       background: white;
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 3px 6px;
+      padding: 4px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 44px;
+      min-width: 46px;
       cursor: pointer;
       position: relative;
       user-select: none;
@@ -334,6 +334,12 @@
       border-color: var(--primary);
       background: #EEF2FF;
       transform: translateY(-1px);
+    }
+
+    .char-unit.selected-char {
+      border-color: var(--accent);
+      background: #FEF3C7;
+      box-shadow: 0 0 0 1.5px var(--accent);
     }
 
     /* Canvas Work Area */
@@ -433,17 +439,20 @@
     <div class="brand-title">
       <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
       <div>
-        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">多音字點選切換 / 完整注音全字庫</span></h1>
+        <h1>Puti-AI | 國小教材圖片注音排版產生器 <span class="badge">單字獨立移動 / 原圖精準貼合</span></h1>
       </div>
     </div>
     <div class="header-actions">
-      <button class="btn btn-outline" id="btnCopyImg" title="複製圖片到剪貼簿，可直接貼到 Word/PPT/Canva">
-        <i class="fa-regular fa-copy"></i> 複製圖片
+      <button class="btn btn-outline" id="btnToggleOutline" onclick="toggleShowOutline()" title="切換顯示/隱藏編輯虛線框">
+        <i class="fa-regular fa-eye-slash" id="iconToggleOutline"></i> 隱藏選取虛線框
+      </button>
+      <button class="btn btn-outline" id="btnCopyImg" title="複製圖片到剪貼簿（保證無任何虛線或多餘框線）">
+        <i class="fa-regular fa-copy"></i> 複製乾淨圖片
       </button>
       <button class="btn btn-primary" id="btnDownloadImg">
         <i class="fa-solid fa-download"></i> 匯出高畫質圖
       </button>
-      <button class="btn btn-success" id="btnDownloadOverlayOnly" title="只匯出透明注音文字框PNG">
+      <button class="btn btn-success" id="btnDownloadOverlayOnly" title="只匯出透明注音圖層PNG">
         <i class="fa-solid fa-layer-group"></i> 僅匯出透明注音PNG
       </button>
     </div>
@@ -475,7 +484,7 @@
 
         <!-- 3 Modes: Pure Text (No BG) vs Card/Bubble vs Bpmf Only -->
         <div class="mode-switch-box">
-          <button class="mode-btn active" id="modeBtnPureText" onclick="setAppMode('pureText')" title="國字+注音，無底色、無邊框（透明文字底）">
+          <button class="mode-btn" id="modeBtnPureText" onclick="setAppMode('pureText')" title="國字+注音，無底色、無邊框（透明文字底）">
             <i class="fa-solid fa-font"></i>
             <span>純文字無框無底</span>
           </button>
@@ -483,31 +492,30 @@
             <i class="fa-solid fa-comment-dots"></i>
             <span>卡片/對話泡泡</span>
           </button>
-          <button class="mode-btn" id="modeBtnOverlay" onclick="setAppMode('bpmfOnly')" title="專門在原圖國字旁邊壓上直式注音！">
+          <button class="mode-btn active" id="modeBtnOverlay" onclick="setAppMode('bpmfOnly')" title="專門在原圖國字旁邊壓上直式注音！">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
             <span>僅在原圖補注音</span>
           </button>
         </div>
 
         <div class="form-group">
-          <label class="form-label">輸入文字（按 Enter 換行，可一次貼多句）：</label>
-          <textarea id="inputText" class="form-control" rows="3" placeholder="例如輸入：&#10;香甜可口的水果&#10;多吃水果好健康">香甜可口的水果
-多吃水果好健康</textarea>
+          <label class="form-label">輸入要標註的文字（支援多行，可直接貼整篇）：</label>
+          <textarea id="inputText" class="form-control" rows="2" placeholder="例如輸入：好吃的鳳梨">好吃的鳳梨</textarea>
         </div>
 
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
           <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="addCurrentInputToCanvas()">
-            <i class="fa-solid fa-plus"></i> 【＋加入注音到圖片】
+            <i class="fa-solid fa-plus"></i> 【＋整句加入注音】
           </button>
-          <button class="btn btn-outline" style="font-size: 0.78rem;" onclick="addBatchLinesToCanvas()" title="將多行文字一次拆解成多個獨立標籤">
-            <i class="fa-solid fa-layer-group"></i> 批量拆解加入
+          <button class="btn btn-outline" style="font-size: 0.8rem; background: #FEF3C7; border-color: #F59E0B; color: #B45309;" onclick="addIndividualCharsToCanvas()" title="直接將句子拆為一顆顆單字注音，每個字能自由拖曳！">
+            <i class="fa-solid fa-stamp"></i> 拆為單字獨立移動
           </button>
         </div>
 
         <!-- Annotations List -->
         <div style="margin-top: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="form-label" style="margin-bottom: 0;">圖片上的標籤清單（點選切換）：</span>
+            <span class="form-label" style="margin-bottom: 0;">圖片上的注音標籤清單（點選切換）：</span>
             <button class="btn btn-outline" style="padding: 1px 6px; font-size: 0.7rem; color: #EF4444;" onclick="clearAllAnnotations()">
               <i class="fa-solid fa-trash"></i> 全部清空
             </button>
@@ -519,24 +527,45 @@
 
       </div>
 
-      <!-- Step 3: Selected Annotation Fine-tuning & Polyphone Editor -->
+      <!-- Step 3: Selected Annotation Fine-tuning & Polyphone / Per-Char Alignment -->
       <div class="card" id="selectedCard">
         <div class="card-title">
-          <span><i class="fa-solid fa-sliders"></i> 3. 目前選取的文字與破音字校正</span>
-          <button class="btn btn-outline" style="padding: 2px 8px; font-size: 0.75rem; color: #EF4444;" onclick="deleteActiveAnnotation()">
-            <i class="fa-solid fa-trash-can"></i> 刪除此標籤
-          </button>
+          <span><i class="fa-solid fa-sliders"></i> 3. 目前選取的文字與單字對齊</span>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-outline" style="padding: 2px 6px; font-size: 0.72rem;" onclick="splitSelectedAnnoToSingleChars()" title="將此整句拆成一顆顆獨立單字注音，個別拉到字旁！">
+              <i class="fa-solid fa-scissors"></i> 拆成單字
+            </button>
+            <button class="btn btn-outline" style="padding: 2px 6px; font-size: 0.72rem; color: #EF4444;" onclick="deleteActiveAnnotation()">
+              <i class="fa-solid fa-trash-can"></i> 刪除
+            </button>
+          </div>
         </div>
 
-        <!-- Polyphone Character Tiles Editor (核心點選改破音字功能) -->
+        <!-- Polyphone Character Tiles Editor (單字點選切換破音字 + 單字微調) -->
         <div class="form-group">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <label class="form-label" style="margin-bottom: 0; color: var(--primary); font-weight: 700;">
-              <i class="fa-solid fa-hand-pointer"></i> 點擊單字方塊可切換「多音字/破音字」：
+              <i class="fa-solid fa-hand-pointer"></i> 單字列表（點擊改破音字，或用微調鈕移動單字）：
             </label>
           </div>
           <div class="char-pinyin-grid" id="charPinyinGrid">
             <!-- Dynamic character tiles with bopomofo -->
+          </div>
+        </div>
+
+        <!-- Single Character Fine-Tune Offset Controls (針對目前選取單字做上下左右微調) -->
+        <div id="singleCharOffsetBox" style="display: none; background: #FEF3C7; padding: 8px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #FDE68A;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #92400E;">
+              🎯 正在微調單字：「<span id="labelSelectedChar">好</span>」的注音位置
+            </span>
+            <button class="btn btn-outline" style="padding: 1px 6px; font-size: 0.7rem;" onclick="resetCharOffset()">重設位置</button>
+          </div>
+          <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+            <button class="btn btn-outline" style="padding: 3px 10px;" onclick="nudgeSelectedChar(-2, 0)"><i class="fa-solid fa-arrow-left"></i> 左移</button>
+            <button class="btn btn-outline" style="padding: 3px 10px;" onclick="nudgeSelectedChar(2, 0)">右移 <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="btn btn-outline" style="padding: 3px 10px;" onclick="nudgeSelectedChar(0, -2)"><i class="fa-solid fa-arrow-up"></i> 上移</button>
+            <button class="btn btn-outline" style="padding: 3px 10px;" onclick="nudgeSelectedChar(0, 2)">下移 <i class="fa-solid fa-arrow-down"></i></button>
           </div>
         </div>
 
@@ -568,8 +597,8 @@
             <input type="range" id="inputFontSize" min="12" max="120" value="42" class="form-range" style="width: 100%;" oninput="onSelectedParamChange()">
           </div>
           <div class="form-group">
-            <label class="form-label">字距拉伸 (<span id="valLetterSpacing">12</span>px)</label>
-            <input type="range" id="inputLetterSpacing" min="0" max="120" value="12" class="form-range" style="width: 100%;" oninput="onSelectedParamChange()">
+            <label class="form-label">字距拉伸 (<span id="valLetterSpacing">24</span>px)</label>
+            <input type="range" id="inputLetterSpacing" min="0" max="150" value="24" class="form-range" style="width: 100%;" oninput="onSelectedParamChange()">
           </div>
         </div>
 
@@ -631,7 +660,7 @@
       </div>
 
       <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748B;">
-        <span>💡 提示：點擊左側「單字方塊」即可快速切換破音字！在圖上按住滑鼠可隨意拖動文字或注音。</span>
+        <span>💡 提示：按頂部「隱藏選取虛線框」可預覽乾淨成果；點擊「拆為單字」可讓每個字的注音獨立隨意拖曳！</span>
         <span id="canvasDimInfo">解析度：1024 x 768 px</span>
       </div>
     </section>
@@ -678,36 +707,39 @@
       'heiti': '"Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif'
     };
 
-    let globalMode = 'pureText'; // 'pureText' | 'complete' | 'bpmfOnly'
+    let globalMode = 'bpmfOnly'; // 'bpmfOnly' | 'pureText' | 'complete'
+    let showEditorOutline = true; // 預覽編輯框控制
 
     let annotations = [
       {
         id: 1,
-        text: '香甜可口的水果\n多吃水果好健康',
-        mode: 'pureText',
+        text: '好吃的鳳梨',
+        mode: 'bpmfOnly',
         bpmfLayout: 'vertical-right',
         fontFamilyKey: 'kaiti',
         cardStyle: 'bubble',
-        fontSize: 44,
-        letterSpacing: 12,
+        fontSize: 48,
+        letterSpacing: 38,
         lineSpacing: 18,
         textColor: '#1E293B',
         bpmfColor: '#DC2626',
         bgColor: '#FFFFFF',
         bgOpacity: 0.0,
         borderWidth: 0,
-        x: 280,
-        y: 520,
-        width: 460,
-        height: 140,
-        charsData: []
+        x: 120,
+        y: 60,
+        width: 480,
+        height: 80,
+        charsData: [] // [ [ { char: '好', bpmf: 'ㄏㄠˇ', ox: 0, oy: 0 }, ... ] ]
       }
     ];
 
     let activeAnnoId = 1;
+    let selectedCharCoord = null; // { lineIdx, charIdx }
     let bgImage = null;
     let imgLoaded = false;
     let isDragging = false;
+    let dragTarget = 'anno'; // 'anno' | 'char'
     let dragOffsetX = 0;
     let dragOffsetY = 0;
     let editingCharTarget = null; // { lineIdx, charIdx }
@@ -730,7 +762,7 @@
       annotations.forEach(a => parseAnnotationChars(a));
       renderChipList();
       syncFormFromActive();
-      loadDefaultSample();
+      loadDefaultPineappleSample();
       initEvents();
     });
 
@@ -745,10 +777,22 @@
         for (let i = 0; i < line.length; i++) {
           const ch = line[i];
           const bList = getCharBpmfList(ch);
-          list.push({ char: ch, bpmf: bList[0] || '' });
+          list.push({ char: ch, bpmf: bList[0] || '', ox: 0, oy: 0 });
         }
         return list;
       });
+    }
+
+    function toggleShowOutline() {
+      showEditorOutline = !showEditorOutline;
+      const btn = document.getElementById('btnToggleOutline');
+      const icon = document.getElementById('iconToggleOutline');
+      if (showEditorOutline) {
+        btn.innerHTML = '<i class="fa-regular fa-eye-slash" id="iconToggleOutline"></i> 隱藏選取虛線框';
+      } else {
+        btn.innerHTML = '<i class="fa-regular fa-eye" id="iconToggleOutline"></i> 顯示選取虛線框';
+      }
+      updateCanvas();
     }
 
     function addCurrentInputToCanvas() {
@@ -768,15 +812,15 @@
         fontFamilyKey: active ? active.fontFamilyKey : 'kaiti',
         cardStyle: active ? active.cardStyle : 'bubble',
         fontSize: active ? active.fontSize : 42,
-        letterSpacing: active ? active.letterSpacing : 12,
+        letterSpacing: active ? active.letterSpacing : 28,
         lineSpacing: 18,
         textColor: active ? active.textColor : '#1E293B',
         bpmfColor: active ? active.bpmfColor : '#DC2626',
         bgColor: '#FFFFFF',
         bgOpacity: globalMode === 'complete' ? 0.95 : 0.0,
         borderWidth: globalMode === 'complete' ? 2 : 0,
-        x: active ? Math.min(canvas.width - 200, active.x + 20) : 250,
-        y: active ? Math.min(canvas.height - 80, active.y + 60) : 200,
+        x: active ? Math.min(canvas.width - 200, active.x + 20) : 200,
+        y: active ? Math.min(canvas.height - 80, active.y + 60) : 120,
         width: 300,
         height: 80,
         charsData: []
@@ -785,55 +829,125 @@
       parseAnnotationChars(newAnno);
       annotations.push(newAnno);
       activeAnnoId = newId;
+      selectedCharCoord = null;
 
       renderChipList();
       syncFormFromActive();
       updateCanvas();
     }
 
-    function addBatchLinesToCanvas() {
+    // 將輸入文字拆解為單字獨立注音物件
+    function addIndividualCharsToCanvas() {
       const inputVal = document.getElementById('inputText').value.trim();
       if (!inputVal) return;
 
-      const lines = inputVal.split(/\r?\n/).filter(l => l.trim().length > 0);
-      if (lines.length === 0) return;
+      const flatChars = [];
+      for (let i = 0; i < inputVal.length; i++) {
+        const ch = inputVal[i];
+        if (!/[\r\n\s]/.test(ch)) {
+          flatChars.push(ch);
+        }
+      }
 
-      let startY = 60;
-      lines.forEach((lineText, idx) => {
+      if (flatChars.length === 0) return;
+
+      let startX = 140;
+      let startY = 80;
+      const active = getActiveAnno();
+
+      flatChars.forEach((ch, idx) => {
         const newId = Date.now() + idx;
+        const bList = getCharBpmfList(ch);
         const newAnno = {
           id: newId,
-          text: lineText.trim(),
+          text: ch,
           mode: globalMode,
           bpmfLayout: 'vertical-right',
-          fontFamilyKey: 'kaiti',
+          fontFamilyKey: active ? active.fontFamilyKey : 'kaiti',
           cardStyle: 'bubble',
-          fontSize: 36,
-          letterSpacing: 14,
+          fontSize: active ? active.fontSize : 46,
+          letterSpacing: 0,
           lineSpacing: 18,
-          textColor: '#1E293B',
-          bpmfColor: idx === 0 ? '#C0392B' : '#2C2C2C',
+          textColor: active ? active.textColor : '#1E293B',
+          bpmfColor: active ? active.bpmfColor : '#DC2626',
           bgColor: '#FFFFFF',
           bgOpacity: globalMode === 'complete' ? 0.95 : 0.0,
-          borderWidth: globalMode === 'complete' ? 2 : 0,
-          x: 280,
+          borderWidth: 0,
+          x: startX + idx * 80,
           y: startY,
-          width: 280,
+          width: 50,
           height: 60,
-          charsData: []
+          charsData: [[{ char: ch, bpmf: bList[0] || '', ox: 0, oy: 0 }]]
         };
-        parseAnnotationChars(newAnno);
         annotations.push(newAnno);
-        startY += 65;
       });
 
       if (annotations.length > 0) {
-        activeAnnoId = annotations[annotations.length - 1].id;
+        activeAnnoId = annotations[annotations.length - flatChars.length].id;
       }
 
       renderChipList();
       syncFormFromActive();
       updateCanvas();
+      alert(`🎉 已將「${inputVal}」成功拆為 ${flatChars.length} 個獨立單字注音！\n您可以用滑鼠點擊任意一顆注音，隨意拖曳到圖片文字旁邊！`);
+    }
+
+    // 將目前選取的整句拆成單字
+    function splitSelectedAnnoToSingleChars() {
+      const active = getActiveAnno();
+      if (!active || !active.charsData) return;
+
+      const flatChars = [];
+      active.charsData.forEach(line => {
+        line.forEach(item => flatChars.push(item));
+      });
+
+      if (flatChars.length <= 1) {
+        alert('此標籤已經是單字了。');
+        return;
+      }
+
+      const baseX = active.x;
+      const baseY = active.y;
+      const cellWidth = active.fontSize + (active.mode === 'bpmfOnly' ? 0 : 20);
+      const stepX = cellWidth + active.letterSpacing;
+
+      // 移除原有的整句
+      annotations = annotations.filter(a => a.id !== active.id);
+
+      flatChars.forEach((item, idx) => {
+        const newId = Date.now() + idx;
+        const newAnno = {
+          id: newId,
+          text: item.char,
+          mode: active.mode,
+          bpmfLayout: active.bpmfLayout,
+          fontFamilyKey: active.fontFamilyKey,
+          cardStyle: active.cardStyle,
+          fontSize: active.fontSize,
+          letterSpacing: 0,
+          lineSpacing: 18,
+          textColor: active.textColor,
+          bpmfColor: active.bpmfColor,
+          bgColor: active.bgColor,
+          bgOpacity: active.bgOpacity,
+          borderWidth: active.borderWidth,
+          x: baseX + idx * stepX + (item.ox || 0),
+          y: baseY + (item.oy || 0),
+          width: 50,
+          height: 60,
+          charsData: [[{ char: item.char, bpmf: item.bpmf, ox: 0, oy: 0 }]]
+        };
+        annotations.push(newAnno);
+      });
+
+      activeAnnoId = annotations[annotations.length - flatChars.length].id;
+      selectedCharCoord = null;
+
+      renderChipList();
+      syncFormFromActive();
+      updateCanvas();
+      alert(`✂️ 已將句子拆解為 ${flatChars.length} 個獨立單字注音！每個字都能自由拉動！`);
     }
 
     function renderChipList() {
@@ -850,6 +964,7 @@
         chip.className = `anno-chip ${anno.id === activeAnnoId ? 'active' : ''}`;
         chip.onclick = () => {
           activeAnnoId = anno.id;
+          selectedCharCoord = null;
           renderChipList();
           syncFormFromActive();
           updateCanvas();
@@ -873,7 +988,7 @@
       });
     }
 
-    // 渲染破音字單字方塊清單
+    // 渲染破音字與單字列表
     function renderCharPinyinTiles() {
       const active = getActiveAnno();
       const grid = document.getElementById('charPinyinGrid');
@@ -888,9 +1003,14 @@
         lineList.forEach((item, cIdx) => {
           if (/[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:()（）]/.test(item.char)) return;
 
+          const isCharSelected = selectedCharCoord && selectedCharCoord.lineIdx === lIdx && selectedCharCoord.charIdx === cIdx;
           const tile = document.createElement('div');
-          tile.className = 'char-unit';
-          tile.onclick = () => openPolyphoneModal(lIdx, cIdx);
+          tile.className = `char-unit ${isCharSelected ? 'selected-char' : ''}`;
+          tile.title = '點擊修改讀音或選取微調位置';
+          tile.onclick = () => {
+            selectCharForNudge(lIdx, cIdx);
+            openPolyphoneModal(lIdx, cIdx);
+          };
           tile.innerHTML = `
             <div class="char-bpmf">${item.bpmf || '&nbsp;'}</div>
             <div class="char-text">${item.char}</div>
@@ -898,6 +1018,36 @@
           grid.appendChild(tile);
         });
       });
+    }
+
+    function selectCharForNudge(lIdx, cIdx) {
+      selectedCharCoord = { lineIdx: lIdx, charIdx: cIdx };
+      const active = getActiveAnno();
+      if (active && active.charsData[lIdx] && active.charsData[lIdx][cIdx]) {
+        const item = active.charsData[lIdx][cIdx];
+        document.getElementById('labelSelectedChar').textContent = `${item.char} (${item.bpmf})`;
+        document.getElementById('singleCharOffsetBox').style.display = 'block';
+      }
+      renderCharPinyinTiles();
+      updateCanvas();
+    }
+
+    function nudgeSelectedChar(dx, dy) {
+      const active = getActiveAnno();
+      if (!active || !selectedCharCoord) return;
+      const item = active.charsData[selectedCharCoord.lineIdx][selectedCharCoord.charIdx];
+      item.ox = (item.ox || 0) + dx;
+      item.oy = (item.oy || 0) + dy;
+      updateCanvas();
+    }
+
+    function resetCharOffset() {
+      const active = getActiveAnno();
+      if (!active || !selectedCharCoord) return;
+      const item = active.charsData[selectedCharCoord.lineIdx][selectedCharCoord.charIdx];
+      item.ox = 0;
+      item.oy = 0;
+      updateCanvas();
     }
 
     // 彈出多音字切換彈窗
@@ -1044,6 +1194,7 @@
       } else {
         activeAnnoId = null;
       }
+      selectedCharCoord = null;
       renderChipList();
       syncFormFromActive();
       updateCanvas();
@@ -1055,6 +1206,7 @@
       if (activeAnnoId === id) {
         activeAnnoId = annotations.length > 0 ? annotations[annotations.length - 1].id : null;
       }
+      selectedCharCoord = null;
       renderChipList();
       syncFormFromActive();
       updateCanvas();
@@ -1064,6 +1216,7 @@
       if (confirm('確定要清空圖片上所有的文字與注音標籤嗎？')) {
         annotations = [];
         activeAnnoId = null;
+        selectedCharCoord = null;
         renderChipList();
         syncFormFromActive();
         updateCanvas();
@@ -1091,19 +1244,21 @@
       return { symbols, tone, isLight };
     }
 
-    function updateCanvas(overlayOnly = false) {
+    function updateCanvas(isExporting = false) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (!overlayOnly && imgLoaded && bgImage) {
+      if (!isExporting && imgLoaded && bgImage) {
+        ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+      } else if (isExporting && isExporting !== 'overlayOnly' && imgLoaded && bgImage) {
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
       }
 
       annotations.forEach(anno => {
-        drawSingleAnnotation(anno, anno.id === activeAnnoId);
+        drawSingleAnnotation(anno, anno.id === activeAnnoId, isExporting);
       });
     }
 
-    function drawSingleAnnotation(anno, isSelected) {
+    function drawSingleAnnotation(anno, isSelected, isExporting) {
       const isBpmfOnly = anno.mode === 'bpmfOnly';
       const isCardMode = anno.mode === 'complete';
       const isHorizontalBpmf = anno.bpmfLayout === 'horizontal-top';
@@ -1148,7 +1303,7 @@
       const bx = anno.x;
       const by = anno.y;
 
-      // 繪製卡片底框
+      // 繪製卡片底框 (僅在 complete 模式且有不透明度)
       if (isCardMode && (anno.bgOpacity > 0 || anno.borderWidth > 0)) {
         ctx.save();
         if (anno.cardStyle === 'chalkboard') {
@@ -1190,15 +1345,17 @@
         ctx.restore();
       }
 
-      if (isSelected) {
+      // 只有在非導出模式且開啟顯示虛線框時，才畫出輔助藍色虛線框
+      if (isSelected && !isExporting && showEditorOutline) {
         ctx.save();
         ctx.strokeStyle = '#4F46E5';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1.2;
         ctx.setLineDash([4, 4]);
         ctx.strokeRect(bx - 3, by - 3, totalWidth + 6, totalHeight + 6);
         ctx.restore();
       }
 
+      // 繪製文字與注音
       lines.forEach((lineChars, lineIdx) => {
         let curX = bx + paddingX;
         let curY = by + paddingY + lineIdx * (cellHeight + anno.lineSpacing);
@@ -1207,7 +1364,11 @@
           const isPunc = /[，。！？、：；～0-9a-zA-Z\s\-_.,!?;:()（）]/.test(item.char);
           const w = isPunc ? (isBpmfOnly ? 0 : fontSize * 0.6) : cellWidth;
 
-          drawCharGlyph(item.char, item.bpmf, curX, curY, fontSize, bpmfSize, bpmfWidth, isPunc, anno);
+          // 加入單字自訂偏移量 (ox, oy)
+          const charDrawX = curX + (item.ox || 0);
+          const charDrawY = curY + (item.oy || 0);
+
+          drawCharGlyph(item.char, item.bpmf, charDrawX, charDrawY, fontSize, bpmfSize, bpmfWidth, isPunc, anno);
           curX += w + anno.letterSpacing;
         });
       });
@@ -1360,6 +1521,30 @@
         }
       });
 
+      // 鍵盤方向鍵微調選取單字或標籤
+      window.addEventListener('keydown', (e) => {
+        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+        const active = getActiveAnno();
+        if (!active) return;
+
+        let dx = 0, dy = 0;
+        if (e.key === 'ArrowLeft') dx = -2;
+        if (e.key === 'ArrowRight') dx = 2;
+        if (e.key === 'ArrowUp') dy = -2;
+        if (e.key === 'ArrowDown') dy = 2;
+
+        if (dx !== 0 || dy !== 0) {
+          e.preventDefault();
+          if (selectedCharCoord) {
+            nudgeSelectedChar(dx, dy);
+          } else {
+            active.x += dx;
+            active.y += dy;
+            updateCanvas();
+          }
+        }
+      });
+
       document.getElementById('btnDownloadImg').onclick = downloadImage;
       document.getElementById('btnCopyImg').onclick = copyImageToClipboard;
       document.getElementById('btnDownloadOverlayOnly').onclick = downloadOverlayOnly;
@@ -1382,30 +1567,31 @@
       reader.readAsDataURL(file);
     }
 
-    function loadDefaultSample() {
+    function loadDefaultPineappleSample() {
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = () => {
         bgImage = img;
         imgLoaded = true;
-        canvas.width = img.naturalWidth || 1024;
-        canvas.height = img.naturalHeight || 768;
+        canvas.width = img.naturalWidth || 683;
+        canvas.height = img.naturalHeight || 1024;
         document.getElementById('canvasDimInfo').textContent = `解析度：${canvas.width} x ${canvas.height} px`;
         updateCanvas();
       };
-      img.src = "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=1200&q=80";
+      img.src = "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=800&q=80";
     }
 
     function downloadImage() {
-      updateCanvas(false);
+      updateCanvas(true);
       const link = document.createElement('a');
       link.download = `Puti-AI_注音教材_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
+      setTimeout(() => updateCanvas(false), 300);
     }
 
     function downloadOverlayOnly() {
-      updateCanvas(true);
+      updateCanvas('overlayOnly');
       const link = document.createElement('a');
       link.download = `Puti-AI_透明注音圖層_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -1414,15 +1600,17 @@
     }
 
     async function copyImageToClipboard() {
-      updateCanvas(false);
+      updateCanvas(true);
       try {
         canvas.toBlob(async (blob) => {
           const item = new ClipboardItem({ 'image/png': blob });
           await navigator.clipboard.write([item]);
-          alert('🎉 圖片已成功複製至剪貼簿！可直接貼到 Word、PPT 或教材中！');
+          alert('🎉 圖片已成功複製至剪貼簿（保證100%無任何虛線或邊框）！可直接貼到 Word、PPT 或教材中！');
+          updateCanvas(false);
         });
       } catch (err) {
         alert('複製失敗，請直接點選「匯出高畫質圖」下載。');
+        updateCanvas(false);
       }
     }
   </script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puti-AI | 官方 PDF 題庫 AI 轉換精靈 (勞動部檢定題庫專用)</title>
+    <title>Puti-AI | 官方 PDF 題庫 AI 轉換精靈 (附官方題庫下載專區)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,6 +56,33 @@
         .btn-back-player:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35); }
 
         main { width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 20px; }
+
+        /* 官方題庫下載專區卡片 */
+        .portal-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+            border-radius: 20px; padding: 22px 24px; box-shadow: var(--shadow);
+            border: 2px solid #bbf7d0; display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .portal-header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+        }
+
+        .portal-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;
+        }
+
+        .portal-btn {
+            background: white; border: 1.5px solid #86efac; border-radius: 14px; padding: 14px;
+            text-decoration: none; color: var(--text-dark); display: flex; flex-direction: column; gap: 4px;
+            transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .portal-btn:hover {
+            transform: translateY(-2px); border-color: #10b981; background: #ecfdf5;
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
+        }
+        .portal-btn-title { font-weight: 700; font-size: 14px; color: #047857; display: flex; align-items: center; gap: 6px; }
+        .portal-btn-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
 
         /* 3 步驟導覽卡片 */
         .step-grid {
@@ -160,6 +187,32 @@
     </header>
 
     <main>
+        <!-- 官方題庫下載專區 -->
+        <div class="portal-card">
+            <div class="portal-header">
+                <div>
+                    <h3 style="font-size:16px; font-weight:700; color:#065f46; display:flex; align-items:center; gap:6px;">
+                        🏛️ 官方 PDF 題庫下載專區（一手官方真題來源）
+                    </h3>
+                    <p style="font-size:12px; color:#047857;">點擊下方官方入口即可下載各職類原廠學科試卷 PDF：</p>
+                </div>
+            </div>
+            <div class="portal-grid">
+                <a href="https://tech.labor.gov.tw/" target="_blank" class="portal-btn">
+                    <span class="portal-btn-title">⚡ 勞動部技檢中心 - 測試參考資料</span>
+                    <span class="portal-btn-desc">全國技術士技能檢定（甲/乙/丙級）全職類最新官方學科題庫 PDF 下載專區。</span>
+                </a>
+                <a href="https://www.wdasec.gov.tw/News.aspx?n=110" target="_blank" class="portal-btn">
+                    <span class="portal-btn-title">📄 技能檢定中心 - 歷年試題查詢</span>
+                    <span class="portal-btn-desc">歷年全國技能檢定、即測即評學科測試試題及官方標準解答。</span>
+                </a>
+                <a href="https://www.tcte.edu.tw/" target="_blank" class="portal-btn">
+                    <span class="portal-btn-title">🎓 技專校院入學測驗中心 (TCTE)</span>
+                    <span class="portal-btn-desc">高職升學四技二專統一入學測驗（統測）各群類歷屆真題與答案。</span>
+                </a>
+            </div>
+        </div>
+
         <!-- 3 步驟導覽 -->
         <div class="step-grid">
             <div class="step-card">
@@ -178,7 +231,7 @@
                     <div class="step-title">餵給 AI 解析</div>
                 </div>
                 <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
-                    開啟常用 AI 工具，上傳您的官方題庫 PDF 並貼上提示詞：
+                    開啟常用 AI 工具，上傳您在上方下載的題庫 PDF 並貼上提示詞：
                 </p>
                 <div class="ai-links">
                     <a href="https://chatgpt.com" target="_blank" class="ai-link-btn">🤖 ChatGPT</a>
@@ -307,7 +360,6 @@
 
             // 嘗試 JSON 解析
             try {
-                // 自動清理 markdown 標籤如 ```json
                 let cleanJson = trimmed.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
                 const obj = JSON.parse(cleanJson);
                 if (obj.years && Array.isArray(obj.years)) {

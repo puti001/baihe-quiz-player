@@ -323,7 +323,7 @@
                         <label style="font-size:13px; font-weight:700;">貼上 AI 回覆的 JSON 或題目純文字：</label>
                         <button onclick="fillSample()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;">填入範例測試</button>
                     </div>
-                    <textarea id="input-raw-text" class="custom-textarea" placeholder="請將 ChatGPT / Claude / Gemini 產生的 JSON 內容（或純文字題目）貼在此處..."></textarea>
+                    <textarea id="input-raw-text" class="custom-textarea" oninput="liveValidate()" placeholder="請將 ChatGPT / Claude / Gemini 產生的 JSON 內容（或純文字題目）貼在此處..."></textarea>
                 </div>
 
                 <div id="status-feedback" style="display:none; padding:12px 16px; border-radius:12px; font-size:13px; line-height:1.5;"></div>
@@ -403,7 +403,37 @@
                 ]
             };
             document.getElementById('input-raw-text').value = JSON.stringify(sample, null, 2);
-            parseAndValidate(document.getElementById('input-raw-text').value);
+            liveValidate();
+        }
+
+        function liveValidate() {
+            const raw = document.getElementById('input-raw-text').value;
+            const data = parseAndValidate(raw);
+            const fb = document.getElementById('status-feedback');
+
+            if (!raw.trim()) {
+                fb.style.display = 'none';
+                return;
+            }
+
+            if (data) {
+                if (data.subjectName && data.subjectName !== "自訂科目 丙級") {
+                    document.getElementById('input-subject-name').value = data.subjectName;
+                }
+                if (data.years && data.years[0] && data.years[0].year) {
+                    document.getElementById('input-year-name').value = data.years[0].year;
+                }
+                const totalQ = data.years.reduce((s, y) => s + y.questions.length, 0);
+                fb.style.display = 'block';
+                fb.style.background = '#ecfdf5';
+                fb.style.color = '#065f46';
+                fb.innerHTML = `✅ <b>識別成功！</b> 科目：【${data.subjectName}】，共 ${data.years.length} 份試卷、<b>${totalQ} 題</b>。`;
+            } else {
+                fb.style.display = 'block';
+                fb.style.background = '#fef2f2';
+                fb.style.color = '#991b1b';
+                fb.innerHTML = '❌ <b>格式無法識別</b>：請確認是否包含題目與 (1)~(4) 選項及解答。';
+            }
         }
 
         function parseAndValidate(raw) {
@@ -432,7 +462,8 @@
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
                 const ansMatch = line.match(/^\s*(?:\d+[\.\s]*)?[\(（]([1-4])[\)）]\s*(.+)$/) ||
-                                 line.match(/^\s*(\d+)[\.\s]+[\(（]([1-4])[\)）]\s*(.+)$/);
+                                 line.match(/^\s*(\d+)[\.\s]+[\(（]([1-4])[\)）]\s*(.+)$/) ||
+                                 line.match(/^[\(（]([1-4])[\)）]\s*(\d+)[\.\s]+(.+)$/);
 
                 if (ansMatch) {
                     const ansNum = parseInt(ansMatch[1] || ansMatch[2], 10) - 1;
@@ -474,6 +505,8 @@
                 return;
             }
 
+            const name = document.getElementById('input-subject-name').value.trim() || data.subjectName || "自訂科目 丙級";
+            data.subjectName = name;
             const totalQ = data.years.reduce((s, y) => s + y.questions.length, 0);
 
             // 儲存至 localStorage
@@ -490,6 +523,8 @@
                 fb.style.background = '#ecfdf5';
                 fb.style.color = '#065f46';
                 fb.innerHTML = `✅ <b>儲存成功！</b> 【${data.subjectName}】共 ${data.years.length} 份試卷、<b>${totalQ} 題</b> 已保存至瀏覽器！`;
+
+                renderManageList();
 
                 if (launchNow) {
                     setTimeout(() => {
@@ -508,6 +543,8 @@
                 alert("請先貼上有效的題庫內容！");
                 return;
             }
+            const name = document.getElementById('input-subject-name').value.trim() || data.subjectName || "自訂科目";
+            data.subjectName = name;
             const jsonStr = JSON.stringify(data, null, 2);
             const blob = new Blob([jsonStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
@@ -552,6 +589,7 @@
 
         function renderManageList() {
             const container = document.getElementById('custom-banks-list');
+            if (!container) return;
             container.innerHTML = '';
             let currentCustom = {};
             const stored = localStorage.getItem('puti_custom_quiz_banks');
@@ -610,6 +648,9 @@
             a.click();
             URL.revokeObjectURL(url);
         }
+
+        // 初始化
+        renderManageList();
     </script>
 </body>
 </html>

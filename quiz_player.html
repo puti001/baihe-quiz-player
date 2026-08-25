@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puti-AI | 7 大職類官方 PDF 真題播放器 (版面完全修復版)</title>
+    <title>Puti-AI | 7 大職類官方 PDF 真題播放器 (支援全台教師自訂題庫匯入版)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,9 +33,10 @@
         }
 
         header {
-            width: 100%; max-width: 880px; display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 920px; display: flex; justify-content: space-between; align-items: center;
             padding: 14px 20px; background: var(--panel-bg); border-radius: 20px;
             box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 16px;
+            flex-wrap: wrap; gap: 10px;
         }
 
         .brand-logo {
@@ -44,7 +45,26 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        main { width: 100%; max-width: 880px; display: flex; flex-direction: column; gap: 16px; }
+        .header-actions {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            color: white; border: none; padding: 8px 16px; border-radius: 12px;
+            font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); transition: all 0.2s;
+        }
+        .btn-custom:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35); }
+
+        .btn-export {
+            background: #f1f5f9; color: var(--text-dark); border: 1px solid var(--border);
+            padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-export:hover { background: #e2e8f0; }
+
+        main { width: 100%; max-width: 920px; display: flex; flex-direction: column; gap: 16px; }
 
         .subject-selector-card {
             background: var(--panel-bg); border-radius: 20px; padding: 18px 24px;
@@ -52,7 +72,7 @@
             flex-direction: column; gap: 10px;
         }
 
-        .selector-header { display: flex; justify-content: space-between; align-items: center; }
+        .selector-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 
         .selector-title {
             font-size: 15px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px;
@@ -130,23 +150,24 @@
             padding: 12px; font-size: 14px; display: none; line-height: 1.5;
         }
 
+        /* 模態彈窗通用樣式 */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
-            display: none; justify-content: center; align-items: center; z-index: 999; padding: 20px;
+            display: none; justify-content: center; align-items: center; z-index: 999; padding: 16px;
         }
 
         .modal-content {
-            background: white; border-radius: 24px; width: 95%; max-width: 900px; max-height: 85vh;
+            background: white; border-radius: 24px; width: 95%; max-width: 900px; max-height: 88vh;
             display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden;
         }
 
         .modal-header {
-            padding: 20px 24px; background: #f8fafc; border-bottom: 1px solid var(--border);
+            padding: 18px 24px; background: #f8fafc; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        .modal-body { padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+        .modal-body { padding: 20px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
 
         .inspect-q-item {
             background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 16px;
@@ -157,39 +178,72 @@
         .inspect-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: var(--text-muted); }
         .inspect-opt-correct { font-weight: 700; color: var(--success); }
 
+        /* 自訂題庫 Modal 樣式 */
+        .tab-btn-group { display: flex; gap: 8px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        .tab-sub-btn {
+            background: none; border: none; padding: 8px 16px; font-weight: 700; font-size: 14px;
+            color: var(--text-muted); cursor: pointer; border-radius: 8px; transition: all 0.2s;
+        }
+        .tab-sub-btn.active { background: var(--primary-light); color: var(--primary); }
+
+        .form-input {
+            width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+            border-radius: 10px; font-size: 14px; outline: none; margin-top: 6px;
+        }
+        .form-input:focus { border-color: var(--primary); }
+
+        .custom-textarea {
+            width: 100%; min-height: 180px; padding: 12px; border: 1.5px solid var(--border);
+            border-radius: 10px; font-family: monospace; font-size: 13px; line-height: 1.5; outline: none;
+            resize: vertical;
+        }
+        .custom-textarea:focus { border-color: var(--primary); }
+
+        .upload-dropzone {
+            border: 2px dashed #cbd5e1; border-radius: 14px; padding: 30px 20px;
+            text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.2s;
+        }
+        .upload-dropzone:hover { border-color: var(--primary); background: #eef2ff; }
+
         footer {
-            width: 100%; max-width: 880px; margin-top: 24px; padding: 16px;
+            width: 100%; max-width: 920px; margin-top: 24px; padding: 16px;
             background: var(--panel-bg); border-radius: 16px; border: 1px solid var(--border);
             text-align: center; font-size: 13px; color: var(--text-muted); line-height: 1.6;
         }
         footer a { color: var(--primary); font-weight: 700; text-decoration: none; }
     </style>
 
+    <!-- 預載官方 7 職類 9,360 題全資料庫 -->
     <script src="full_baihe_5years_database.js"></script>
 </head>
 <body>
 
     <header>
         <div class="brand-logo">Puti-AI | 7 大職類官方 PDF 真題播放器</div>
-        <span style="font-size:12px; color:#047857; background:#ecfdf5; font-weight:700; padding:4px 8px; border-radius:8px;">
-            ✅ 已通過權威對齊驗證：117 份試卷、9,360 題
-        </span>
+        <div class="header-actions">
+            <button class="btn-custom" onclick="openCustomBankModal()">➕ 匯入自訂題庫 / 自建科目</button>
+            <button class="btn-export" onclick="exportCurrentSubjectJSON()" title="下載當前科目的 JSON 題庫檔">💾 匯出題庫</button>
+        </div>
     </header>
 
     <main>
         <div class="subject-selector-card">
             <div class="selector-header">
-                <span class="selector-title">🏫 收錄 7 個已取得官方 PDF 之丙級職類（117 份試卷，共 9,360 題）：</span>
+                <span class="selector-title">🏫 選擇科目職類（含 7 大官方職類與自訂題庫）：</span>
                 <span style="font-size:12px; background:#e0e7ff; color:#4338ca; font-weight:700; padding:2px 8px; border-radius:6px;" id="q-total-badge">載入中...</span>
             </div>
             <select id="subject-select" class="subject-dropdown" onchange="onSubjectChange()">
-                <option value="00700" selected>⚡ 00700 室內配線 - 屋內線路裝修 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                <option value="02000">🚗 02000 汽車修護 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                <option value="04200">📐 04200 測量 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                <option value="14500">🛵 14500 機器腳踏車修護 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                <option value="18300">🗜️ 18300 車床 - 車床項 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                <option value="18500">⚙️ 18500 機械加工 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                <option value="21101">🏛️ 21101 建築製圖應用 - 電腦繪圖 丙級 (101-115 年，15 年全套，1,200 題)</option>
+                <optgroup label="🏛️ 官方真題 7 職類 (共 9,360 題)">
+                    <option value="00700" selected>⚡ 00700 室內配線 - 屋內線路裝修 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                    <option value="02000">🚗 02000 汽車修護 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                    <option value="04200">📐 04200 測量 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                    <option value="14500">🛵 14500 機器腳踏車修護 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                    <option value="18300">🗜️ 18300 車床 - 車床項 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                    <option value="18500">⚙️ 18500 機械加工 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                    <option value="21101">🏛️ 21101 建築製圖應用 - 電腦繪圖 丙級 (101-115 年，15 年全套，1,200 題)</option>
+                </optgroup>
+                <optgroup label="⭐ 我的自訂題庫 (瀏覽器本地儲存)" id="custom-optgroup" style="display:none;">
+                </optgroup>
             </select>
         </div>
 
@@ -197,7 +251,10 @@
         <div class="year-bar-wrapper">
             <div class="year-bar-header">
                 <span class="year-bar-title">📅 選擇歷年檢定試卷（↔ 可左右滑動切換所有年份）：</span>
-                <button class="inspect-btn" onclick="openInspectModal()">📋 檢視【當前年度全清單】</button>
+                <div style="display:flex; gap:8px;">
+                    <button id="del-custom-btn" onclick="deleteCurrentCustomSubject()" style="display:none; background:#fee2e2; color:#b91c1c; border:none; padding:8px 12px; border-radius:12px; font-size:12px; font-weight:700; cursor:pointer;">🗑️ 刪除此自訂科目</button>
+                    <button class="inspect-btn" onclick="openInspectModal()">📋 檢視【當前年度全清單】</button>
+                </div>
             </div>
             <div class="year-bar" id="year-tabs-container"></div>
         </div>
@@ -219,16 +276,78 @@
         </div>
     </main>
 
+    <!-- 檢視當前全清單 Modal -->
     <div class="modal-overlay" id="inspect-modal">
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <h3 style="font-size:18px; font-weight:700; color:var(--primary);" id="modal-title">當前年度 80 題全清單稽核</h3>
-                    <p style="font-size:12px; color:var(--text-muted);">來自 Codex 下載之官方 PDF 100% 原始內容展覽</p>
+                    <h3 style="font-size:18px; font-weight:700; color:var(--primary);" id="modal-title">當前試卷全清單稽核</h3>
+                    <p style="font-size:12px; color:var(--text-muted);">完整題目與標準解答對齊核對</p>
                 </div>
                 <button onclick="closeInspectModal()" style="background:#f1f5f9; border:none; padding:8px 16px; border-radius:10px; font-weight:700; cursor:pointer;">✕ 關閉視窗</button>
             </div>
             <div class="modal-body" id="modal-list-body"></div>
+        </div>
+    </div>
+
+    <!-- 自訂題庫匯入 / 管理 Modal -->
+    <div class="modal-overlay" id="custom-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h3 style="font-size:18px; font-weight:700; color:var(--primary);">➕ 匯入自訂題庫 / 自建職類</h3>
+                    <p style="font-size:12px; color:var(--text-muted);">供白河商工與各位教師播放自己科目的題庫 (支援純文字貼上、JSON檔、外鏈網址)</p>
+                </div>
+                <button onclick="closeCustomBankModal()" style="background:#f1f5f9; border:none; padding:8px 16px; border-radius:10px; font-weight:700; cursor:pointer;">✕ 關閉</button>
+            </div>
+            <div class="modal-body">
+                <div class="tab-btn-group">
+                    <button class="tab-sub-btn active" id="tab-btn-text" onclick="switchCustomTab('text')">📋 智慧文字貼上 (推薦)</button>
+                    <button class="tab-sub-btn" id="tab-btn-file" onclick="switchCustomTab('file')">📁 上傳 JSON 檔案</button>
+                    <button class="tab-sub-btn" id="tab-btn-url" onclick="switchCustomTab('url')">🔗 外部 JSON 網址</button>
+                </div>
+
+                <!-- 模式 A：純文字智慧貼上 -->
+                <div id="pane-text" style="display:flex; flex-direction:column; gap:12px;">
+                    <div>
+                        <label style="font-size:13px; font-weight:700;">科目代碼與名稱 (例: 02900 烘焙食品)：</label>
+                        <input type="text" id="custom-text-name" class="form-input" placeholder="例如：02900 烘焙食品 - 麵包項 丙級" value="自訂科目 丙級">
+                    </div>
+                    <div>
+                        <label style="font-size:13px; font-weight:700;">試卷/年份名稱 (例: 114年度模擬考 或 114)：</label>
+                        <input type="text" id="custom-text-year" class="form-input" placeholder="例如：114" value="114">
+                    </div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <label style="font-size:13px; font-weight:700;">貼上題庫文字內容：</label>
+                            <button onclick="fillSampleText()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;">載入範例格式</button>
+                        </div>
+                        <textarea id="custom-raw-text" class="custom-textarea" placeholder="支援常見題庫格式，例如：&#10;1. (2) 下列何者為交流電符號？ (1) DC (2) AC (3) GND (4) VCC&#10;2. (1) 車床主軸轉速單位為？ (1) rpm (2) m/s (3) mm (4) kg"></textarea>
+                    </div>
+                    <button class="btn-custom" style="justify-content:center; padding:12px;" onclick="importFromRawText()">🚀 智慧解析並匯入題庫</button>
+                </div>
+
+                <!-- 模式 B：上傳 JSON 檔案 -->
+                <div id="pane-file" style="display:none; flex-direction:column; gap:14px;">
+                    <div class="upload-dropzone" onclick="document.getElementById('json-file-input').click()">
+                        <div style="font-size:36px; margin-bottom:8px;">📂</div>
+                        <div style="font-weight:700; font-size:15px; color:var(--text-dark);">點擊選取或拖曳 JSON 題庫檔案至此</div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">支援標準科目 JSON 或題目陣列</div>
+                        <input type="file" id="json-file-input" accept=".json" style="display:none;" onchange="handleFileUpload(event)">
+                    </div>
+                </div>
+
+                <!-- 模式 C：外鏈 URL -->
+                <div id="pane-url" style="display:none; flex-direction:column; gap:12px;">
+                    <div>
+                        <label style="font-size:13px; font-weight:700;">外部 JSON 題庫網址 (支援 GitHub raw、Gist 等)：</label>
+                        <input type="text" id="custom-url-input" class="form-input" placeholder="https://example.com/my_subject.json">
+                    </div>
+                    <button class="btn-custom" style="justify-content:center; padding:12px;" onclick="importFromUrl()">🌐 從網址載入並儲存</button>
+                </div>
+
+                <div id="import-status-msg" style="display:none; padding:10px 14px; border-radius:10px; font-size:13px; font-weight:700;"></div>
+            </div>
         </div>
     </div>
 
@@ -243,33 +362,106 @@
         let currentQIdx = 0;
         let answered = false;
 
+        // 本地自訂題庫資料字典
+        let customDatabases = {};
+
+        function initApp() {
+            loadCustomDatabasesFromStorage();
+            renderSubjectDropdown();
+
+            // 解析 URL 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramSubject = urlParams.get('subject');
+            const paramCustomUrl = urlParams.get('customUrl');
+
+            if (paramCustomUrl) {
+                document.getElementById('custom-url-input').value = paramCustomUrl;
+                importFromUrl(paramCustomUrl);
+            } else if (paramSubject) {
+                loadSubjectData(paramSubject);
+                document.getElementById('subject-select').value = paramSubject;
+            } else {
+                loadSubjectData("00700");
+            }
+        }
+
+        function loadCustomDatabasesFromStorage() {
+            try {
+                const stored = localStorage.getItem('puti_custom_quiz_banks');
+                if (stored) {
+                    customDatabases = JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error("Failed to load custom databases:", e);
+            }
+        }
+
+        function saveCustomDatabasesToStorage() {
+            try {
+                localStorage.setItem('puti_custom_quiz_banks', JSON.stringify(customDatabases));
+            } catch (e) {
+                alert("儲存至瀏覽器本地空間失敗，可能容量已滿！");
+            }
+        }
+
+        function renderSubjectDropdown() {
+            const select = document.getElementById('subject-select');
+            const customGroup = document.getElementById('custom-optgroup');
+            customGroup.innerHTML = '';
+
+            const customKeys = Object.keys(customDatabases);
+            if (customKeys.length > 0) {
+                customGroup.style.display = 'block';
+                customKeys.forEach(k => {
+                    const item = customDatabases[k];
+                    const opt = document.createElement('option');
+                    opt.value = k;
+                    const totalQ = item.years.reduce((s, y) => s + y.questions.length, 0);
+                    opt.innerText = `⭐ ${item.subjectName || k} (${item.years.length}份試卷，共${totalQ}題)`;
+                    customGroup.appendChild(opt);
+                });
+            } else {
+                customGroup.style.display = 'none';
+            }
+        }
+
         function onSubjectChange() {
             currentSubjectKey = document.getElementById('subject-select').value;
             loadSubjectData(currentSubjectKey);
         }
 
         function loadSubjectData(key) {
-            const data = (typeof fullBaihe5YearsDatabase !== 'undefined' && fullBaihe5YearsDatabase[key]) 
-                ? fullBaihe5YearsDatabase[key] 
-                : (window.currentLoadedSubjectData || null);
+            currentSubjectKey = key;
+            let data = null;
+
+            if (typeof fullBaihe5YearsDatabase !== 'undefined' && fullBaihe5YearsDatabase[key]) {
+                data = fullBaihe5YearsDatabase[key];
+                document.getElementById('del-custom-btn').style.display = 'none';
+            } else if (customDatabases[key]) {
+                data = customDatabases[key];
+                document.getElementById('del-custom-btn').style.display = 'inline-block';
+            }
 
             if (!data) {
-                alert(`無【${key}】實體 PDF 數據！`);
+                alert(`查無【${key}】題庫資料！`);
                 return;
             }
 
             activeYears = data.years;
             
-            let grandTotalQs = 0;
+            // 計算總題數
+            let officialTotalQs = 0;
             if (typeof fullBaihe5YearsDatabase !== 'undefined') {
                 Object.keys(fullBaihe5YearsDatabase).forEach(k => {
-                    grandTotalQs += fullBaihe5YearsDatabase[k].years.reduce((s, y) => s + y.questions.length, 0);
+                    officialTotalQs += fullBaihe5YearsDatabase[k].years.reduce((s, y) => s + y.questions.length, 0);
                 });
-            } else {
-                grandTotalQs = 9360;
             }
+            let customTotalQs = 0;
+            Object.keys(customDatabases).forEach(k => {
+                customTotalQs += customDatabases[k].years.reduce((s, y) => s + y.questions.length, 0);
+            });
 
-            document.getElementById('q-total-badge').innerText = `已載入 6 職類17年+21101 15年，共 ${grandTotalQs} 題`;
+            document.getElementById('q-total-badge').innerText = `已收錄官方 9,360 題 + 自訂 ${customTotalQs} 題 (總計 ${officialTotalQs + customTotalQs} 題)`;
 
             currentYearIdx = 0;
             renderYearTabs();
@@ -304,6 +496,12 @@
             document.getElementById('explanation-box').style.display = 'none';
 
             const yearObj = activeYears[currentYearIdx];
+            if (!yearObj || !yearObj.questions || yearObj.questions.length === 0) {
+                document.getElementById('question-title').innerText = "本試卷尚無題目";
+                document.getElementById('options-list').innerHTML = '';
+                return;
+            }
+
             const q = yearObj.questions[currentQIdx];
 
             document.getElementById('progress-text').innerText = `${currentQIdx + 1} / ${yearObj.questions.length}`;
@@ -329,18 +527,20 @@
             const q = yearObj.questions[currentQIdx];
             const items = document.querySelectorAll('.option-item');
 
-            items[q.answer].classList.add('correct');
+            if (items[q.answer]) {
+                items[q.answer].classList.add('correct');
+            }
 
             if (selectedIdx === q.answer) {
                 element.classList.add('correct');
-                document.getElementById('status-hint').innerText = "✨ 答對了！(符合勞動部官方標準解答)";
+                document.getElementById('status-hint').innerText = "✨ 答對了！(符合標準解答)";
             } else {
                 element.classList.add('wrong');
                 document.getElementById('status-hint').innerText = "💥 答錯了！";
             }
 
             const exp = document.getElementById('explanation-box');
-            exp.innerHTML = `<b>${q.explain}</b>`;
+            exp.innerHTML = `<b>${q.explain || '標準解答：第 (' + (q.answer + 1) + ') 選項'}</b>`;
             exp.style.display = 'block';
 
             document.getElementById('next-btn').disabled = false;
@@ -367,14 +567,14 @@
                 let optsHtml = '';
                 q.options.forEach((opt, oIdx) => {
                     const isAns = oIdx === q.answer;
-                    optsHtml += `<div class="${isAns ? 'inspect-opt-correct' : ''}">(${oIdx + 1}) ${opt} ${isAns ? '✔(官方正解)' : ''}</div>`;
+                    optsHtml += `<div class="${isAns ? 'inspect-opt-correct' : ''}">(${oIdx + 1}) ${opt} ${isAns ? '✔(標準正解)' : ''}</div>`;
                 });
 
                 item.innerHTML = `
                     <div class="inspect-q-title">${q.title}</div>
                     <div class="inspect-opts">${optsHtml}</div>
                     <div style="font-size:12px; color:#475569; background:#e2e8f0; padding:6px 10px; border-radius:6px; margin-top:4px;">
-                        💡 <b>${q.explain}</b>
+                        💡 <b>${q.explain || '標準解答：第 (' + (q.answer + 1) + ') 項'}</b>
                     </div>
                 `;
                 modalBody.appendChild(item);
@@ -387,7 +587,248 @@
             document.getElementById('inspect-modal').style.display = 'none';
         }
 
-        loadSubjectData("00700");
+        /* ===== 自訂題庫相關互動邏輯 ===== */
+
+        function openCustomBankModal() {
+            document.getElementById('custom-modal').style.display = 'flex';
+            document.getElementById('import-status-msg').style.display = 'none';
+        }
+
+        function closeCustomBankModal() {
+            document.getElementById('custom-modal').style.display = 'none';
+        }
+
+        function switchCustomTab(tab) {
+            document.getElementById('tab-btn-text').classList.toggle('active', tab === 'text');
+            document.getElementById('tab-btn-file').classList.toggle('active', tab === 'file');
+            document.getElementById('tab-btn-url').classList.toggle('active', tab === 'url');
+
+            document.getElementById('pane-text').style.display = (tab === 'text') ? 'flex' : 'none';
+            document.getElementById('pane-file').style.display = (tab === 'file') ? 'flex' : 'none';
+            document.getElementById('pane-url').style.display = (tab === 'url') ? 'flex' : 'none';
+        }
+
+        function fillSampleText() {
+            document.getElementById('custom-raw-text').value = `1. (2) 下列何者為交流電的英文縮寫？ (1) DC (2) AC (3) GND (4) VCC
+2. (1) 在標準大氣壓力下，水的沸點為攝氏幾度？ (1) 100度 (2) 0度 (3) 50度 (4) 200度
+3. (3) 台灣常見的家用一般插座電壓為多少伏特？ (1) 220V (2) 380V (3) 110V (4) 440V
+4. (4) 下列何者不是常見的程式語言？ (1) Python (2) JavaScript (3) C++ (4) MP3`;
+        }
+
+        function showImportStatus(msg, isSuccess) {
+            const box = document.getElementById('import-status-msg');
+            box.style.display = 'block';
+            box.style.background = isSuccess ? '#ecfdf5' : '#fef2f2';
+            box.style.color = isSuccess ? '#065f46' : '#991b1b';
+            box.innerText = msg;
+        }
+
+        // 智慧純文字解析器 (可辨識多種勞動部/學校題庫排版)
+        function parseRawTextToQuestions(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            const questions = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                // 格式 1: 1. (2) 題目文字 (1)A (2)B (3)C (4)D
+                const ansMatch = line.match(/^\s*(?:\d+[\.\s]*)?[\(（]([1-4])[\)）]\s*(.+)$/) ||
+                                 line.match(/^\s*(\d+)[\.\s]+[\(（]([1-4])[\)）]\s*(.+)$/);
+
+                if (ansMatch) {
+                    const ansNum = parseInt(ansMatch[1] || ansMatch[2], 10) - 1;
+                    const restText = ansMatch[ansMatch.length - 1];
+
+                    // 尋找選項 (1)... (2)... (3)... (4)...
+                    const optSplit = restText.split(/[\(（]([1-4])[\)）]/);
+                    if (optSplit.length >= 9) {
+                        const title = optSplit[0].trim();
+                        const options = [
+                            optSplit[2].trim(),
+                            optSplit[4].trim(),
+                            optSplit[6].trim(),
+                            optSplit[8].trim()
+                        ];
+                        questions.push({
+                            title: title,
+                            options: options,
+                            answer: ansNum,
+                            explain: `標準解答：第 (${ansNum + 1}) 項`
+                        });
+                        continue;
+                    }
+                }
+
+                // 格式 2: 1. 題目 \n (1) A (2) B (3) C (4) D \n 答案: 2
+                const simpleMatch = line.match(/^\s*(\d+)[\.\s]+(.+)$/);
+                if (simpleMatch && (i + 1 < lines.length)) {
+                    const title = simpleMatch[2];
+                    const nextLine = lines[i + 1];
+                    const optSplit = nextLine.split(/[\(（]([1-4])[\)）]/);
+                    if (optSplit.length >= 9) {
+                        let ansNum = 0;
+                        if (i + 2 < lines.length && lines[i + 2].includes('答')) {
+                            const aM = lines[i + 2].match(/([1-4])/);
+                            if (aM) ansNum = parseInt(aM[1], 10) - 1;
+                            i += 2;
+                        } else {
+                            i += 1;
+                        }
+                        questions.push({
+                            title: title,
+                            options: [optSplit[2].trim(), optSplit[4].trim(), optSplit[6].trim(), optSplit[8].trim()],
+                            answer: ansNum,
+                            explain: `標準解答：第 (${ansNum + 1}) 項`
+                        });
+                    }
+                }
+            }
+            return questions;
+        }
+
+        function importFromRawText() {
+            const name = document.getElementById('custom-text-name').value.trim() || '自訂科目';
+            const year = document.getElementById('custom-text-year').value.trim() || '114';
+            const rawText = document.getElementById('custom-raw-text').value.trim();
+
+            if (!rawText) {
+                showImportStatus("請先貼上題目文字內容！", false);
+                return;
+            }
+
+            const qs = parseRawTextToQuestions(rawText);
+            if (qs.length === 0) {
+                showImportStatus("未能識別出題目，請確認是否包含題幹與 (1)~(4) 選項及答案！", false);
+                return;
+            }
+
+            const key = 'custom_' + Date.now();
+            customDatabases[key] = {
+                subjectName: name,
+                years: [
+                    {
+                        year: year,
+                        questions: qs
+                    }
+                ]
+            };
+
+            saveCustomDatabasesToStorage();
+            renderSubjectDropdown();
+            document.getElementById('subject-select').value = key;
+            loadSubjectData(key);
+
+            showImportStatus(`✅ 成功解析並匯入 ${qs.length} 題！已儲存至自訂科目。`, true);
+            setTimeout(closeCustomBankModal, 1200);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    let subjectName = file.name.replace('.json', '');
+                    let years = [];
+
+                    if (parsed.years && Array.isArray(parsed.years)) {
+                        subjectName = parsed.subjectName || subjectName;
+                        years = parsed.years;
+                    } else if (Array.isArray(parsed)) {
+                        years = [{ year: "114", questions: parsed }];
+                    } else if (parsed.questions && Array.isArray(parsed.questions)) {
+                        years = [{ year: parsed.year || "114", questions: parsed.questions }];
+                    }
+
+                    const key = 'custom_' + Date.now();
+                    customDatabases[key] = {
+                        subjectName: subjectName,
+                        years: years
+                    };
+
+                    saveCustomDatabasesToStorage();
+                    renderSubjectDropdown();
+                    document.getElementById('subject-select').value = key;
+                    loadSubjectData(key);
+
+                    showImportStatus(`✅ 成功匯入檔案【${file.name}】！`, true);
+                    setTimeout(closeCustomBankModal, 1200);
+                } catch (err) {
+                    showImportStatus("JSON 格式解析錯誤，請確認檔案語法！", false);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function importFromUrl(targetUrl) {
+            const url = targetUrl || document.getElementById('custom-url-input').value.trim();
+            if (!url) {
+                showImportStatus("請輸入有效的 JSON 網址！", false);
+                return;
+            }
+
+            try {
+                showImportStatus("正在下載並載入題庫中...", true);
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                const data = await res.json();
+
+                const key = 'custom_' + Date.now();
+                customDatabases[key] = {
+                    subjectName: data.subjectName || "外鏈題庫",
+                    years: data.years || [{ year: "114", questions: data.questions || data }]
+                };
+
+                saveCustomDatabasesToStorage();
+                renderSubjectDropdown();
+                document.getElementById('subject-select').value = key;
+                loadSubjectData(key);
+
+                showImportStatus(`✅ 成功從網址載入自訂題庫！`, true);
+                setTimeout(closeCustomBankModal, 1200);
+            } catch (e) {
+                showImportStatus("無法讀取該網址題庫：" + e.message, false);
+            }
+        }
+
+        function deleteCurrentCustomSubject() {
+            if (!customDatabases[currentSubjectKey]) return;
+            if (confirm(`確定要刪除自訂科目【${customDatabases[currentSubjectKey].subjectName}】嗎？`)) {
+                delete customDatabases[currentSubjectKey];
+                saveCustomDatabasesToStorage();
+                renderSubjectDropdown();
+                loadSubjectData("00700");
+                document.getElementById('subject-select').value = "00700";
+            }
+        }
+
+        function exportCurrentSubjectJSON() {
+            let data = null;
+            if (typeof fullBaihe5YearsDatabase !== 'undefined' && fullBaihe5YearsDatabase[currentSubjectKey]) {
+                data = fullBaihe5YearsDatabase[currentSubjectKey];
+            } else if (customDatabases[currentSubjectKey]) {
+                data = customDatabases[currentSubjectKey];
+            }
+
+            if (!data) {
+                alert("無可匯出的題庫資料！");
+                return;
+            }
+
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${data.subjectName || currentSubjectKey}_題庫.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 啟動 App
+        initApp();
     </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puti-AI | 官方 PDF 題庫 AI 轉換精靈 (附官方題庫下載專區)</title>
+    <title>Puti-AI | 題庫管理與 PDF AI 轉換中心</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,11 +45,9 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .header-nav { display: flex; gap: 10px; align-items: center; }
-
         .btn-back-player {
-            background: var(--primary); color: white; border: none; padding: 10px 18px;
-            border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer;
+            background: var(--primary); color: white; border: none; padding: 10px 20px;
+            border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer;
             text-decoration: none; display: flex; align-items: center; gap: 6px;
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25); transition: all 0.2s;
         }
@@ -57,15 +55,17 @@
 
         main { width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 20px; }
 
-        /* 官方題庫下載專區卡片 */
-        .portal-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-            border-radius: 20px; padding: 22px 24px; box-shadow: var(--shadow);
-            border: 2px solid #bbf7d0; display: flex; flex-direction: column; gap: 12px;
+        /* 卡片共用樣式 */
+        .admin-card {
+            background: var(--panel-bg); border-radius: 20px; padding: 24px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 14px;
         }
 
-        .portal-header {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+        /* 官方題庫下載專區 */
+        .portal-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+            border: 2px solid #bbf7d0;
         }
 
         .portal-grid {
@@ -84,7 +84,7 @@
         .portal-btn-title { font-weight: 700; font-size: 14px; color: #047857; display: flex; align-items: center; gap: 6px; }
         .portal-btn-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
 
-        /* 3 步驟導覽卡片 */
+        /* 3 步驟導覽 */
         .step-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;
         }
@@ -92,16 +92,16 @@
         .step-card {
             background: var(--panel-bg); border-radius: 20px; padding: 20px;
             box-shadow: var(--shadow); border: 1px solid var(--border);
-            display: flex; flex-direction: column; gap: 10px; position: relative;
+            display: flex; flex-direction: column; gap: 10px;
         }
 
         .step-header { display: flex; align-items: center; gap: 10px; }
         .step-num {
-            width: 32px; height: 32px; border-radius: 50%; background: var(--primary);
-            color: white; font-weight: 900; font-size: 16px; display: flex;
+            width: 30px; height: 30px; border-radius: 50%; background: var(--primary);
+            color: white; font-weight: 900; font-size: 15px; display: flex;
             align-items: center; justify-content: center;
         }
-        .step-title { font-size: 16px; font-weight: 700; color: var(--text-dark); }
+        .step-title { font-size: 15px; font-weight: 700; color: var(--text-dark); }
 
         .ai-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
         .ai-link-btn {
@@ -112,61 +112,67 @@
         .ai-link-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
 
         /* Prompt 區域 */
-        .prompt-card {
-            background: var(--panel-bg); border-radius: 20px; padding: 24px;
-            box-shadow: var(--shadow); border: 1px solid var(--border);
-            display: flex; flex-direction: column; gap: 14px;
-        }
-
         .prompt-box {
             background: #1e293b; color: #f8fafc; padding: 18px; border-radius: 14px;
             font-family: monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap;
-            max-height: 280px; overflow-y: auto; border: 1px solid #334155;
+            max-height: 260px; overflow-y: auto; border: 1px solid #334155;
         }
 
         .btn-copy-prompt {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white; border: none; padding: 12px 24px; border-radius: 12px;
-            font-size: 15px; font-weight: 700; cursor: pointer; display: flex;
+            color: white; border: none; padding: 10px 20px; border-radius: 12px;
+            font-size: 14px; font-weight: 700; cursor: pointer; display: flex;
             align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3); transition: all 0.2s;
         }
-        .btn-copy-prompt:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4); }
+        .btn-copy-prompt:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4); }
 
-        /* 驗證與傳送區域 */
-        .converter-card {
-            background: var(--panel-bg); border-radius: 20px; padding: 24px;
-            box-shadow: var(--shadow); border: 2px solid #c7d2fe;
-            display: flex; flex-direction: column; gap: 16px;
+        /* 匯入與管理標籤切換 */
+        .tab-btn-group { display: flex; gap: 8px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; flex-wrap: wrap; }
+        .tab-sub-btn {
+            background: none; border: none; padding: 10px 16px; font-weight: 700; font-size: 14px;
+            color: var(--text-muted); cursor: pointer; border-radius: 10px; transition: all 0.2s;
         }
+        .tab-sub-btn.active { background: var(--primary-light); color: var(--primary); }
+
+        .form-input {
+            width: 100%; padding: 12px 16px; border: 1.5px solid var(--border);
+            border-radius: 12px; font-size: 14px; outline: none; margin-top: 6px;
+        }
+        .form-input:focus { border-color: var(--primary); }
 
         .custom-textarea {
-            width: 100%; min-height: 200px; padding: 14px; border: 1.5px solid var(--border);
+            width: 100%; min-height: 180px; padding: 14px; border: 1.5px solid var(--border);
             border-radius: 12px; font-family: monospace; font-size: 13px; line-height: 1.5; outline: none;
             resize: vertical;
         }
         .custom-textarea:focus { border-color: var(--primary); }
 
-        .action-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .upload-dropzone {
+            border: 2px dashed #cbd5e1; border-radius: 14px; padding: 30px 20px;
+            text-align: center; background: #f8fafc; cursor: pointer; transition: all 0.2s;
+        }
+        .upload-dropzone:hover { border-color: var(--primary); background: #eef2ff; }
 
-        .btn-action-primary {
-            flex: 1; min-width: 200px; background: var(--primary); color: white; border: none;
-            padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 700;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        .btn-main {
+            background: var(--primary); color: white; border: none; padding: 12px 24px;
+            border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3); transition: all 0.2s;
         }
-        .btn-action-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4); }
+        .btn-main:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4); }
 
-        .btn-action-secondary {
+        .btn-secondary {
             background: #f1f5f9; color: var(--text-dark); border: 1px solid var(--border);
-            padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 700;
+            padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 700;
             cursor: pointer; transition: all 0.2s;
         }
-        .btn-action-secondary:hover { background: #e2e8f0; }
+        .btn-secondary:hover { background: #e2e8f0; }
 
-        .preview-box {
-            background: #f8fafc; border: 1px solid var(--border); border-radius: 12px;
-            padding: 16px; font-size: 13px; line-height: 1.6; display: none;
+        /* 自訂科目清單表格 */
+        .bank-item-card {
+            background: #f8fafc; border: 1px solid var(--border); border-radius: 14px; padding: 16px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
         }
 
         footer {
@@ -180,22 +186,18 @@
 <body>
 
     <header>
-        <div class="brand-logo">Puti-AI | 官方 PDF 題庫 AI 轉換精靈</div>
-        <div class="header-nav">
-            <a href="quiz_player.html" class="btn-back-player">🎮 返回真題播放器 ➔</a>
-        </div>
+        <div class="brand-logo">Puti-AI | 題庫管理與 PDF AI 轉換中心</div>
+        <a href="quiz_player.html" class="btn-back-player">🎮 返回學生測驗播放器 ➔</a>
     </header>
 
     <main>
         <!-- 官方題庫下載專區 -->
-        <div class="portal-card">
-            <div class="portal-header">
-                <div>
-                    <h3 style="font-size:16px; font-weight:700; color:#065f46; display:flex; align-items:center; gap:6px;">
-                        🏛️ 官方 PDF 題庫下載專區（一手官方真題來源）
-                    </h3>
-                    <p style="font-size:12px; color:#047857;">點擊下方官方入口即可下載各職類原廠學科試卷 PDF：</p>
-                </div>
+        <div class="admin-card portal-card">
+            <div>
+                <h3 style="font-size:16px; font-weight:700; color:#065f46; display:flex; align-items:center; gap:6px;">
+                    🏛️ 官方 PDF 題庫下載專區（一手官方真題來源）
+                </h3>
+                <p style="font-size:12px; color:#047857; margin-top:4px;">點擊下方官方入口即可下載各職類原廠學科試卷 PDF：</p>
             </div>
             <div class="portal-grid">
                 <a href="https://tech.labor.gov.tw/" target="_blank" class="portal-btn">
@@ -221,7 +223,7 @@
                     <div class="step-title">複製專用 Prompt</div>
                 </div>
                 <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
-                    點擊下方按鈕複製專門為勞動部檢定 PDF 設計的防漏題、防錯字 AI 提示詞。
+                    點擊複製專門為勞動部檢定 PDF 調校的防漏題、防錯字 AI 提示詞。
                 </p>
             </div>
 
@@ -231,7 +233,7 @@
                     <div class="step-title">餵給 AI 解析</div>
                 </div>
                 <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
-                    開啟常用 AI 工具，上傳您在上方下載的題庫 PDF 並貼上提示詞：
+                    開啟常用 AI 工具，上傳題庫 PDF 檔案並貼上提示詞：
                 </p>
                 <div class="ai-links">
                     <a href="https://chatgpt.com" target="_blank" class="ai-link-btn">🤖 ChatGPT</a>
@@ -246,13 +248,13 @@
                     <div class="step-title">貼上即刻開測</div>
                 </div>
                 <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">
-                    將 AI 回傳的題目貼入下方輸入框，一鍵檢查並直接啟動播放器練習！
+                    將 AI 回傳的題目貼入下方，一鍵檢查並儲存至播放器隨時練習！
                 </p>
             </div>
         </div>
 
         <!-- Prompt 複製區 -->
-        <div class="prompt-card">
+        <div class="admin-card">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                 <div>
                     <h3 style="font-size:17px; font-weight:700; color:var(--text-dark);">📋 勞動部官方 PDF 題庫專用解析 Prompt</h3>
@@ -295,20 +297,58 @@
 }</div>
         </div>
 
-        <!-- 貼上與即時驗證區 -->
-        <div class="converter-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="font-size:17px; font-weight:700; color:var(--primary);">🚀 貼上 AI 解析結果 (支援 JSON 或純文字題目)</h3>
-                <button onclick="fillSample()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;">填入範例測試</button>
+        <!-- 匯入自訂題庫操作區 -->
+        <div class="admin-card" style="border: 2px solid #c7d2fe;">
+            <div class="tab-btn-group">
+                <button class="tab-sub-btn active" id="tab-btn-text" onclick="switchTab('text')">📋 智慧文字/JSON貼上</button>
+                <button class="tab-sub-btn" id="tab-btn-file" onclick="switchTab('file')">📁 上傳 JSON 題庫檔</button>
+                <button class="tab-sub-btn" id="tab-btn-manage" onclick="switchTab('manage')">⭐ 管理現有自訂題庫清單</button>
             </div>
 
-            <textarea id="ai-output-textarea" class="custom-textarea" placeholder="請將 ChatGPT / Claude / Gemini 產生的 JSON 內容（或純文字題目）貼在此處..."></textarea>
+            <!-- 標籤 1：文字/JSON貼上 -->
+            <div id="pane-text" style="display:flex; flex-direction:column; gap:14px;">
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+                    <div>
+                        <label style="font-size:13px; font-weight:700;">科目代碼與名稱：</label>
+                        <input type="text" id="input-subject-name" class="form-input" placeholder="例如：02900 烘焙食品 - 麵包項 丙級" value="自訂科目 丙級">
+                    </div>
+                    <div>
+                        <label style="font-size:13px; font-weight:700;">試卷/年份：</label>
+                        <input type="text" id="input-year-name" class="form-input" placeholder="例如：114" value="114">
+                    </div>
+                </div>
 
-            <div id="status-feedback" class="preview-box"></div>
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label style="font-size:13px; font-weight:700;">貼上 AI 回覆的 JSON 或題目純文字：</label>
+                        <button onclick="fillSample()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;">填入範例測試</button>
+                    </div>
+                    <textarea id="input-raw-text" class="custom-textarea" placeholder="請將 ChatGPT / Claude / Gemini 產生的 JSON 內容（或純文字題目）貼在此處..."></textarea>
+                </div>
 
-            <div class="action-row">
-                <button class="btn-action-primary" onclick="verifyAndLaunchPlayer()">🎮 驗證並直接開啟播放器練習</button>
-                <button class="btn-action-secondary" onclick="downloadJSONFile()">💾 下載為標準 JSON 題庫檔</button>
+                <div id="status-feedback" style="display:none; padding:12px 16px; border-radius:12px; font-size:13px; line-height:1.5;"></div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="btn-main" onclick="verifyAndSave(true)">🚀 儲存題庫並直接開啟播放器練習</button>
+                    <button class="btn-secondary" onclick="verifyAndSave(false)">💾 僅儲存至題庫庫房</button>
+                    <button class="btn-secondary" onclick="downloadCurrentJSON()">📥 下載為 JSON 檔案</button>
+                </div>
+            </div>
+
+            <!-- 標籤 2：檔案上傳 -->
+            <div id="pane-file" style="display:none; flex-direction:column; gap:14px;">
+                <div class="upload-dropzone" onclick="document.getElementById('file-uploader').click()">
+                    <div style="font-size:36px; margin-bottom:8px;">📂</div>
+                    <div style="font-weight:700; font-size:15px; color:var(--text-dark);">點擊選取或拖曳 JSON 題庫檔案至此</div>
+                    <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">支援標準科目 JSON 題庫檔</div>
+                    <input type="file" id="file-uploader" accept=".json" style="display:none;" onchange="handleFile(event)">
+                </div>
+            </div>
+
+            <!-- 標籤 3：現有自訂題庫清單 -->
+            <div id="pane-manage" style="display:none; flex-direction:column; gap:12px;">
+                <div style="font-size:14px; font-weight:700; color:var(--text-dark);">已保存在此瀏覽器的自訂科目題庫：</div>
+                <div id="custom-banks-list" style="display:flex; flex-direction:column; gap:10px;"></div>
             </div>
         </div>
     </main>
@@ -325,6 +365,18 @@
             }).catch(() => {
                 alert("複製失敗，請手動反白複製。");
             });
+        }
+
+        function switchTab(tab) {
+            document.getElementById('tab-btn-text').classList.toggle('active', tab === 'text');
+            document.getElementById('tab-btn-file').classList.toggle('active', tab === 'file');
+            document.getElementById('tab-btn-manage').classList.toggle('active', tab === 'manage');
+
+            document.getElementById('pane-text').style.display = (tab === 'text') ? 'flex' : 'none';
+            document.getElementById('pane-file').style.display = (tab === 'file') ? 'flex' : 'none';
+            document.getElementById('pane-manage').style.display = (tab === 'manage') ? 'flex' : 'none';
+
+            if (tab === 'manage') renderManageList();
         }
 
         function fillSample() {
@@ -350,28 +402,30 @@
                     }
                 ]
             };
-            document.getElementById('ai-output-textarea').value = JSON.stringify(sample, null, 2);
-            verifyContent();
+            document.getElementById('input-raw-text').value = JSON.stringify(sample, null, 2);
+            parseAndValidate(document.getElementById('input-raw-text').value);
         }
 
-        function parseInput(rawText) {
-            const trimmed = rawText.trim();
+        function parseAndValidate(raw) {
+            const trimmed = raw.trim();
             if (!trimmed) return null;
 
-            // 嘗試 JSON 解析
+            // 1. JSON
             try {
                 let cleanJson = trimmed.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
                 const obj = JSON.parse(cleanJson);
                 if (obj.years && Array.isArray(obj.years)) {
                     return obj;
                 } else if (Array.isArray(obj)) {
-                    return { subjectName: "自訂科目 丙級", years: [{ year: "114", questions: obj }] };
+                    const name = document.getElementById('input-subject-name').value.trim() || "自訂科目 丙級";
+                    const year = document.getElementById('input-year-name').value.trim() || "114";
+                    return { subjectName: name, years: [{ year: year, questions: obj }] };
                 } else if (obj.questions && Array.isArray(obj.questions)) {
                     return { subjectName: obj.subjectName || "自訂科目 丙級", years: [{ year: obj.year || "114", questions: obj.questions }] };
                 }
             } catch (e) {}
 
-            // 純文字解析
+            // 2. 純文字
             const lines = trimmed.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             const questions = [];
 
@@ -396,42 +450,31 @@
             }
 
             if (questions.length > 0) {
+                const name = document.getElementById('input-subject-name').value.trim() || "自訂科目 丙級";
+                const year = document.getElementById('input-year-name').value.trim() || "114";
                 return {
-                    subjectName: "自訂文字題庫 丙級",
-                    years: [{ year: "114", questions: questions }]
+                    subjectName: name,
+                    years: [{ year: year, questions: questions }]
                 };
             }
 
             return null;
         }
 
-        function verifyContent() {
-            const txt = document.getElementById('ai-output-textarea').value;
-            const data = parseInput(txt);
+        function verifyAndSave(launchNow) {
+            const raw = document.getElementById('input-raw-text').value;
+            const data = parseAndValidate(raw);
             const fb = document.getElementById('status-feedback');
 
             if (!data) {
                 fb.style.display = 'block';
                 fb.style.background = '#fef2f2';
                 fb.style.color = '#991b1b';
-                fb.innerHTML = '❌ <b>格式無法識別！</b> 請確認內容是否為完整 JSON 或符合 (1)~(4) 選項之文字格式。';
-                return null;
+                fb.innerHTML = '❌ <b>格式無法識別！</b> 請確認內容是否為完整 JSON 或符合 (1)~(4) 選項之題目文字。';
+                return;
             }
 
             const totalQ = data.years.reduce((s, y) => s + y.questions.length, 0);
-            fb.style.display = 'block';
-            fb.style.background = '#ecfdf5';
-            fb.style.color = '#065f46';
-            fb.innerHTML = `✅ <b>驗證通過！</b> 科目：【${data.subjectName}】，共 ${data.years.length} 份試卷，總題數：<b>${totalQ} 題</b>。`;
-            return data;
-        }
-
-        function verifyAndLaunchPlayer() {
-            const data = verifyContent();
-            if (!data) {
-                alert("請先貼上有效的題庫內容！");
-                return;
-            }
 
             // 儲存至 localStorage
             try {
@@ -443,26 +486,127 @@
                 currentCustom[key] = data;
                 localStorage.setItem('puti_custom_quiz_banks', JSON.stringify(currentCustom));
 
-                // 導向播放器並自動載入該科目
-                window.location.href = `quiz_player.html?subject=${key}`;
+                fb.style.display = 'block';
+                fb.style.background = '#ecfdf5';
+                fb.style.color = '#065f46';
+                fb.innerHTML = `✅ <b>儲存成功！</b> 【${data.subjectName}】共 ${data.years.length} 份試卷、<b>${totalQ} 題</b> 已保存至瀏覽器！`;
+
+                if (launchNow) {
+                    setTimeout(() => {
+                        window.location.href = `quiz_player.html?subject=${key}`;
+                    }, 500);
+                }
             } catch (e) {
-                alert("儲存至瀏覽器失敗：" + e.message);
+                alert("儲存失敗：" + e.message);
             }
         }
 
-        function downloadJSONFile() {
-            const data = verifyContent();
+        function downloadCurrentJSON() {
+            const raw = document.getElementById('input-raw-text').value;
+            const data = parseAndValidate(raw);
             if (!data) {
                 alert("請先貼上有效的題庫內容！");
                 return;
             }
-
             const jsonStr = JSON.stringify(data, null, 2);
             const blob = new Blob([jsonStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `${data.subjectName}_題庫.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    let currentCustom = {};
+                    const stored = localStorage.getItem('puti_custom_quiz_banks');
+                    if (stored) currentCustom = JSON.parse(stored);
+
+                    const key = 'custom_' + Date.now();
+                    let finalData = parsed;
+                    if (!parsed.years) {
+                        finalData = {
+                            subjectName: file.name.replace('.json', ''),
+                            years: [{ year: "114", questions: parsed.questions || parsed }]
+                        };
+                    }
+                    currentCustom[key] = finalData;
+                    localStorage.setItem('puti_custom_quiz_banks', JSON.stringify(currentCustom));
+
+                    alert(`✅ 成功匯入題庫【${finalData.subjectName}】！`);
+                    window.location.href = `quiz_player.html?subject=${key}`;
+                } catch (err) {
+                    alert("JSON 解析失敗，請確認檔案格式！");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function renderManageList() {
+            const container = document.getElementById('custom-banks-list');
+            container.innerHTML = '';
+            let currentCustom = {};
+            const stored = localStorage.getItem('puti_custom_quiz_banks');
+            if (stored) currentCustom = JSON.parse(stored);
+
+            const keys = Object.keys(currentCustom);
+            if (keys.length === 0) {
+                container.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">目前尚無已保存的自訂題庫。</div>';
+                return;
+            }
+
+            keys.forEach(k => {
+                const item = currentCustom[k];
+                const totalQ = item.years.reduce((s, y) => s + y.questions.length, 0);
+                const div = document.createElement('div');
+                div.className = 'bank-item-card';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight:700; font-size:14px; color:var(--text-dark);">⭐ ${item.subjectName || k}</div>
+                        <div style="font-size:12px; color:var(--text-muted);">${item.years.length} 份試卷，共 ${totalQ} 題</div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <a href="quiz_player.html?subject=${k}" class="btn-main" style="padding:6px 12px; font-size:12px; text-decoration:none;">🎮 測驗</a>
+                        <button onclick="exportSingleBank('${k}')" class="btn-secondary" style="padding:6px 12px; font-size:12px;">💾 匯出</button>
+                        <button onclick="deleteBank('${k}')" style="background:#fee2e2; color:#b91c1c; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer;">🗑️ 刪除</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteBank(k) {
+            if (confirm("確定要刪除此題庫嗎？")) {
+                let currentCustom = {};
+                const stored = localStorage.getItem('puti_custom_quiz_banks');
+                if (stored) currentCustom = JSON.parse(stored);
+                delete currentCustom[k];
+                localStorage.setItem('puti_custom_quiz_banks', JSON.stringify(currentCustom));
+                renderManageList();
+            }
+        }
+
+        function exportSingleBank(k) {
+            let currentCustom = {};
+            const stored = localStorage.getItem('puti_custom_quiz_banks');
+            if (stored) currentCustom = JSON.parse(stored);
+            const data = currentCustom[k];
+            if (!data) return;
+
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${data.subjectName || k}_題庫.json`;
             a.click();
             URL.revokeObjectURL(url);
         }

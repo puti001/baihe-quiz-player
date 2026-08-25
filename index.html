@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puti-AI | 7 大職類官方 PDF 真題播放器</title>
+    <title>Puti-AI | 7 大職類官方 PDF 真題播放器 (電競射擊爆破版)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&family=Fredoka:wght@600;700&family=Black+Ops+One&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #f4f7fc;
+            --bg-main: #f0f4f9;
             --panel-bg: #ffffff;
             --primary: #4f46e5;
             --primary-hover: #4338ca;
@@ -22,20 +22,29 @@
             --text-dark: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --gun-laser: #ef4444;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: var(--bg-main); color: var(--text-dark);
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 16px;
+            overflow-x: hidden; position: relative;
+        }
+
+        /* 遊戲粒子畫布 */
+        #fx-canvas {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9999;
         }
 
         header {
             width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center;
             padding: 14px 20px; background: var(--panel-bg); border-radius: 20px;
             box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 16px;
+            flex-wrap: wrap; gap: 10px;
         }
 
         .brand-logo {
@@ -44,7 +53,17 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* 精簡的齒輪按鈕 (連接題庫管理中心) */
+        .header-tools { display: flex; gap: 8px; align-items: center; }
+
+        .sound-toggle-btn {
+            background: #f8fafc; border: 1.5px solid var(--border); padding: 8px 12px;
+            border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .sound-toggle-btn:hover { background: #e2e8f0; color: var(--text-dark); }
+        .sound-toggle-btn.active { background: #ecfdf5; border-color: #10b981; color: #047857; }
+
         .gear-btn {
             display: flex; align-items: center; gap: 6px; background: #f8fafc;
             border: 1.5px solid var(--border); padding: 8px 14px; border-radius: 12px;
@@ -58,17 +77,41 @@
 
         main { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 16px; }
 
+        /* 遊戲 HUD 狀態條 (分數、連擊、命中率) */
+        .hud-bar {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            border-radius: 20px; padding: 14px 20px; color: white;
+            display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 10px 25px rgba(49, 46, 129, 0.25); border: 2px solid #6366f1;
+            position: relative; overflow: hidden;
+        }
+
+        .hud-item { display: flex; flex-direction: column; align-items: center; }
+        .hud-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #a5b4fc; letter-spacing: 0.5px; }
+        .hud-value { font-size: 22px; font-weight: 900; font-family: 'Black Ops One', sans-serif; color: #fbbf24; }
+
+        .combo-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 900;
+            font-family: 'Black Ops One', sans-serif; color: white;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+            display: none; animation: pulseCombo 0.4s infinite alternate;
+        }
+
+        @keyframes pulseCombo {
+            from { transform: scale(1); }
+            to { transform: scale(1.15) rotate(2deg); }
+        }
+
+        /* 題庫與年度選擇卡片 */
         .subject-selector-card {
-            background: var(--panel-bg); border-radius: 20px; padding: 18px 24px;
-            box-shadow: var(--shadow); border: 2px solid #c7d2fe; display: flex;
+            background: var(--panel-bg); border-radius: 20px; padding: 16px 20px;
+            box-shadow: var(--shadow); border: 1.5px solid #c7d2fe; display: flex;
             flex-direction: column; gap: 10px;
         }
 
         .selector-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-
-        .selector-title {
-            font-size: 15px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px;
-        }
+        .selector-title { font-size: 14px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; }
 
         select.subject-dropdown {
             width: 100%; padding: 12px 16px; border: 2px solid var(--primary);
@@ -76,42 +119,32 @@
             background: #f8fafc; outline: none; cursor: pointer; transition: all 0.2s;
         }
 
-        /* 年度選單與稽核列 */
         .year-bar-wrapper {
-            background: var(--panel-bg); border-radius: 20px; padding: 16px 20px;
+            background: var(--panel-bg); border-radius: 20px; padding: 14px 20px;
             box-shadow: var(--shadow); border: 1px solid var(--border);
-            display: flex; flex-direction: column; gap: 12px;
+            display: flex; flex-direction: column; gap: 10px;
         }
 
-        .year-bar-header {
-            display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
-        }
-
-        .year-bar-title {
-            font-size: 14px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 6px;
-        }
+        .year-bar-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .year-bar-title { font-size: 13px; font-weight: 700; color: var(--text-dark); }
 
         .inspect-btn {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white; border: none; padding: 8px 16px; border-radius: 12px;
-            font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); transition: all 0.2s;
+            color: white; border: none; padding: 6px 14px; border-radius: 10px;
+            font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); transition: all 0.2s;
         }
-        .inspect-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35); }
 
-        /* 滑動流暢、橫向無限捲動的年度列 */
         .year-bar {
             display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px 2px;
             scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;
             -webkit-overflow-scrolling: touch;
         }
-
         .year-bar::-webkit-scrollbar { height: 6px; }
         .year-bar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .year-bar::-webkit-scrollbar-track { background: transparent; }
 
         .year-tab {
-            background: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 14px;
+            background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 12px;
             font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer;
             white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
         }
@@ -121,25 +154,131 @@
             box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
         }
 
+        /* 核心測驗戰鬥卡片 */
         .quiz-card {
             background: var(--panel-bg); border-radius: 24px; padding: 24px;
-            box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 16px;
+            box-shadow: var(--shadow); border: 2px solid var(--border);
+            display: flex; flex-direction: column; gap: 16px; position: relative;
+            transition: transform 0.1s;
         }
 
-        .question-title { font-size: 18px; font-weight: 700; line-height: 1.6; }
+        /* 震屏效果 */
+        .shake-screen {
+            animation: screenShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
 
+        @keyframes screenShake {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* 能量進度條 */
+        .energy-progress-wrapper {
+            width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden;
+        }
+        .energy-progress-bar {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #4f46e5, #06b6d4, #10b981);
+            transition: width 0.3s ease; border-radius: 10px;
+        }
+
+        .question-title { font-size: 19px; font-weight: 700; line-height: 1.6; color: var(--text-dark); }
+
+        /* 遊戲化瞄準選項按鈕 */
         .option-item {
-            background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px;
-            padding: 14px 18px; font-size: 15px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s; display: flex; justify-content: space-between;
+            background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px;
+            padding: 16px 20px; font-size: 15px; font-weight: 600; cursor: pointer;
+            transition: all 0.15s ease-out; display: flex; justify-content: space-between;
+            align-items: center; position: relative; overflow: hidden; user-select: none;
         }
-        .option-item:hover { border-color: var(--primary); background: var(--primary-light); }
-        .option-item.correct { border-color: var(--success); background: #ecfdf5; color: #065f46; }
-        .option-item.wrong { border-color: var(--danger); background: #fef2f2; color: #991b1b; }
+
+        /* 瞄準十字準心圖示 (Hover / Active) */
+        .crosshair-icon {
+            position: absolute; right: 16px; width: 28px; height: 28px;
+            border: 2px solid #94a3b8; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; opacity: 0.3; transition: all 0.2s;
+        }
+        .crosshair-icon::before { content: ''; position: absolute; width: 14px; height: 2px; background: #94a3b8; }
+        .crosshair-icon::after { content: ''; position: absolute; height: 14px; width: 2px; background: #94a3b8; }
+
+        .option-item:hover {
+            border-color: #f59e0b; background: #fffbeb; transform: translateX(6px) scale(1.01);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.15);
+        }
+        .option-item:hover .crosshair-icon {
+            opacity: 1; border-color: #ef4444; transform: rotate(90deg) scale(1.15);
+        }
+        .option-item:hover .crosshair-icon::before, .option-item:hover .crosshair-icon::after {
+            background: #ef4444;
+        }
+
+        /* 點擊擊穿彈孔 (Bullet Hole) 效果 */
+        .bullet-hole {
+            position: absolute; width: 20px; height: 20px; background: #0f172a;
+            border-radius: 50%; border: 3px solid #64748b; box-shadow: inset 0 0 6px #000, 0 0 10px rgba(0,0,0,0.5);
+            pointer-events: none; z-index: 10; animation: bulletImpact 0.2s ease-out;
+        }
+
+        @keyframes bulletImpact {
+            0% { transform: scale(3); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+
+        /* 答對爆破命中 */
+        .option-item.correct {
+            border-color: #10b981 !important; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+            color: #065f46 !important; font-weight: 700; box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+            animation: hitPop 0.3s ease-out;
+        }
+        .option-item.correct .crosshair-icon {
+            border-color: #10b981; opacity: 1; transform: scale(1.2);
+        }
+        .option-item.correct .crosshair-icon::before, .option-item.correct .crosshair-icon::after {
+            background: #10b981;
+        }
+
+        /* 答錯防護罩碎裂 */
+        .option-item.wrong {
+            border-color: #ef4444 !important; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+            color: #991b1b !important; font-weight: 700; box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
+            animation: missJiggle 0.3s ease-in-out;
+        }
+
+        @keyframes hitPop {
+            0% { transform: scale(0.96); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes missJiggle {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
 
         .explanation-box {
-            background: #f1f5f9; border-left: 4px solid var(--primary); border-radius: 8px;
-            padding: 12px; font-size: 14px; display: none; line-height: 1.5;
+            background: #f8fafc; border-left: 4px solid var(--primary); border-radius: 12px;
+            padding: 14px 18px; font-size: 14px; display: none; line-height: 1.6;
+            animation: fadeIn 0.25s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .next-btn-cyber {
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            color: white; border: none; padding: 12px 28px; border-radius: 14px;
+            font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35); display: flex; align-items: center; gap: 8px;
+        }
+        .next-btn-cyber:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.45);
+        }
+        .next-btn-cyber:disabled {
+            background: #cbd5e1; color: #94a3b8; box-shadow: none; cursor: not-allowed;
         }
 
         /* 稽核 Modal */
@@ -165,7 +304,6 @@
             background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 16px;
             display: flex; flex-direction: column; gap: 8px;
         }
-
         .inspect-q-title { font-size: 15px; font-weight: 700; color: var(--text-dark); }
         .inspect-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: var(--text-muted); }
         .inspect-opt-correct { font-weight: 700; color: var(--success); }
@@ -183,17 +321,41 @@
 </head>
 <body>
 
+    <canvas id="fx-canvas"></canvas>
+
     <header>
         <div class="brand-logo">Puti-AI | 7 大職類官方 PDF 真題播放器</div>
-        <a href="pdf_converter.html" target="_blank" class="gear-btn" title="進入題庫管理與 PDF 轉換中心">
-            ⚙️ 題庫管理
-        </a>
+        <div class="header-tools">
+            <button class="sound-toggle-btn active" id="sound-btn" onclick="toggleSound()">
+                <span id="sound-icon">🔊</span> 音效開
+            </button>
+            <a href="pdf_converter.html" target="_blank" class="gear-btn" title="進入題庫管理與 PDF 轉換中心">
+                ⚙️ 題庫管理
+            </a>
+        </div>
     </header>
 
     <main>
+        <!-- 戰鬥電競 HUD：即時分數、連擊倍率、命中率 -->
+        <div class="hud-bar">
+            <div class="hud-item">
+                <span class="hud-label">🎯 當前得分</span>
+                <span class="hud-value" id="hud-score">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">⚡ 連擊加成</span>
+                <span class="combo-badge" id="hud-combo-badge">🔥 COMBO x0</span>
+                <span class="hud-value" id="hud-combo-text" style="color:#a5b4fc; font-size:16px;">READY</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">📊 命中率</span>
+                <span class="hud-value" id="hud-accuracy" style="color:#34d399;">100%</span>
+            </div>
+        </div>
+
         <div class="subject-selector-card">
             <div class="selector-header">
-                <span class="selector-title">🏫 選擇科目職類：</span>
+                <span class="selector-title">🏫 選擇戰鬥科目職類：</span>
                 <span style="font-size:12px; background:#e0e7ff; color:#4338ca; font-weight:700; padding:2px 8px; border-radius:6px;" id="q-total-badge">載入中...</span>
             </div>
             <select id="subject-select" class="subject-dropdown" onchange="onSubjectChange()">
@@ -220,19 +382,24 @@
             <div class="year-bar" id="year-tabs-container"></div>
         </div>
 
-        <div class="quiz-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="background:#dcfce7; color:#15803d; font-size:12px; font-weight:700; padding:4px 10px; border-radius:8px;" id="category-tag">100% 官方原廠 PDF 實體解析</span>
-                <span style="font-size:13px; color:var(--text-muted); font-weight:700;" id="progress-text">1 / 80</span>
+        <div class="quiz-card" id="main-quiz-card">
+            <!-- 能量條 -->
+            <div class="energy-progress-wrapper">
+                <div class="energy-progress-bar" id="energy-bar"></div>
             </div>
 
-            <div class="question-title" id="question-title">載入題目中...</div>
-            <div style="display:flex; flex-direction:column; gap:10px;" id="options-list"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="background:#dcfce7; color:#15803d; font-size:12px; font-weight:700; padding:4px 10px; border-radius:8px;" id="category-tag">100% 官方原廠 PDF 實體真題</span>
+                <span style="font-size:14px; color:var(--text-muted); font-weight:800;" id="progress-text">1 / 80</span>
+            </div>
+
+            <div class="question-title" id="question-title">載入戰鬥題目中...</div>
+            <div style="display:flex; flex-direction:column; gap:12px;" id="options-list"></div>
             <div class="explanation-box" id="explanation-box"></div>
 
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:12px; color:var(--text-muted);" id="status-hint">💡 點擊選項即可進行答題！</span>
-                <button id="next-btn" onclick="nextQuestion()" disabled style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:700; cursor:pointer;">下一題 ➔</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <span style="font-size:13px; color:var(--text-muted); font-weight:600;" id="status-hint">🎯 瞄準選項並點擊擊發！</span>
+                <button id="next-btn" class="next-btn-cyber" onclick="nextQuestion()" disabled>下一題 ➔</button>
             </div>
         </div>
     </main>
@@ -263,6 +430,185 @@
         let answered = false;
         let customDatabases = {};
 
+        // 遊戲數值系統
+        let score = 0;
+        let combo = 0;
+        let totalAnswered = 0;
+        let totalCorrect = 0;
+        let soundEnabled = true;
+
+        /* ===== Web Audio API 原生音效合成引擎 (零延遲、免外部音檔) ===== */
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playGunshotSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            const now = audioCtx.currentTime;
+            
+            // 噪音脈衝模擬開火衝擊
+            const bufferSize = audioCtx.sampleRate * 0.08;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1000, now);
+            filter.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.6, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start(now);
+        }
+
+        function playCorrectChime(comboCount) {
+            if (!soundEnabled) return;
+            initAudio();
+            const now = audioCtx.currentTime;
+
+            // 連擊音調遞增
+            const baseFreq = 523.25; // C5
+            const multiplier = Math.min(1 + (comboCount * 0.08), 2.2);
+            
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq * multiplier, now + idx * 0.05);
+
+                gain.gain.setValueAtTime(0.25, now + idx * 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.35);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now + idx * 0.05);
+                osc.stop(now + idx * 0.05 + 0.36);
+            });
+        }
+
+        function playWrongBuzz() {
+            if (!soundEnabled) return;
+            initAudio();
+            const now = audioCtx.currentTime;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(140, now);
+            osc.frequency.linearRampToValueAtTime(90, now + 0.25);
+
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.26);
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-btn');
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                btn.classList.add('active');
+                icon.innerText = "🔊";
+                btn.innerHTML = `<span>🔊</span> 音效開`;
+            } else {
+                btn.classList.remove('active');
+                icon.innerText = "🔇";
+                btn.innerHTML = `<span>🔇</span> 音效關`;
+            }
+        }
+
+        /* ===== Canvas 爆破粒子與粉碎動畫系統 ===== */
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 5 + 3;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 12 + 4;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.03 + 0.015;
+                this.gravity = 0.35;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function spawnShatterFX(x, y, isSuccess) {
+            const colors = isSuccess 
+                ? ['#10b981', '#34d399', '#f59e0b', '#fbbf24', '#ffffff', '#38bdf8']
+                : ['#ef4444', '#f87171', '#64748b', '#0f172a'];
+
+            for (let i = 0; i < 40; i++) {
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animateFX() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw();
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(animateFX);
+        }
+        animateFX();
+
+        /* ===== 主應用邏輯 ===== */
         function initApp() {
             loadCustomDatabasesFromStorage();
             renderSubjectDropdown();
@@ -312,6 +658,11 @@
 
         function onSubjectChange() {
             currentSubjectKey = document.getElementById('subject-select').value;
+            score = 0;
+            combo = 0;
+            totalAnswered = 0;
+            totalCorrect = 0;
+            updateHUD();
             loadSubjectData(currentSubjectKey);
         }
 
@@ -350,7 +701,6 @@
             loadYear(0);
         }
 
-        // 年度按鈕列：僅顯示「年度」，不顯示題數
         function renderYearTabs() {
             const container = document.getElementById('year-tabs-container');
             container.innerHTML = '';
@@ -373,6 +723,25 @@
             loadQuestion();
         }
 
+        function updateHUD() {
+            document.getElementById('hud-score').innerText = score;
+            const comboBadge = document.getElementById('hud-combo-badge');
+            const comboText = document.getElementById('hud-combo-text');
+
+            if (combo >= 2) {
+                comboBadge.style.display = 'inline-block';
+                comboBadge.innerText = `🔥 COMBO x${combo}`;
+                comboText.style.display = 'none';
+            } else {
+                comboBadge.style.display = 'none';
+                comboText.style.display = 'inline';
+                comboText.innerText = combo === 1 ? '1 HIT' : 'READY';
+            }
+
+            const acc = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 100;
+            document.getElementById('hud-accuracy').innerText = `${acc}%`;
+        }
+
         function loadQuestion() {
             answered = false;
             document.getElementById('next-btn').disabled = true;
@@ -387,8 +756,13 @@
 
             const q = yearObj.questions[currentQIdx];
 
+            // 能量條進度
+            const pct = Math.round(((currentQIdx + 1) / yearObj.questions.length) * 100);
+            document.getElementById('energy-bar').style.width = `${pct}%`;
+
             document.getElementById('progress-text').innerText = `${currentQIdx + 1} / ${yearObj.questions.length}`;
             document.getElementById('question-title').innerText = q.title;
+            document.getElementById('status-hint').innerText = "🎯 瞄準選項並點擊擊發！";
 
             const list = document.getElementById('options-list');
             list.innerHTML = '';
@@ -396,34 +770,82 @@
             q.options.forEach((opt, idx) => {
                 const item = document.createElement('div');
                 item.className = 'option-item';
-                item.innerHTML = `<span><b>(${idx + 1})</b> ${opt}</span>`;
-                item.onclick = () => checkAnswer(idx, item);
+                item.innerHTML = `
+                    <span><b>(${idx + 1})</b> ${opt}</span>
+                    <div class="crosshair-icon"></div>
+                `;
+                item.onclick = (e) => checkAnswer(idx, item, e);
                 list.appendChild(item);
             });
         }
 
-        function checkAnswer(selectedIdx, element) {
+        function checkAnswer(selectedIdx, element, event) {
             if (answered) return;
             answered = true;
+            totalAnswered++;
 
             const yearObj = activeYears[currentYearIdx];
             const q = yearObj.questions[currentQIdx];
             const items = document.querySelectorAll('.option-item');
+            const isCorrect = selectedIdx === q.answer;
+
+            // 開火音效
+            playGunshotSound();
+
+            // 生成擊發彈孔 (Bullet Hole) 視覺效果
+            const rect = element.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+            const hole = document.createElement('div');
+            hole.className = 'bullet-hole';
+            hole.style.left = `${clickX - 10}px`;
+            hole.style.top = `${clickY - 10}px`;
+            element.appendChild(hole);
+
+            // 觸發物理粉碎粒子
+            spawnShatterFX(event.clientX, event.clientY, isCorrect);
 
             if (items[q.answer]) {
                 items[q.answer].classList.add('correct');
             }
 
-            if (selectedIdx === q.answer) {
+            if (isCorrect) {
+                totalCorrect++;
+                combo++;
+                const point = 100 + (combo * 20);
+                score += point;
                 element.classList.add('correct');
-                document.getElementById('status-hint').innerText = "✨ 答對了！(符合官方標準解答)";
+                document.getElementById('status-hint').innerHTML = `<span style="color:#059669; font-weight:800;">💥 爆破擊中！+${point} 分！(官方標準正解)</span>`;
+                
+                playCorrectChime(combo);
+
+                // 震動回饋 (答對輕快雙震)
+                if (navigator.vibrate) {
+                    navigator.vibrate([35, 40, 45]);
+                }
             } else {
+                combo = 0;
                 element.classList.add('wrong');
-                document.getElementById('status-hint').innerText = "💥 答錯了！";
+                document.getElementById('status-hint').innerHTML = `<span style="color:#dc2626; font-weight:800;">💥 彈道偏離！防護盾破裂！</span>`;
+                
+                // 震屏效果
+                const card = document.getElementById('main-quiz-card');
+                card.classList.remove('shake-screen');
+                void card.offsetWidth; // trigger reflow
+                card.classList.add('shake-screen');
+
+                playWrongBuzz();
+
+                // 震動回饋 (答錯長震)
+                if (navigator.vibrate) {
+                    navigator.vibrate([120, 60, 120]);
+                }
             }
 
+            updateHUD();
+
             const exp = document.getElementById('explanation-box');
-            exp.innerHTML = `<b>${q.explain || '標準解答：第 (' + (q.answer + 1) + ') 項'}</b>`;
+            exp.innerHTML = `💡 <b>${q.explain || '標準解答：第 (' + (q.answer + 1) + ') 項'}</b>`;
             exp.style.display = 'block';
 
             document.getElementById('next-btn').disabled = false;

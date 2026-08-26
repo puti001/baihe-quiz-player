@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Puti-AI | 7 大職類官方 PDF 真題播放器 (電競防空街機版)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,63 +25,124 @@
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
 
         body {
-            background-color: var(--bg-main); color: var(--text-dark);
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 12px 14px;
-            overflow-x: hidden; position: relative; user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 12px;
+            user-select: none;
         }
 
         /* 頂部導航列 */
         header {
-            width: 100%; max-width: 960px; display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 18px; background: var(--panel-bg); border-radius: 18px;
-            box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 12px;
-            flex-wrap: wrap; gap: 10px;
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--panel-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .brand-logo {
-            font-size: 19px; font-weight: 800; font-family: 'Fredoka', cursive;
+            font-size: 17px;
+            font-weight: 800;
+            font-family: 'Fredoka', cursive;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            display: flex; align-items: center; gap: 8px;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .header-tools { display: flex; gap: 8px; align-items: center; }
+        .header-tools { display: flex; gap: 6px; align-items: center; }
 
         .btn-pill {
-            background: #f8fafc; border: 1.5px solid var(--border); padding: 7px 12px;
-            border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 6px; color: var(--text-muted);
-            transition: all 0.2s; text-decoration: none;
+            background: #f8fafc;
+            border: 1.5px solid var(--border);
+            padding: 6px 11px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            text-decoration: none;
+            white-space: nowrap;
         }
         .btn-pill:hover { background: #e2e8f0; color: var(--text-dark); transform: translateY(-1px); }
         .btn-pill.active { background: #ecfdf5; border-color: #10b981; color: #047857; }
 
-        main { width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 12px; }
+        main {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+        }
 
         /* 戰鬥電競 HUD 儀表板 */
         .hud-bar {
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-            border-radius: 18px; padding: 12px 18px; color: white;
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-            align-items: center; box-shadow: 0 10px 25px rgba(49, 46, 129, 0.25);
-            border: 2px solid #6366f1; position: relative; overflow: hidden;
+            border-radius: 16px;
+            padding: 10px 14px;
+            color: white;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(49, 46, 129, 0.25);
+            border: 2px solid #6366f1;
+            width: 100%;
+            min-width: 0;
         }
 
-        .hud-item { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .hud-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #a5b4fc; letter-spacing: 0.5px; }
-        .hud-value { font-size: 19px; font-weight: 900; font-family: 'Black Ops One', 'Orbitron', sans-serif; color: #fbbf24; }
+        .hud-item { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
+        .hud-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: #a5b4fc; letter-spacing: 0.5px; white-space: nowrap; }
+        .hud-value { font-size: 18px; font-weight: 900; font-family: 'Black Ops One', 'Orbitron', sans-serif; color: #fbbf24; }
 
-        .shield-hearts { font-size: 17px; letter-spacing: 2px; }
+        .shield-hearts { font-size: 16px; letter-spacing: 2px; }
 
         .combo-badge {
             background: linear-gradient(135deg, #f59e0b, #ef4444);
-            padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 900;
-            font-family: 'Black Ops One', sans-serif; color: white;
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 900;
+            font-family: 'Black Ops One', sans-serif;
+            color: white;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
             animation: pulseCombo 0.4s infinite alternate;
+            white-space: nowrap;
         }
 
         @keyframes pulseCombo {
@@ -89,67 +150,144 @@
             to { transform: scale(1.15) rotate(2deg); }
         }
 
-        /* 職類與年度選擇器 */
+        /* 職類與年度選擇器 (完整防跑版寬度封鎖) */
         .controls-row {
-            display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 10px;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
         }
+
         @media (max-width: 768px) {
-            .controls-row { grid-template-columns: 1fr; }
-            .hud-bar { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .controls-row { grid-template-columns: 1fr; gap: 8px; }
+            .hud-bar { grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 8px 10px; }
+            .brand-logo { font-size: 16px; }
+            header { padding: 8px 12px; }
         }
 
         .selector-card {
-            background: var(--panel-bg); border-radius: 16px; padding: 10px 14px;
-            box-shadow: var(--shadow); border: 1px solid var(--border);
-            display: flex; flex-direction: column; gap: 6px;
+            background: var(--panel-bg);
+            border-radius: 14px;
+            padding: 9px 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
         }
 
         select.subject-dropdown {
-            width: 100%; padding: 8px 12px; border: 2px solid var(--primary);
-            border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--text-dark);
-            background: #f8fafc; outline: none; cursor: pointer;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            padding: 8px 10px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            background: #f8fafc;
+            outline: none;
+            cursor: pointer;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            display: block;
         }
 
         .year-bar {
-            display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px;
-            scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 2px 2px 4px 2px;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+            -webkit-overflow-scrolling: touch;
         }
-        .year-bar::-webkit-scrollbar { height: 5px; }
+        .year-bar::-webkit-scrollbar { height: 4px; }
         .year-bar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
         .year-tab {
-            background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 12px; border-radius: 10px;
-            font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer;
-            white-space: nowrap; transition: all 0.15s; flex-shrink: 0;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 5px 11px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+            flex-shrink: 0;
         }
         .year-tab:hover { background: #e2e8f0; color: var(--primary); }
         .year-tab.active {
-            background: var(--primary); color: white; border-color: var(--primary);
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
         }
 
         /* 街機主遊戲舞台 (Arcade Battle Arena) */
         .arcade-container {
-            background: var(--panel-bg); border-radius: 20px; padding: 14px;
-            box-shadow: var(--shadow); border: 2px solid #c7d2fe;
-            display: flex; flex-direction: column; gap: 10px; position: relative;
-            overflow: hidden;
+            background: var(--panel-bg);
+            border-radius: 18px;
+            padding: 12px;
+            box-shadow: var(--shadow);
+            border: 2px solid #c7d2fe;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
         }
 
         .arena-header {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #f8fafc; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            padding: 7px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .mode-toggle-group {
-            display: flex; gap: 4px; background: #e2e8f0; padding: 3px; border-radius: 10px;
+            display: flex;
+            gap: 3px;
+            background: #e2e8f0;
+            padding: 3px;
+            border-radius: 9px;
         }
         .mode-btn {
-            border: none; background: transparent; padding: 5px 10px; border-radius: 8px;
-            font-size: 12px; font-weight: 700; cursor: pointer; color: #475569; transition: all 0.2s;
+            border: none;
+            background: transparent;
+            padding: 4px 9px;
+            border-radius: 7px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            color: #475569;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
         .mode-btn.active {
-            background: white; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         /* 戰術情報簡報框 (題幹：獨立於畫布上方，絕對不遮擋選項) */
@@ -157,67 +295,127 @@
             background: #ffffff;
             border: 2px solid #6366f1;
             border-radius: 14px;
-            padding: 12px 16px;
+            padding: 12px 14px;
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
-            transition: all 0.3s;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
         .briefing-tag {
-            font-size: 11px; font-weight: 900; color: #4f46e5; text-transform: uppercase;
-            letter-spacing: 1px; display: flex; justify-content: space-between; margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 900;
+            color: #4f46e5;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
         }
         .briefing-text {
-            font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.55;
+            font-size: 15.5px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.55;
             word-break: break-word;
         }
 
         /* 戰術 Canvas 舞台 */
         .canvas-wrapper {
-            width: 100%; height: 380px; position: relative; border-radius: 16px;
-            overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.08);
+            width: 100%;
+            height: 380px;
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.08);
             background: linear-gradient(to bottom, #dbeafe 0%, #e0f2fe 60%, #bae6fd 100%);
             border: 2px solid #93c5fd;
+            max-width: 100%;
+            min-width: 0;
         }
         @media (max-width: 640px) {
-            .canvas-wrapper { height: 350px; }
-            .briefing-text { font-size: 15px; }
+            .canvas-wrapper { height: 340px; }
+            .briefing-text { font-size: 14.5px; }
+            body { padding: 8px; }
         }
 
         #game-canvas {
-            width: 100%; height: 100%; display: block; cursor: crosshair;
+            width: 100%;
+            height: 100%;
+            display: block;
+            cursor: crosshair;
         }
 
         /* 底部操作與熱鍵提示 */
         .arena-footer {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
-            padding: 4px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 2px 4px;
         }
         .hotkey-badges {
-            display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--text-muted); font-weight: 700;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            flex-wrap: wrap;
         }
         .kbd-key {
-            background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 6px;
-            padding: 2px 6px; font-family: monospace; font-size: 12px; color: #334155;
-            box-shadow: 0 2px 0 #cbd5e1;
+            background: #f1f5f9;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 5px;
+            padding: 2px 5px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #334155;
+            box-shadow: 0 1.5px 0 #cbd5e1;
         }
 
         .next-btn {
             background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
-            color: white; border: none; padding: 9px 20px; border-radius: 12px;
-            font-size: 13.5px; font-weight: 800; cursor: pointer; transition: all 0.2s;
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35); display: flex; align-items: center; gap: 6px;
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 11px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
         }
         .next-btn:hover:not(:disabled) {
-            transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
         }
         .next-btn:disabled {
-            background: #cbd5e1; color: #94a3b8; box-shadow: none; cursor: not-allowed;
+            background: #cbd5e1;
+            color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
         }
 
         /* 解析與答案彈出列 */
         .explanation-card {
-            background: #f0fdf4; border: 2px solid #86efac; border-radius: 14px;
-            padding: 12px 16px; font-size: 13.5px; color: #166534; font-weight: 600;
-            display: none; animation: fadeIn 0.25s ease-out; line-height: 1.5;
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            border-radius: 12px;
+            padding: 11px 15px;
+            font-size: 13.5px;
+            color: #166534;
+            font-weight: 600;
+            display: none;
+            animation: fadeIn 0.25s ease-out;
+            line-height: 1.5;
+            width: 100%;
+            box-sizing: border-box;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-4px); }
@@ -226,22 +424,41 @@
 
         /* 經典卡片模式清單 (Pro Mode) */
         .card-mode-container {
-            display: none; flex-direction: column; gap: 8px; margin-top: 4px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+            width: 100%;
         }
         .card-option {
-            background: #f8fafc; border: 2px solid var(--border); border-radius: 14px;
-            padding: 12px 16px; font-size: 14.5px; font-weight: 600; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             transition: all 0.15s;
         }
         .card-option:hover {
-            border-color: #f59e0b; background: #fffbeb; transform: translateX(4px);
+            border-color: #f59e0b;
+            background: #fffbeb;
+            transform: translateX(3px);
         }
         .card-option.correct {
-            border-color: #10b981 !important; background: #ecfdf5 !important; color: #065f46 !important; font-weight: 700;
+            border-color: #10b981 !important;
+            background: #ecfdf5 !important;
+            color: #065f46 !important;
+            font-weight: 700;
         }
         .card-option.wrong {
-            border-color: #ef4444 !important; background: #fef2f2 !important; color: #991b1b !important; font-weight: 700;
+            border-color: #ef4444 !important;
+            background: #fef2f2 !important;
+            color: #991b1b !important;
+            font-weight: 700;
         }
 
         /* 震屏動效 */
@@ -255,18 +472,43 @@
             40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
-        /* 全螢幕結算 Modal */
+        /* 全螢幕結算 Modal (置中高層級，鎖定視窗永不跑版) */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px);
-            display: none; justify-content: center; align-items: center; z-index: 999; padding: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            padding: 16px;
+            box-sizing: border-box;
         }
 
         .modal-box {
-            background: white; border-radius: 24px; width: 95%; max-width: 500px; padding: 24px;
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 22px;
+            width: 100%;
+            max-width: 440px;
+            padding: 22px 18px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            border: 2px solid #e2e8f0;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes popIn {
             from { transform: scale(0.85); opacity: 0; }
@@ -274,25 +516,44 @@
         }
 
         .rank-badge {
-            font-size: 50px; font-weight: 900; font-family: 'Black Ops One', sans-serif;
+            font-size: 46px;
+            font-weight: 900;
+            font-family: 'Black Ops One', sans-serif;
             background: linear-gradient(135deg, #f59e0b, #ef4444);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin: 6px 0; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 4px 0;
+            filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4));
         }
 
         .stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin: 14px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            width: 100%;
+            margin: 12px 0;
         }
         .stat-card {
-            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 9px;
         }
-        .stat-card-label { font-size: 11px; font-weight: 700; color: var(--text-muted); }
-        .stat-card-val { font-size: 18px; font-weight: 900; color: var(--text-dark); font-family: 'Orbitron', sans-serif; }
+        .stat-card-label { font-size: 10.5px; font-weight: 700; color: var(--text-muted); }
+        .stat-card-val { font-size: 17px; font-weight: 900; color: var(--text-dark); font-family: 'Orbitron', sans-serif; }
 
         footer {
-            width: 100%; max-width: 960px; margin-top: 16px; padding: 14px;
-            background: var(--panel-bg); border-radius: 16px; border: 1px solid var(--border);
-            text-align: center; font-size: 13px; color: var(--text-muted); line-height: 1.6;
+            width: 100%;
+            max-width: 960px;
+            margin-top: 14px;
+            padding: 12px;
+            background: var(--panel-bg);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            text-align: center;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
         }
         footer a { color: var(--primary); font-weight: 700; text-decoration: none; }
     </style>
@@ -304,14 +565,14 @@
 
     <header>
         <div class="brand-logo">
-            <span>🚀</span> Puti-AI | 7 大職類官方 PDF 真題播放器 (電競防空街機版)
+            <span>🚀</span> Puti-AI | 7 大職類官方真題 (電競街機版)
         </div>
         <div class="header-tools">
             <a href="index.html" class="btn-pill" title="回到原本精心打磨的電競射擊爆破版">
                 🎯 原版播放器
             </a>
             <button class="btn-pill active" id="sound-btn" onclick="toggleSound()">
-                <span id="sound-icon">🔊</span> 音效開
+                <span id="sound-icon">🔊</span> 音效
             </button>
             <a href="pdf_converter.html" target="_blank" class="btn-pill" title="進入題庫管理與 PDF 轉換中心">
                 ⚙️ 題庫管理
@@ -332,8 +593,8 @@
             </div>
             <div class="hud-item">
                 <span class="hud-label">⚡ 連擊加成</span>
-                <span class="combo-badge" id="hud-combo-badge" style="display:none;">🔥 COMBO x0</span>
-                <span class="hud-value" id="hud-combo-text" style="color:#a5b4fc; font-size:16px;">READY</span>
+                <span class="combo-badge" id="hud-combo-badge" style="display:none;">🔥 x0</span>
+                <span class="hud-value" id="hud-combo-text" style="color:#a5b4fc; font-size:15px;">READY</span>
             </div>
             <div class="hud-item">
                 <span class="hud-label">📊 命中精準度</span>
@@ -344,24 +605,24 @@
         <!-- 選擇科目與試卷 -->
         <div class="controls-row">
             <div class="selector-card">
-                <span style="font-size:12px; font-weight:800; color:var(--primary);">🏫 選擇檢定職類：</span>
+                <span style="font-size:11.5px; font-weight:800; color:var(--primary);">🏫 選擇檢定職類：</span>
                 <select id="subject-select" class="subject-dropdown" onchange="onSubjectChange()">
                     <optgroup label="🏛️ 官方真題 7 職類 (共 9,360 題)">
-                        <option value="00700" selected>⚡ 00700 室內配線 - 屋內線路裝修 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                        <option value="02000">🚗 02000 汽車修護 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                        <option value="04200">📐 04200 測量 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                        <option value="14500">🛵 14500 機器腳踏車修護 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                        <option value="18300">🗜️ 18300 車床 - 車床項 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                        <option value="18500">⚙️ 18500 機械加工 丙級 (099-115 年，17 年全套，1,360 題)</option>
-                        <option value="21101">🏛️ 21101 建築製圖應用 - 電腦繪圖 丙級 (101-115 年，15 年全套，1,200 題)</option>
+                        <option value="00700" selected>⚡ 00700 室內配線 - 屋內線路裝修 丙級 (099-115 年，1,360 題)</option>
+                        <option value="02000">🚗 02000 汽車修護 丙級 (099-115 年，1,360 題)</option>
+                        <option value="04200">📐 04200 測量 丙級 (099-115 年，1,360 題)</option>
+                        <option value="14500">🛵 14500 機器腳踏車修護 丙級 (099-115 年，1,360 題)</option>
+                        <option value="18300">🗜️ 18300 車床 - 車床項 丙級 (099-115 年，1,360 題)</option>
+                        <option value="18500">⚙️ 18500 機械加工 丙級 (099-115 年，1,360 題)</option>
+                        <option value="21101">🏛️ 21101 建築製圖應用 - 電腦繪圖 丙級 (101-115 年，1,200 題)</option>
                     </optgroup>
                     <optgroup label="⭐ 我的自訂題庫 (瀏覽器保存)" id="custom-optgroup" style="display:none;"></optgroup>
                 </select>
             </div>
             <div class="selector-card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:12px; font-weight:800; color:var(--text-dark);">📅 選擇歷年試卷（↔ 滑動切換）：</span>
-                    <span style="font-size:11px; background:#e0e7ff; color:#4338ca; font-weight:700; padding:2px 8px; border-radius:6px;" id="q-total-badge">100% 官方題庫</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:4px;">
+                    <span style="font-size:11.5px; font-weight:800; color:var(--text-dark); white-space:nowrap;">📅 選擇歷年試卷：</span>
+                    <span style="font-size:10.5px; background:#e0e7ff; color:#4338ca; font-weight:700; padding:1px 6px; border-radius:5px; white-space:nowrap;" id="q-total-badge">100% 官方題庫</span>
                 </div>
                 <div class="year-bar" id="year-tabs-container"></div>
             </div>
@@ -370,13 +631,13 @@
         <!-- 街機主遊戲戰場 -->
         <div class="arcade-container" id="arena-card">
             <div class="arena-header">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="background:#dcfce7; color:#15803d; font-size:12px; font-weight:800; padding:3px 10px; border-radius:8px;" id="subject-badge">00700 室內配線</span>
-                    <span style="font-size:13px; color:var(--text-muted); font-weight:800;" id="q-progress">第 1 / 80 題</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="background:#dcfce7; color:#15803d; font-size:11.5px; font-weight:800; padding:2px 8px; border-radius:6px;" id="subject-badge">00700 室內配線</span>
+                    <span style="font-size:12.5px; color:var(--text-muted); font-weight:800;" id="q-progress">第 1 / 80 題</span>
                 </div>
                 <div class="mode-toggle-group">
-                    <button class="mode-btn active" id="btn-mode-arcade" onclick="switchMode('arcade')">🎮 街機戰鬥模式</button>
-                    <button class="mode-btn" id="btn-mode-card" onclick="switchMode('card')">📝 刷題模式</button>
+                    <button class="mode-btn active" id="btn-mode-arcade" onclick="switchMode('arcade')">🎮 街機戰鬥</button>
+                    <button class="mode-btn" id="btn-mode-card" onclick="switchMode('card')">📝 刷題</button>
                 </div>
             </div>
 
@@ -396,8 +657,8 @@
 
             <!-- 刷題模式清單 (Pro Card Mode) -->
             <div class="card-mode-container" id="card-mode-container">
-                <div style="font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:6px;" id="card-q-title">載入中...</div>
-                <div style="display:flex; flex-direction:column; gap:8px;" id="card-options-list"></div>
+                <div style="font-size:15px; font-weight:700; color:var(--text-dark); margin-bottom:4px;" id="card-q-title">載入中...</div>
+                <div style="display:flex; flex-direction:column; gap:6px;" id="card-options-list"></div>
             </div>
 
             <!-- 解析與作戰狀態提示 -->
@@ -406,9 +667,9 @@
             <!-- 底部動作欄 -->
             <div class="arena-footer">
                 <div class="hotkey-badges">
-                    <span>⚡ 鍵盤快捷鍵：</span>
+                    <span>⚡ 鍵盤：</span>
                     <span class="kbd-key">1</span><span class="kbd-key">2</span><span class="kbd-key">3</span><span class="kbd-key">4</span> <span>發射飛彈</span>
-                    <span class="kbd-key" style="margin-left:6px;">Space</span> <span>下一題</span>
+                    <span class="kbd-key" style="margin-left:4px;">Space</span> <span>下一題</span>
                 </div>
                 <button id="next-btn" class="next-btn" onclick="nextQuestion()" disabled>
                     下一題 ➔
@@ -417,12 +678,12 @@
         </div>
     </main>
 
-    <!-- 戰況結算 Modal -->
+    <!-- 戰況結算 Modal (鎖定在畫面正中心) -->
     <div class="modal-overlay" id="mission-modal">
         <div class="modal-box">
-            <h2 style="font-size:22px; font-weight:900; color:#1e1b4b;" id="modal-result-title">🏆 任務結算報告</h2>
+            <h2 style="font-size:20px; font-weight:900; color:#1e1b4b;" id="modal-result-title">🏆 任務結算報告</h2>
             <div class="rank-badge" id="modal-rank">S</div>
-            <p style="font-size:14px; color:var(--text-muted); font-weight:700;" id="modal-result-desc">卓越神射手！完美防禦基地防線！</p>
+            <p style="font-size:13.5px; color:var(--text-muted); font-weight:700;" id="modal-result-desc">卓越神射手！完美防禦基地防線！</p>
 
             <div class="stats-grid">
                 <div class="stat-card">
@@ -443,12 +704,12 @@
                 </div>
             </div>
 
-            <div style="display:flex; gap:10px; width:100%; margin-top:8px;">
-                <button onclick="restartMission()" style="flex:1; background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:12px; border-radius:14px; font-size:14px; font-weight:800; cursor:pointer;">
-                    🔄 滿血重新挑戰
+            <div style="display:flex; gap:8px; width:100%; margin-top:8px;">
+                <button onclick="restartMission()" style="flex:1; background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:11px; border-radius:12px; font-size:13.5px; font-weight:800; cursor:pointer;">
+                    🔄 滿血重試
                 </button>
-                <button onclick="closeMissionModal()" style="flex:1; background:#f1f5f9; color:#475569; border:none; padding:12px; border-radius:14px; font-size:14px; font-weight:800; cursor:pointer;">
-                    📋 繼續下一年度
+                <button onclick="closeMissionModal()" style="flex:1; background:#f1f5f9; color:#475569; border:none; padding:11px; border-radius:12px; font-size:13.5px; font-weight:800; cursor:pointer;">
+                    📋 繼續挑戰
                 </button>
             </div>
         </div>
@@ -584,11 +845,11 @@
             if (soundEnabled) {
                 btn.classList.add('active');
                 icon.innerText = "🔊";
-                btn.innerHTML = `<span>🔊</span> 音效開`;
+                btn.innerHTML = `<span>🔊</span> 音效`;
             } else {
                 btn.classList.remove('active');
                 icon.innerText = "🔇";
-                btn.innerHTML = `<span>🔇</span> 音效關`;
+                btn.innerHTML = `<span>🔇</span> 靜音`;
             }
         }
 
@@ -621,6 +882,9 @@
             repositionDrones();
         }
         window.addEventListener('resize', resizeGameCanvas);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resizeGameCanvas, 200);
+        });
 
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
@@ -641,6 +905,22 @@
                 }
             });
         });
+
+        // 觸控支援
+        canvas.addEventListener('touchstart', (e) => {
+            if (answered) return;
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const clickX = touch.clientX - rect.left;
+            const clickY = touch.clientY - rect.top;
+
+            drones.forEach((d, idx) => {
+                if (isInsideDrone(clickX, clickY, d)) {
+                    e.preventDefault();
+                    fireTurretAt(idx);
+                }
+            });
+        }, { passive: false });
 
         function checkDroneHover() {
             hoveredDroneIdx = -1;
@@ -663,8 +943,8 @@
             const W = canvas.width;
             const H = canvas.height;
             const cellW = W / 2;
-            const startY = 65;
-            const rowH = 115;
+            const startY = 60;
+            const rowH = 110;
 
             drones.forEach((d, i) => {
                 const col = i % 2;
@@ -674,7 +954,7 @@
                 d.x = d.targetX;
                 d.y = d.targetY;
                 d.width = Math.min(W * 0.46, 390);
-                d.height = 70;
+                d.height = 68;
             });
         }
 
@@ -695,7 +975,7 @@
                     targetX: 0,
                     targetY: 0,
                     width: Math.min(canvas.width * 0.46, 390),
-                    height: 70,
+                    height: 68,
                     propellerAngle: Math.random() * Math.PI,
                     hoverOffset: Math.random() * Math.PI * 2,
                     isTargeted: false,
@@ -714,14 +994,14 @@
 
             const targetDrone = drones[targetIdx];
             const launcherX = canvas.width / 2;
-            const launcherY = canvas.height - 20;
+            const launcherY = canvas.height - 18;
 
             turretAngle = Math.atan2(targetDrone.y - launcherY, targetDrone.x - launcherX);
             playMissileLaunchSound();
 
             missiles.push({
                 x: launcherX,
-                y: launcherY - 15,
+                y: launcherY - 12,
                 target: targetDrone,
                 targetIdx: targetIdx,
                 speed: 18
@@ -885,13 +1165,13 @@
                 if (d.isTargeted && !answered) {
                     ctx.strokeStyle = '#ef4444';
                     ctx.lineWidth = 3;
-                    ctx.strokeRect(-d.width/2 - 6, -d.height/2 - 6, d.width + 12, d.height + 12);
-                    const mLen = 10;
+                    ctx.strokeRect(-d.width/2 - 5, -d.height/2 - 5, d.width + 10, d.height + 10);
+                    const mLen = 9;
                     ctx.beginPath();
-                    ctx.moveTo(-d.width/2 - 12, -d.height/2 - 12 + mLen); ctx.lineTo(-d.width/2 - 12, -d.height/2 - 12); ctx.lineTo(-d.width/2 - 12 + mLen, -d.height/2 - 12);
-                    ctx.moveTo(d.width/2 + 12 - mLen, -d.height/2 - 12); ctx.lineTo(d.width/2 + 12, -d.height/2 - 12); ctx.lineTo(d.width/2 + 12, -d.height/2 - 12 + mLen);
-                    ctx.moveTo(-d.width/2 - 12, d.height/2 + 12 - mLen); ctx.lineTo(-d.width/2 - 12, d.height/2 + 12); ctx.lineTo(-d.width/2 - 12 + mLen, d.height/2 + 12);
-                    ctx.moveTo(d.width/2 + 12 - mLen, d.height/2 + 12); ctx.lineTo(d.width/2 + 12, d.height/2 + 12); ctx.lineTo(d.width/2 + 12, d.height/2 + 12 - mLen);
+                    ctx.moveTo(-d.width/2 - 10, -d.height/2 - 10 + mLen); ctx.lineTo(-d.width/2 - 10, -d.height/2 - 10); ctx.lineTo(-d.width/2 - 10 + mLen, -d.height/2 - 10);
+                    ctx.moveTo(d.width/2 + 10 - mLen, -d.height/2 - 10); ctx.lineTo(d.width/2 + 10, -d.height/2 - 10); ctx.lineTo(d.width/2 + 10, -d.height/2 - 10 + mLen);
+                    ctx.moveTo(-d.width/2 - 10, d.height/2 + 10 - mLen); ctx.lineTo(-d.width/2 - 10, d.height/2 + 10); ctx.lineTo(-d.width/2 - 10 + mLen, d.height/2 + 10);
+                    ctx.moveTo(d.width/2 + 10 - mLen, d.height/2 + 10); ctx.lineTo(d.width/2 + 10, d.height/2 + 10); ctx.lineTo(d.width/2 + 10, d.height/2 + 10 - mLen);
                     ctx.stroke();
                 }
 
@@ -905,20 +1185,20 @@
                 }
 
                 ctx.strokeStyle = '#475569';
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 3.5;
                 const armW = d.width * 0.48;
                 ctx.beginPath();
-                ctx.moveTo(-armW, -14); ctx.lineTo(armW, -14);
+                ctx.moveTo(-armW, -12); ctx.lineTo(armW, -12);
                 ctx.stroke();
 
                 [-armW, armW].forEach(px => {
                     ctx.save();
-                    ctx.translate(px, -18);
+                    ctx.translate(px, -16);
                     ctx.rotate(d.propellerAngle);
                     ctx.strokeStyle = d.isTargeted ? '#ef4444' : '#0284c7';
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 2.8;
                     ctx.beginPath();
-                    ctx.moveTo(-14, 0); ctx.lineTo(14, 0);
+                    ctx.moveTo(-13, 0); ctx.lineTo(13, 0);
                     ctx.stroke();
                     ctx.restore();
                 });
@@ -936,24 +1216,24 @@
 
                 ctx.fillStyle = bodyBg;
                 ctx.strokeStyle = borderCol;
-                ctx.lineWidth = 2.5;
+                ctx.lineWidth = 2.2;
                 roundRect(ctx, -d.width/2, -d.height/2, d.width, d.height, 12, true, true);
 
                 ctx.fillStyle = d.state === 'highlight' ? '#10b981' : (d.isTargeted ? '#f59e0b' : '#4f46e5');
                 ctx.beginPath();
-                ctx.arc(-d.width/2 + 24, 0, 16, 0, Math.PI * 2);
+                ctx.arc(-d.width/2 + 22, 0, 15, 0, Math.PI * 2);
                 ctx.fill();
 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '900 15px "Orbitron", "Noto Sans TC"';
+                ctx.font = '900 14px "Orbitron", "Noto Sans TC"';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(`${d.optionNum}`, -d.width/2 + 24, 1);
+                ctx.fillText(`${d.optionNum}`, -d.width/2 + 22, 1);
 
                 ctx.fillStyle = '#1e293b';
-                ctx.font = '700 13px "Noto Sans TC"';
+                ctx.font = '700 12.5px "Noto Sans TC"';
                 ctx.textAlign = 'left';
-                wrapText(ctx, d.text, -d.width/2 + 48, -12, d.width - 56, 17);
+                wrapText(ctx, d.text, -d.width/2 + 44, -10, d.width - 50, 16);
 
                 ctx.restore();
             });
@@ -978,7 +1258,7 @@
                     y: m.y,
                     vx: (Math.random() - 0.5) * 2,
                     vy: (Math.random() - 0.5) * 2,
-                    radius: Math.random() * 4 + 2,
+                    radius: Math.random() * 3.5 + 1.5,
                     color: Math.random() > 0.5 ? '#f59e0b' : '#ef4444',
                     alpha: 0.9,
                     decay: 0.05,
@@ -990,7 +1270,7 @@
                 ctx.rotate(Math.atan2(dy, dx));
                 ctx.fillStyle = '#ef4444';
                 ctx.beginPath();
-                ctx.moveTo(12, 0); ctx.lineTo(-8, -4); ctx.lineTo(-8, 4);
+                ctx.moveTo(11, 0); ctx.lineTo(-7, -3.5); ctx.lineTo(-7, 3.5);
                 ctx.closePath();
                 ctx.fill();
                 ctx.restore();
@@ -1034,7 +1314,7 @@
             }
 
             const turretX = canvas.width / 2;
-            const turretY = canvas.height - 10;
+            const turretY = canvas.height - 8;
 
             if (!answered) {
                 const targetAngle = Math.atan2(mousePos.y - turretY, mousePos.x - turretX);
@@ -1046,17 +1326,17 @@
 
             ctx.fillStyle = '#1e293b';
             ctx.beginPath();
-            ctx.arc(0, 0, 34, Math.PI, 0);
+            ctx.arc(0, 0, 32, Math.PI, 0);
             ctx.fill();
             ctx.strokeStyle = '#4f46e5';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2.8;
             ctx.stroke();
 
             ctx.rotate(turretAngle);
             ctx.fillStyle = '#334155';
-            ctx.fillRect(0, -6, 38, 12);
+            ctx.fillRect(0, -5.5, 36, 11);
             ctx.fillStyle = '#6366f1';
-            ctx.fillRect(32, -4, 8, 8);
+            ctx.fillRect(30, -3.5, 7, 7);
 
             ctx.restore();
 
@@ -1272,7 +1552,7 @@
             q.options.forEach((opt, idx) => {
                 const item = document.createElement('div');
                 item.className = 'card-option';
-                item.innerHTML = `<span><b>(${idx + 1})</b> ${opt}</span><span style="font-size:12px; color:#94a3b8;">[鍵盤 ${idx + 1}]</span>`;
+                item.innerHTML = `<span><b>(${idx + 1})</b> ${opt}</span><span style="font-size:11px; color:#94a3b8;">[${idx + 1}]</span>`;
                 item.onclick = () => {
                     if (answered) return;
                     fireTurretAt(idx);
@@ -1313,7 +1593,7 @@
             const comboText = document.getElementById('hud-combo-text');
             if (combo >= 2) {
                 comboBadge.style.display = 'inline-block';
-                comboBadge.innerText = `🔥 COMBO x${combo}`;
+                comboBadge.innerText = `🔥 x${combo}`;
                 comboText.style.display = 'none';
             } else {
                 comboBadge.style.display = 'none';
@@ -1356,6 +1636,7 @@
             }
             document.getElementById('res-shield').innerText = heartsStr;
 
+            document.body.style.overflow = 'hidden';
             modal.style.display = 'flex';
         }
 
@@ -1374,6 +1655,7 @@
 
         function closeMissionModal() {
             document.getElementById('mission-modal').style.display = 'none';
+            document.body.style.overflow = '';
         }
 
         window.onload = initApp;

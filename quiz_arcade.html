@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puti-AI | 7 大職類官方 PDF 真題播放器 (電競防空街機版)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&family=Fredoka:wght@600;700&family=Black+Ops+One&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f0f4f9;
+            --panel-bg: #ffffff;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-main); color: var(--text-dark);
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 12px 16px;
+            overflow-x: hidden; position: relative; user-select: none;
+        }
+
+        /* 頂部導航列 */
+        header {
+            width: 100%; max-width: 960px; display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; background: var(--panel-bg); border-radius: 18px;
+            box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 12px;
+            flex-wrap: wrap; gap: 10px;
+        }
+
+        .brand-logo {
+            font-size: 20px; font-weight: 800; font-family: 'Fredoka', cursive;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .header-tools { display: flex; gap: 8px; align-items: center; }
+
+        .btn-pill {
+            background: #f8fafc; border: 1.5px solid var(--border); padding: 7px 12px;
+            border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; color: var(--text-muted);
+            transition: all 0.2s; text-decoration: none;
+        }
+        .btn-pill:hover { background: #e2e8f0; color: var(--text-dark); transform: translateY(-1px); }
+        .btn-pill.active { background: #ecfdf5; border-color: #10b981; color: #047857; }
+
+        main { width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 12px; }
+
+        /* 戰鬥電競 HUD 儀表板 */
+        .hud-bar {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            border-radius: 18px; padding: 12px 20px; color: white;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            align-items: center; box-shadow: 0 10px 25px rgba(49, 46, 129, 0.25);
+            border: 2px solid #6366f1; position: relative; overflow: hidden;
+        }
+
+        .hud-item { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .hud-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #a5b4fc; letter-spacing: 0.5px; }
+        .hud-value { font-size: 20px; font-weight: 900; font-family: 'Black Ops One', 'Orbitron', sans-serif; color: #fbbf24; }
+
+        .shield-hearts { font-size: 18px; letter-spacing: 2px; }
+
+        .combo-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            padding: 2px 10px; border-radius: 20px; font-size: 13px; font-weight: 900;
+            font-family: 'Black Ops One', sans-serif; color: white;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+            animation: pulseCombo 0.4s infinite alternate;
+        }
+
+        @keyframes pulseCombo {
+            from { transform: scale(1); }
+            to { transform: scale(1.15) rotate(2deg); }
+        }
+
+        /* 職類與年度選擇器 */
+        .controls-row {
+            display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 12px;
+        }
+        @media (max-width: 768px) {
+            .controls-row { grid-template-columns: 1fr; }
+            .hud-bar { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        }
+
+        .selector-card {
+            background: var(--panel-bg); border-radius: 16px; padding: 12px 16px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+
+        select.subject-dropdown {
+            width: 100%; padding: 9px 12px; border: 2px solid var(--primary);
+            border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--text-dark);
+            background: #f8fafc; outline: none; cursor: pointer;
+        }
+
+        .year-bar {
+            display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px;
+            scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;
+        }
+        .year-bar::-webkit-scrollbar { height: 5px; }
+        .year-bar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .year-tab {
+            background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 12px; border-radius: 10px;
+            font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer;
+            white-space: nowrap; transition: all 0.15s; flex-shrink: 0;
+        }
+        .year-tab:hover { background: #e2e8f0; color: var(--primary); }
+        .year-tab.active {
+            background: var(--primary); color: white; border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        /* 街機主遊戲舞台 (Arcade Battle Arena) */
+        .arcade-container {
+            background: var(--panel-bg); border-radius: 22px; padding: 14px;
+            box-shadow: var(--shadow); border: 2px solid #c7d2fe;
+            display: flex; flex-direction: column; gap: 12px; position: relative;
+            overflow: hidden;
+        }
+
+        .arena-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f8fafc; padding: 8px 14px; border-radius: 12px; border: 1px solid var(--border);
+        }
+
+        .mode-toggle-group {
+            display: flex; gap: 4px; background: #e2e8f0; padding: 3px; border-radius: 10px;
+        }
+        .mode-btn {
+            border: none; background: transparent; padding: 5px 12px; border-radius: 8px;
+            font-size: 12px; font-weight: 700; cursor: pointer; color: #475569; transition: all 0.2s;
+        }
+        .mode-btn.active {
+            background: white; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 戰術 Canvas 舞台 */
+        .canvas-wrapper {
+            width: 100%; height: 490px; position: relative; border-radius: 16px;
+            overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+            background: linear-gradient(to bottom, #dbeafe 0%, #e0f2fe 60%, #bae6fd 100%);
+            border: 2px solid #93c5fd;
+        }
+
+        #game-canvas {
+            width: 100%; height: 100%; display: block; cursor: crosshair;
+        }
+
+        /* 戰術情報簡報框 (題幹) */
+        .tactical-briefing {
+            position: absolute; top: 12px; left: 16px; right: 16px;
+            background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(6px);
+            border: 2px solid #6366f1; border-radius: 14px; padding: 12px 18px;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15); pointer-events: none;
+            z-index: 5; transition: all 0.3s;
+        }
+        .briefing-tag {
+            font-size: 11px; font-weight: 900; color: #4f46e5; text-transform: uppercase;
+            letter-spacing: 1px; display: flex; justify-content: space-between; margin-bottom: 4px;
+        }
+        .briefing-text {
+            font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.5;
+        }
+
+        /* 底部操作與熱鍵提示 */
+        .arena-footer {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+            padding: 4px 6px;
+        }
+        .hotkey-badges {
+            display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--text-muted); font-weight: 700;
+        }
+        .kbd-key {
+            background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 6px;
+            padding: 2px 7px; font-family: monospace; font-size: 12px; color: #334155;
+            box-shadow: 0 2px 0 #cbd5e1;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            color: white; border: none; padding: 10px 24px; border-radius: 12px;
+            font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35); display: flex; align-items: center; gap: 6px;
+        }
+        .next-btn:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02); box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+        }
+        .next-btn:disabled {
+            background: #cbd5e1; color: #94a3b8; box-shadow: none; cursor: not-allowed;
+        }
+
+        /* 解析與答案彈出列 */
+        .explanation-card {
+            background: #f0fdf4; border: 2px solid #86efac; border-radius: 14px;
+            padding: 12px 18px; font-size: 14px; color: #166534; font-weight: 600;
+            display: none; animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 經典卡片模式清單 (Pro Mode) */
+        .card-mode-container {
+            display: none; flex-direction: column; gap: 10px; margin-top: 6px;
+        }
+        .card-option {
+            background: #f8fafc; border: 2px solid var(--border); border-radius: 14px;
+            padding: 14px 18px; font-size: 15px; font-weight: 600; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.15s;
+        }
+        .card-option:hover {
+            border-color: #f59e0b; background: #fffbeb; transform: translateX(4px);
+        }
+        .card-option.correct {
+            border-color: #10b981 !important; background: #ecfdf5 !important; color: #065f46 !important; font-weight: 700;
+        }
+        .card-option.wrong {
+            border-color: #ef4444 !important; background: #fef2f2 !important; color: #991b1b !important; font-weight: 700;
+        }
+
+        /* 震屏動效 */
+        .shake {
+            animation: screenShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes screenShake {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* 全螢幕結算 Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px);
+            display: none; justify-content: center; align-items: center; z-index: 999; padding: 16px;
+        }
+
+        .modal-box {
+            background: white; border-radius: 24px; width: 95%; max-width: 540px; padding: 28px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #e2e8f0;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .rank-badge {
+            font-size: 54px; font-weight: 900; font-family: 'Black Ops One', sans-serif;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin: 8px 0; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4));
+        }
+
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin: 16px 0;
+        }
+        .stat-card {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px;
+        }
+        .stat-card-label { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+        .stat-card-val { font-size: 20px; font-weight: 900; color: var(--text-dark); font-family: 'Orbitron', sans-serif; }
+
+        footer {
+            width: 100%; max-width: 960px; margin-top: 16px; padding: 14px;
+            background: var(--panel-bg); border-radius: 16px; border: 1px solid var(--border);
+            text-align: center; font-size: 13px; color: var(--text-muted); line-height: 1.6;
+        }
+        footer a { color: var(--primary); font-weight: 700; text-decoration: none; }
+    </style>
+
+    <!-- 預載官方 7 職類 9,360 題全資料庫 -->
+    <script src="full_baihe_5years_database.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="brand-logo">
+            <span>🚀</span> Puti-AI | 7 大職類官方 PDF 真題播放器 (電競防空街機版)
+        </div>
+        <div class="header-tools">
+            <a href="index.html" class="btn-pill" title="回到原本精心打磨的電競射擊爆破版">
+                🎯 回到原版播放器
+            </a>
+            <button class="btn-pill active" id="sound-btn" onclick="toggleSound()">
+                <span id="sound-icon">🔊</span> 音效開
+            </button>
+            <a href="pdf_converter.html" target="_blank" class="btn-pill" title="進入題庫管理與 PDF 轉換中心">
+                ⚙️ 題庫管理
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- 戰鬥電競 HUD 儀表板 -->
+        <div class="hud-bar">
+            <div class="hud-item">
+                <span class="hud-label">🛡️ 基地護盾 (HP)</span>
+                <span class="shield-hearts" id="hud-shield">❤️❤️❤️</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">🎯 作戰得分</span>
+                <span class="hud-value" id="hud-score">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">⚡ 連擊加成</span>
+                <span class="combo-badge" id="hud-combo-badge" style="display:none;">🔥 COMBO x0</span>
+                <span class="hud-value" id="hud-combo-text" style="color:#a5b4fc; font-size:16px;">READY</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">📊 命中精準度</span>
+                <span class="hud-value" id="hud-accuracy" style="color:#34d399;">100%</span>
+            </div>
+        </div>
+
+        <!-- 選擇科目與試卷 -->
+        <div class="controls-row">
+            <div class="selector-card">
+                <span style="font-size:12px; font-weight:800; color:var(--primary);">🏫 選擇檢定職類：</span>
+                <select id="subject-select" class="subject-dropdown" onchange="onSubjectChange()">
+                    <optgroup label="🏛️ 官方真題 7 職類 (共 9,360 題)">
+                        <option value="00700" selected>⚡ 00700 室內配線 - 屋內線路裝修 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                        <option value="02000">🚗 02000 汽車修護 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                        <option value="04200">📐 04200 測量 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                        <option value="14500">🛵 14500 機器腳踏車修護 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                        <option value="18300">🗜️ 18300 車床 - 車床項 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                        <option value="18500">⚙️ 18500 機械加工 丙級 (099-115 年，17 年全套，1,360 題)</option>
+                        <option value="21101">🏛️ 21101 建築製圖應用 - 電腦繪圖 丙級 (101-115 年，15 年全套，1,200 題)</option>
+                    </optgroup>
+                    <optgroup label="⭐ 我的自訂題庫 (瀏覽器保存)" id="custom-optgroup" style="display:none;"></optgroup>
+                </select>
+            </div>
+            <div class="selector-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; font-weight:800; color:var(--text-dark);">📅 選擇歷年試卷（↔ 滑動切換）：</span>
+                    <span style="font-size:11px; background:#e0e7ff; color:#4338ca; font-weight:700; padding:2px 8px; border-radius:6px;" id="q-total-badge">100% 官方題庫</span>
+                </div>
+                <div class="year-bar" id="year-tabs-container"></div>
+            </div>
+        </div>
+
+        <!-- 街機主遊戲戰場 -->
+        <div class="arcade-container" id="arena-card">
+            <div class="arena-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="background:#dcfce7; color:#15803d; font-size:12px; font-weight:800; padding:3px 10px; border-radius:8px;" id="subject-badge">00700 室內配線</span>
+                    <span style="font-size:13px; color:var(--text-muted); font-weight:800;" id="q-progress">第 1 / 80 題</span>
+                </div>
+                <div class="mode-toggle-group">
+                    <button class="mode-btn active" id="btn-mode-arcade" onclick="switchMode('arcade')">🎮 街機戰鬥模式</button>
+                    <button class="mode-btn" id="btn-mode-card" onclick="switchMode('card')">📝 刷題模式</button>
+                </div>
+            </div>
+
+            <!-- Canvas 戰鬥空間 -->
+            <div class="canvas-wrapper" id="canvas-wrapper">
+                <div class="tactical-briefing" id="tactical-briefing">
+                    <div class="briefing-tag">
+                        <span>🎯 任務情報 / 考題指令</span>
+                        <span id="briefing-timer">⚡ 瞄準敵機擊破</span>
+                    </div>
+                    <div class="briefing-text" id="briefing-text">正在載入任務題目...</div>
+                </div>
+                <canvas id="game-canvas" width="920" height="490"></canvas>
+            </div>
+
+            <!-- 刷題模式清單 (Pro Card Mode) -->
+            <div class="card-mode-container" id="card-mode-container">
+                <div style="font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:6px;" id="card-q-title">載入中...</div>
+                <div style="display:flex; flex-direction:column; gap:8px;" id="card-options-list"></div>
+            </div>
+
+            <!-- 解析與作戰狀態提示 -->
+            <div class="explanation-card" id="explanation-card"></div>
+
+            <!-- 底部動作欄 -->
+            <div class="arena-footer">
+                <div class="hotkey-badges">
+                    <span>⚡ 鍵盤快捷鍵：</span>
+                    <span class="kbd-key">1</span><span class="kbd-key">2</span><span class="kbd-key">3</span><span class="kbd-key">4</span> <span>發射飛彈</span>
+                    <span class="kbd-key" style="margin-left:6px;">Space</span> <span>下一題</span>
+                </div>
+                <button id="next-btn" class="next-btn" onclick="nextQuestion()" disabled>
+                    下一題 ➔
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 戰況結算 Modal -->
+    <div class="modal-overlay" id="mission-modal">
+        <div class="modal-box">
+            <h2 style="font-size:22px; font-weight:900; color:#1e1b4b;" id="modal-result-title">🏆 任務結算報告</h2>
+            <div class="rank-badge" id="modal-rank">S</div>
+            <p style="font-size:14px; color:var(--text-muted); font-weight:700;" id="modal-result-desc">卓越神射手！完美防禦基地防線！</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-label">最終得分</div>
+                    <div class="stat-card-val" id="res-score" style="color:#4f46e5;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">命中精準度</div>
+                    <div class="stat-card-val" id="res-accuracy" style="color:#10b981;">100%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">最高連擊</div>
+                    <div class="stat-card-val" id="res-combo" style="color:#f59e0b;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">基地護盾剩餘</div>
+                    <div class="stat-card-val" id="res-shield">❤️❤️❤️</div>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; width:100%; margin-top:8px;">
+                <button onclick="restartMission()" style="flex:1; background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:12px; border-radius:14px; font-size:14px; font-weight:800; cursor:pointer;">
+                    🔄 滿血重新挑戰
+                </button>
+                <button onclick="closeMissionModal()" style="flex:1; background:#f1f5f9; color:#475569; border:none; padding:12px; border-radius:14px; font-size:14px; font-weight:800; cursor:pointer;">
+                    📋 繼續下一年度
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        屏東縣後庄國小黃朝榮老師作品，免費分享，歡迎擴散推廣，嚴禁商用與任何侵權、不尊重著作權的行為，更多 Puti-AI 教學工具 <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank">點此前往</a>
+    </footer>
+
+    <script>
+        /* ===== 系統全域變數 ===== */
+        let currentSubjectKey = "00700";
+        let activeYears = [];
+        let currentYearIdx = 0;
+        let currentQIdx = 0;
+        let answered = false;
+        let customDatabases = {};
+        let currentMode = 'arcade';
+
+        let score = 0;
+        let combo = 0;
+        let maxCombo = 0;
+        let totalAnswered = 0;
+        let totalCorrect = 0;
+        let shieldHp = 3;
+        const MAX_SHIELD = 3;
+        let soundEnabled = true;
+
+        /* ===== Web Audio API 原生音效合成引擎 ===== */
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playMissileLaunchSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(280, now);
+            osc.frequency.exponentialRampToValueAtTime(70, now + 0.25);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.26);
+        }
+
+        function playExplosionSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            const now = audioCtx.currentTime;
+            const bufferSize = audioCtx.sampleRate * 0.4;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(800, now);
+            filter.frequency.exponentialRampToValueAtTime(30, now + 0.4);
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.8, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start(now);
+        }
+
+        function playCorrectChime(comboCount) {
+            if (!soundEnabled) return;
+            initAudio();
+            const now = audioCtx.currentTime;
+            const multiplier = Math.min(1 + (comboCount * 0.08), 2.2);
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq * multiplier, now + idx * 0.05);
+                gain.gain.setValueAtTime(0.2, now + idx * 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now + idx * 0.05);
+                osc.stop(now + idx * 0.05 + 0.31);
+            });
+        }
+
+        function playShieldDamageSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(160, now);
+            osc.frequency.linearRampToValueAtTime(60, now + 0.35);
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.36);
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-btn');
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                btn.classList.add('active');
+                icon.innerText = "🔊";
+                btn.innerHTML = `<span>🔊</span> 音效開`;
+            } else {
+                btn.classList.remove('active');
+                icon.innerText = "🔇";
+                btn.innerHTML = `<span>🔇</span> 音效關`;
+            }
+        }
+
+        /* ===== Canvas 引擎 ===== */
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let drones = [];
+        let missiles = [];
+        let particles = [];
+        let shockwaves = [];
+        let clouds = [];
+        let mousePos = { x: 460, y: 240 };
+        let turretAngle = -Math.PI / 2;
+        let hoveredDroneIdx = -1;
+
+        for (let i = 0; i < 6; i++) {
+            clouds.push({
+                x: Math.random() * 920,
+                y: Math.random() * 180 + 20,
+                speed: Math.random() * 0.3 + 0.1,
+                size: Math.random() * 40 + 50
+            });
+        }
+
+        function resizeGameCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width || 920;
+            canvas.height = rect.height || 490;
+            repositionDrones();
+        }
+        window.addEventListener('resize', resizeGameCanvas);
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mousePos.x = e.clientX - rect.left;
+            mousePos.y = e.clientY - rect.top;
+            checkDroneHover();
+        });
+
+        canvas.addEventListener('click', (e) => {
+            if (answered) return;
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            drones.forEach((d, idx) => {
+                if (isInsideDrone(clickX, clickY, d)) {
+                    fireTurretAt(idx);
+                }
+            });
+        });
+
+        function checkDroneHover() {
+            hoveredDroneIdx = -1;
+            drones.forEach((d, idx) => {
+                if (isInsideDrone(mousePos.x, mousePos.y, d)) {
+                    hoveredDroneIdx = idx;
+                    d.isTargeted = true;
+                } else {
+                    d.isTargeted = false;
+                }
+            });
+        }
+
+        function isInsideDrone(px, py, d) {
+            return px >= d.x - d.width/2 && px <= d.x + d.width/2 &&
+                   py >= d.y - d.height/2 && py <= d.y + d.height/2;
+        }
+
+        function repositionDrones() {
+            const W = canvas.width;
+            const cellW = W / 2;
+            const startY = 175;
+            const rowH = 110;
+
+            drones.forEach((d, i) => {
+                const col = i % 2;
+                const row = Math.floor(i / 2);
+                d.targetX = (col === 0 ? cellW * 0.5 : cellW * 1.5);
+                d.targetY = startY + (row * rowH);
+                d.x = d.targetX;
+                d.y = d.targetY;
+            });
+        }
+
+        function setupDronesForCurrentQuestion() {
+            const yearObj = activeYears[currentYearIdx];
+            if (!yearObj || !yearObj.questions) return;
+            const q = yearObj.questions[currentQIdx];
+            if (!q) return;
+
+            drones = [];
+            q.options.forEach((opt, idx) => {
+                drones.push({
+                    idx: idx,
+                    optionNum: idx + 1,
+                    text: opt,
+                    x: 0,
+                    y: 0,
+                    targetX: 0,
+                    targetY: 0,
+                    width: Math.min(canvas.width * 0.44, 380),
+                    height: 72,
+                    propellerAngle: Math.random() * Math.PI,
+                    hoverOffset: Math.random() * Math.PI * 2,
+                    isTargeted: false,
+                    state: 'normal',
+                    shieldAlpha: 0
+                });
+            });
+
+            repositionDrones();
+        }
+
+        function fireTurretAt(targetIdx) {
+            if (answered || targetIdx < 0 || targetIdx >= drones.length) return;
+            answered = true;
+            totalAnswered++;
+
+            const targetDrone = drones[targetIdx];
+            const launcherX = canvas.width / 2;
+            const launcherY = canvas.height - 30;
+
+            turretAngle = Math.atan2(targetDrone.y - launcherY, targetDrone.x - launcherX);
+            playMissileLaunchSound();
+
+            missiles.push({
+                x: launcherX,
+                y: launcherY - 20,
+                target: targetDrone,
+                targetIdx: targetIdx,
+                speed: 16
+            });
+        }
+
+        function processAnswerResult(selectedIdx, targetDrone) {
+            const yearObj = activeYears[currentYearIdx];
+            const q = yearObj.questions[currentQIdx];
+            const isCorrect = selectedIdx === q.answer;
+
+            if (isCorrect) {
+                totalCorrect++;
+                combo++;
+                if (combo > maxCombo) maxCombo = combo;
+                const points = 100 + (combo * 25);
+                score += points;
+
+                targetDrone.state = 'destroyed';
+                createExplosion(targetDrone.x, targetDrone.y, true);
+                playExplosionSound();
+                playCorrectChime(combo);
+
+                if (navigator.vibrate) navigator.vibrate([40, 30, 50]);
+            } else {
+                combo = 0;
+                shieldHp = Math.max(0, shieldHp - 1);
+                targetDrone.state = 'shield';
+                targetDrone.shieldAlpha = 1.0;
+                
+                createLaserCounterAttack(targetDrone.x, targetDrone.y);
+                playShieldDamageSound();
+
+                if (drones[q.answer]) {
+                    drones[q.answer].state = 'highlight';
+                }
+
+                const arena = document.getElementById('arena-card');
+                arena.classList.remove('shake');
+                void arena.offsetWidth;
+                arena.classList.add('shake');
+
+                if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+
+                if (shieldHp <= 0) {
+                    setTimeout(() => showMissionDebrief(false), 800);
+                }
+            }
+
+            updateHUD();
+
+            const exp = document.getElementById('explanation-card');
+            exp.innerHTML = `💡 <b>官方標準正解：第 (${q.answer + 1}) 項</b> — ${q.explain || '檢定真題標準解答'}`;
+            exp.style.display = 'block';
+
+            updateCardModeView(selectedIdx, q.answer);
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function createExplosion(x, y, isBig) {
+            shockwaves.push({ x, y, radius: 10, maxRadius: 80, alpha: 1, color: '#f59e0b' });
+            shockwaves.push({ x, y, radius: 5, maxRadius: 110, alpha: 0.8, color: '#10b981' });
+
+            const colors = ['#f59e0b', '#ef4444', '#fbbf24', '#ffffff', '#10b981', '#38bdf8'];
+            for (let i = 0; i < 45; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 10 + 3;
+                particles.push({
+                    x, y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: Math.random() * 6 + 3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: 1,
+                    decay: Math.random() * 0.03 + 0.02,
+                    gravity: 0.25
+                });
+            }
+        }
+
+        function createLaserCounterAttack(fromX, fromY) {
+            shockwaves.push({
+                x: canvas.width / 2,
+                y: canvas.height - 20,
+                radius: 10,
+                maxRadius: 60,
+                alpha: 1,
+                color: '#ef4444'
+            });
+            for (let i = 0; i < 20; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height - 20,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: -Math.random() * 8,
+                    radius: Math.random() * 4 + 2,
+                    color: '#ef4444',
+                    alpha: 1,
+                    decay: 0.04,
+                    gravity: 0.3
+                });
+            }
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            clouds.forEach(c => {
+                c.x += c.speed;
+                if (c.x > canvas.width + 100) c.x = -100;
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
+                ctx.arc(c.x + c.size * 0.6, c.y - 10, c.size * 0.7, 0, Math.PI * 2);
+                ctx.arc(c.x + c.size * 1.2, c.y, c.size * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            const now = Date.now() / 1000;
+            drones.forEach((d) => {
+                if (d.state === 'destroyed') return;
+
+                d.propellerAngle += 0.45;
+                const hoverY = Math.sin(now * 3 + d.hoverOffset) * 4;
+                const drawX = d.x;
+                const drawY = d.y + hoverY;
+
+                ctx.save();
+                ctx.translate(drawX, drawY);
+
+                if (d.isTargeted && !answered) {
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(-d.width/2 - 6, -d.height/2 - 6, d.width + 12, d.height + 12);
+                    const mLen = 10;
+                    ctx.beginPath();
+                    ctx.moveTo(-d.width/2 - 12, -d.height/2 - 12 + mLen); ctx.lineTo(-d.width/2 - 12, -d.height/2 - 12); ctx.lineTo(-d.width/2 - 12 + mLen, -d.height/2 - 12);
+                    ctx.moveTo(d.width/2 + 12 - mLen, -d.height/2 - 12); ctx.lineTo(d.width/2 + 12, -d.height/2 - 12); ctx.lineTo(d.width/2 + 12, -d.height/2 - 12 + mLen);
+                    ctx.moveTo(-d.width/2 - 12, d.height/2 + 12 - mLen); ctx.lineTo(-d.width/2 - 12, d.height/2 + 12); ctx.lineTo(-d.width/2 - 12 + mLen, d.height/2 + 12);
+                    ctx.moveTo(d.width/2 + 12 - mLen, d.height/2 + 12); ctx.lineTo(d.width/2 + 12, d.height/2 + 12); ctx.lineTo(d.width/2 + 12, d.height/2 + 12 - mLen);
+                    ctx.stroke();
+                }
+
+                if (d.shieldAlpha > 0) {
+                    ctx.strokeStyle = `rgba(239, 68, 68, ${d.shieldAlpha})`;
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, d.width * 0.52, 0, Math.PI * 2);
+                    ctx.stroke();
+                    d.shieldAlpha -= 0.02;
+                }
+
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 4;
+                const armW = d.width * 0.48;
+                ctx.beginPath();
+                ctx.moveTo(-armW, -14); ctx.lineTo(armW, -14);
+                ctx.stroke();
+
+                [-armW, armW].forEach(px => {
+                    ctx.save();
+                    ctx.translate(px, -18);
+                    ctx.rotate(d.propellerAngle);
+                    ctx.strokeStyle = d.isTargeted ? '#ef4444' : '#0284c7';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(-14, 0); ctx.lineTo(14, 0);
+                    ctx.stroke();
+                    ctx.restore();
+                });
+
+                let bodyBg = '#ffffff';
+                let borderCol = '#cbd5e1';
+
+                if (d.state === 'highlight') {
+                    bodyBg = '#ecfdf5';
+                    borderCol = '#10b981';
+                } else if (d.isTargeted && !answered) {
+                    bodyBg = '#fffbeb';
+                    borderCol = '#f59e0b';
+                }
+
+                ctx.fillStyle = bodyBg;
+                ctx.strokeStyle = borderCol;
+                ctx.lineWidth = 2.5;
+                roundRect(ctx, -d.width/2, -d.height/2, d.width, d.height, 12, true, true);
+
+                ctx.fillStyle = d.state === 'highlight' ? '#10b981' : (d.isTargeted ? '#f59e0b' : '#4f46e5');
+                ctx.beginPath();
+                ctx.arc(-d.width/2 + 24, 0, 16, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 15px "Orbitron", "Noto Sans TC"';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${d.optionNum}`, -d.width/2 + 24, 1);
+
+                ctx.fillStyle = '#1e293b';
+                ctx.font = '700 13.5px "Noto Sans TC"';
+                ctx.textAlign = 'left';
+                wrapText(ctx, d.text, -d.width/2 + 48, -12, d.width - 60, 18);
+
+                ctx.restore();
+            });
+
+            for (let i = missiles.length - 1; i >= 0; i--) {
+                const m = missiles[i];
+                const dx = m.target.x - m.x;
+                const dy = m.target.y - m.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 18) {
+                    processAnswerResult(m.targetIdx, m.target);
+                    missiles.splice(i, 1);
+                    continue;
+                }
+
+                m.x += (dx / dist) * m.speed;
+                m.y += (dy / dist) * m.speed;
+
+                particles.push({
+                    x: m.x,
+                    y: m.y,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: Math.random() * 4 + 2,
+                    color: Math.random() > 0.5 ? '#f59e0b' : '#ef4444',
+                    alpha: 0.9,
+                    decay: 0.05,
+                    gravity: 0
+                });
+
+                ctx.save();
+                ctx.translate(m.x, m.y);
+                ctx.rotate(Math.atan2(dy, dx));
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.moveTo(12, 0); ctx.lineTo(-8, -4); ctx.lineTo(-8, 4);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            for (let i = shockwaves.length - 1; i >= 0; i--) {
+                const sw = shockwaves[i];
+                sw.radius += 4;
+                sw.alpha -= 0.035;
+                if (sw.alpha <= 0) {
+                    shockwaves.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, sw.alpha);
+                ctx.strokeStyle = sw.color;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += p.gravity;
+                p.alpha -= p.decay;
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            const turretX = canvas.width / 2;
+            const turretY = canvas.height - 10;
+
+            if (!answered) {
+                const targetAngle = Math.atan2(mousePos.y - turretY, mousePos.x - turretX);
+                turretAngle = turretAngle + (targetAngle - turretAngle) * 0.15;
+            }
+
+            ctx.save();
+            ctx.translate(turretX, turretY);
+
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(0, 0, 36, Math.PI, 0);
+            ctx.fill();
+            ctx.strokeStyle = '#4f46e5';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.rotate(turretAngle);
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, -7, 42, 14);
+            ctx.fillStyle = '#6366f1';
+            ctx.fillRect(36, -5, 8, 10);
+
+            ctx.restore();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function roundRect(c, x, y, width, height, radius, fill, stroke) {
+            c.beginPath();
+            c.moveTo(x + radius, y);
+            c.lineTo(x + width - radius, y);
+            c.quadraticCurveTo(x + width, y, x + width, y + radius);
+            c.lineTo(x + width, y + height - radius);
+            c.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            c.lineTo(x + radius, y + height);
+            c.quadraticCurveTo(x, y + height, x, y + height - radius);
+            c.lineTo(x, y + radius);
+            c.quadraticCurveTo(x, y, x + radius, y);
+            c.closePath();
+            if (fill) c.fill();
+            if (stroke) c.stroke();
+        }
+
+        function wrapText(c, text, x, y, maxWidth, lineHeight) {
+            const chars = text.split('');
+            let line = '';
+            let lineCount = 0;
+
+            for (let n = 0; n < chars.length; n++) {
+                const testLine = line + chars[n];
+                const metrics = c.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    c.fillText(line, x, y);
+                    line = chars[n];
+                    y += lineHeight;
+                    lineCount++;
+                    if (lineCount >= 2) {
+                        c.fillText(line + '...', x, y);
+                        return;
+                    }
+                } else {
+                    line = testLine;
+                }
+            }
+            c.fillText(line, x, y);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key >= '1' && e.key <= '4') {
+                const idx = parseInt(e.key) - 1;
+                if (currentMode === 'arcade') {
+                    fireTurretAt(idx);
+                } else {
+                    const cardOpts = document.querySelectorAll('.card-option');
+                    if (cardOpts[idx]) cardOpts[idx].click();
+                }
+            } else if (e.key === ' ' || e.key === 'Enter') {
+                const nextBtn = document.getElementById('next-btn');
+                if (!nextBtn.disabled) nextQuestion();
+            }
+        });
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const canvasWrapper = document.getElementById('canvas-wrapper');
+            const cardContainer = document.getElementById('card-mode-container');
+            const btnArcade = document.getElementById('btn-mode-arcade');
+            const btnCard = document.getElementById('btn-mode-card');
+
+            if (mode === 'arcade') {
+                canvasWrapper.style.display = 'block';
+                cardContainer.style.display = 'none';
+                btnArcade.classList.add('active');
+                btnCard.classList.remove('active');
+                resizeGameCanvas();
+            } else {
+                canvasWrapper.style.display = 'none';
+                cardContainer.style.display = 'flex';
+                btnArcade.classList.remove('active');
+                btnCard.classList.add('active');
+            }
+        }
+
+        function initApp() {
+            loadCustomDatabasesFromStorage();
+            renderSubjectDropdown();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramSubject = urlParams.get('subject');
+
+            if (paramSubject) {
+                document.getElementById('subject-select').value = paramSubject;
+                loadSubjectData(paramSubject);
+            } else {
+                loadSubjectData("00700");
+            }
+
+            resizeGameCanvas();
+            gameLoop();
+        }
+
+        function loadCustomDatabasesFromStorage() {
+            try {
+                const stored = localStorage.getItem('puti_custom_quiz_banks');
+                if (stored) customDatabases = JSON.parse(stored);
+            } catch (e) {
+                console.error("Failed to load custom databases:", e);
+            }
+        }
+
+        function renderSubjectDropdown() {
+            const customGroup = document.getElementById('custom-optgroup');
+            customGroup.innerHTML = '';
+            const customKeys = Object.keys(customDatabases);
+            if (customKeys.length > 0) {
+                customGroup.style.display = 'block';
+                customKeys.forEach(k => {
+                    const item = customDatabases[k];
+                    const opt = document.createElement('option');
+                    opt.value = k;
+                    const totalQ = item.years.reduce((s, y) => s + y.questions.length, 0);
+                    opt.innerText = `⭐ ${item.subjectName || k} (${item.years.length}份試卷，共${totalQ}題)`;
+                    customGroup.appendChild(opt);
+                });
+            } else {
+                customGroup.style.display = 'none';
+            }
+        }
+
+        function onSubjectChange() {
+            currentSubjectKey = document.getElementById('subject-select').value;
+            score = 0;
+            combo = 0;
+            totalAnswered = 0;
+            totalCorrect = 0;
+            shieldHp = MAX_SHIELD;
+            updateHUD();
+            loadSubjectData(currentSubjectKey);
+        }
+
+        function loadSubjectData(key) {
+            currentSubjectKey = key;
+            let data = null;
+
+            if (typeof fullBaihe5YearsDatabase !== 'undefined' && fullBaihe5YearsDatabase[key]) {
+                data = fullBaihe5YearsDatabase[key];
+            } else if (customDatabases[key]) {
+                data = customDatabases[key];
+            }
+
+            if (!data) {
+                alert(`查無【${key}】題庫資料！`);
+                return;
+            }
+
+            activeYears = data.years;
+            document.getElementById('subject-badge').innerText = data.subjectName || key;
+
+            currentYearIdx = 0;
+            renderYearTabs();
+            loadYear(0);
+        }
+
+        function renderYearTabs() {
+            const container = document.getElementById('year-tabs-container');
+            container.innerHTML = '';
+            activeYears.forEach((y, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `year-tab ${idx === currentYearIdx ? 'active' : ''}`;
+                btn.innerText = `📅 ${y.year} 年度`;
+                btn.onclick = () => {
+                    currentYearIdx = idx;
+                    renderYearTabs();
+                    loadYear(idx);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function loadYear(yearIdx) {
+            currentYearIdx = yearIdx;
+            currentQIdx = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answered = false;
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('explanation-card').style.display = 'none';
+
+            const yearObj = activeYears[currentYearIdx];
+            if (!yearObj || !yearObj.questions || yearObj.questions.length === 0) {
+                document.getElementById('briefing-text').innerText = "本試卷尚無題目";
+                return;
+            }
+
+            const q = yearObj.questions[currentQIdx];
+            document.getElementById('q-progress').innerText = `第 ${currentQIdx + 1} / ${yearObj.questions.length} 題`;
+            document.getElementById('briefing-text').innerText = q.title;
+            document.getElementById('card-q-title').innerText = `${currentQIdx + 1}. ${q.title}`;
+
+            setupDronesForCurrentQuestion();
+            renderCardModeOptions(q);
+        }
+
+        function renderCardModeOptions(q) {
+            const list = document.getElementById('card-options-list');
+            list.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const item = document.createElement('div');
+                item.className = 'card-option';
+                item.innerHTML = `<span><b>(${idx + 1})</b> ${opt}</span><span style="font-size:12px; color:#94a3b8;">[鍵盤 ${idx + 1}]</span>`;
+                item.onclick = () => {
+                    if (answered) return;
+                    fireTurretAt(idx);
+                };
+                list.appendChild(item);
+            });
+        }
+
+        function updateCardModeView(selectedIdx, correctIdx) {
+            const items = document.querySelectorAll('.card-option');
+            if (items[correctIdx]) items[correctIdx].classList.add('correct');
+            if (selectedIdx !== correctIdx && items[selectedIdx]) {
+                items[selectedIdx].classList.add('wrong');
+            }
+        }
+
+        function nextQuestion() {
+            const yearObj = activeYears[currentYearIdx];
+            if (currentQIdx + 1 >= yearObj.questions.length) {
+                showMissionDebrief(true);
+                return;
+            }
+            currentQIdx++;
+            loadQuestion();
+        }
+
+        function updateHUD() {
+            document.getElementById('hud-score').innerText = score;
+            
+            let heartsStr = '';
+            for (let i = 0; i < MAX_SHIELD; i++) {
+                heartsStr += (i < shieldHp) ? '❤️' : '🖤';
+            }
+            document.getElementById('hud-shield').innerText = heartsStr;
+
+            const comboBadge = document.getElementById('hud-combo-badge');
+            const comboText = document.getElementById('hud-combo-text');
+            if (combo >= 2) {
+                comboBadge.style.display = 'inline-block';
+                comboBadge.innerText = `🔥 COMBO x${combo}`;
+                comboText.style.display = 'none';
+            } else {
+                comboBadge.style.display = 'none';
+                comboText.style.display = 'inline';
+                comboText.innerText = combo === 1 ? '1 HIT' : 'READY';
+            }
+
+            const acc = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 100;
+            document.getElementById('hud-accuracy').innerText = `${acc}%`;
+        }
+
+        function showMissionDebrief(isVictory) {
+            const modal = document.getElementById('mission-modal');
+            const titleEl = document.getElementById('modal-result-title');
+            const rankEl = document.getElementById('modal-rank');
+            const descEl = document.getElementById('modal-result-desc');
+
+            const acc = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 100;
+
+            if (isVictory) {
+                titleEl.innerText = "🏆 試卷全通關！任務大勝利";
+                if (acc >= 90) { rankEl.innerText = "S"; descEl.innerText = "神級特級大師！全場完美攔截！"; }
+                else if (acc >= 75) { rankEl.innerText = "A"; descEl.innerText = "優秀指揮官！精準命中目標！"; }
+                else if (acc >= 60) { rankEl.innerText = "B"; descEl.innerText = "檢定順利及格！防線固若金湯！"; }
+                else { rankEl.innerText = "C"; descEl.innerText = "通過挑戰！建議多加強化弱點題型！"; }
+            } else {
+                titleEl.innerText = "🚨 基地護盾歸零！任務失守";
+                rankEl.innerText = "D";
+                descEl.innerText = "別氣餒！立刻重整裝備再次迎擊！";
+            }
+
+            document.getElementById('res-score').innerText = score;
+            document.getElementById('res-accuracy').innerText = `${acc}%`;
+            document.getElementById('res-combo').innerText = `${maxCombo} COMBO`;
+
+            let heartsStr = '';
+            for (let i = 0; i < MAX_SHIELD; i++) {
+                heartsStr += (i < shieldHp) ? '❤️' : '🖤';
+            }
+            document.getElementById('res-shield').innerText = heartsStr;
+
+            modal.style.display = 'flex';
+        }
+
+        function restartMission() {
+            shieldHp = MAX_SHIELD;
+            score = 0;
+            combo = 0;
+            totalAnswered = 0;
+            totalCorrect = 0;
+            currentQIdx = 0;
+            updateHUD();
+            closeMissionModal();
+            loadQuestion();
+        }
+
+        function closeMissionModal() {
+            document.getElementById('mission-modal').style.display = 'none';
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>

@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puti-AI | 校園 AI 視覺海報與圖卡提示詞產生器</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+            },
+            accent: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+            }
+          },
+          animation: {
+            'glow-pulse': 'glowPulse 1.2s ease-in-out 2',
+          },
+          keyframes: {
+            glowPulse: {
+              '0%, 100%': { borderColor: '#e2e8f0', boxShadow: 'none' },
+              '50%': { borderColor: '#f97316', boxShadow: '0 0 16px rgba(249, 115, 22, 0.45)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      font-family: 'Noto Sans TC', 'Inter', sans-serif;
+    }
+    
+    /* 橘黃色閃爍特效 */
+    .flash-highlight {
+      animation: glowPulse 1s ease-in-out 2;
+    }
+    
+    /* 自訂捲軸 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* 隱藏原生箭頭 */
+    select {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 0.75rem center;
+      background-repeat: no-repeat;
+      background-size: 1.25em 1.25em;
+      padding-right: 2.5rem;
+      -webkit-print-color-adjust: exact;
+      appearance: none;
+    }
+
+    .badge-dept {
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-teal-500 selection:text-white">
+
+  <!-- Toast 訊息容器 -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- 頂部導覽列 -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- 品牌與 Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-teal-500/20">
+          <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-teal-800 to-teal-600 bg-clip-text text-transparent">
+              Puti-AI 視覺海報提示詞產生器
+            </h1>
+            <span class="hidden sm:inline-block px-2 py-0.5 text-xs font-semibold bg-teal-100 text-teal-800 rounded-full border border-teal-200">
+              校園行政 & 教學專用版
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 hidden md:block">一鍵產生零文字、純背景排版的高成功率 AI 詠唱指令</p>
+        </div>
+      </div>
+
+      <!-- 右側動作區 -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button id="btn-open-guide" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors border border-slate-200">
+          <i class="fa-regular fa-circle-question text-teal-600"></i>
+          <span>使用教學</span>
+        </button>
+        <button id="btn-clear-all-history" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors border border-rose-200">
+          <i class="fa-regular fa-trash-can"></i>
+          <span>清除紀錄</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主內容區塊 (Grid 7:5 排版) -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- ================= 左側：表單設定區 (7 欄) ================= -->
+      <section class="lg:col-span-7 space-y-6">
+        
+        <!-- 步驟 1: 16 大校園情境選擇 -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-teal-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+              <h2 class="font-bold text-slate-800 text-base">選擇校園應用情境</h2>
+            </div>
+            <span class="text-xs text-slate-500 font-medium">共 16 類常用主題</span>
+          </div>
+
+          <!-- 16 個情境按鈕格點 -->
+          <div id="scenario-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <!-- 由 JS 動態渲染 -->
+          </div>
+        </div>
+
+        <!-- 步驟 2: 動態自訂表單欄位 -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-5">
+          
+          <!-- 表單頂部標題與「一鍵填入範例」按鈕 -->
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-teal-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+              <h2 class="font-bold text-slate-800 text-base">填寫畫面細節與設定</h2>
+            </div>
+            
+            <!-- 一鍵填入範例按鈕 -->
+            <button id="btn-fill-example" type="button" class="group inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold text-accent-600 bg-accent-50 hover:bg-accent-100 border border-accent-400/40 rounded-xl transition-all duration-200 active:scale-95 shadow-sm">
+              <i class="fa-solid fa-lightbulb text-accent-500 group-hover:rotate-12 transition-transform"></i>
+              <span>一鍵填入範例</span>
+            </button>
+          </div>
+
+          <!-- 欄位 1: 活動/宣導名稱 -->
+          <div>
+            <label for="input-activity-name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              活動 / 宣導 / 專案名稱 <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <input id="input-activity-name" type="text" placeholder="例如：113學年度校園雙語科學探索營、反霸凌與友善校園週" 
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all text-sm">
+            </div>
+          </div>
+
+          <!-- 欄位 2: 主要視覺主體 -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="input-visual-subject" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                主要視覺主體描述 <span class="text-rose-500">*</span>
+              </label>
+              <span class="text-xs text-slate-400">描述人物動作、核心象徵物</span>
+            </div>
+            <textarea id="input-visual-subject" rows="3" placeholder="例如：兩位戴安全帽背書包的國小學童正開心走在斑馬線上，身旁有發光的交通號誌與盛開綠樹" 
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all text-sm resize-none"></textarea>
+          </div>
+
+          <!-- 下拉選單群組 (4大項，全繁體中文 + 自訂展開) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- 目標對象 -->
+            <div>
+              <label for="select-target-audience" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                目標受眾族群
+              </label>
+              <select id="select-target-audience" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all">
+                <option value="國小低年級學童（活潑童趣）">國小低年級學童（活潑童趣）</option>
+                <option value="國小中高年級學童（探索活力）" selected>國小中高年級學童（探索活力）</option>
+                <option value="國中青少年學生（熱血青春）">國中青少年學生（熱血青春）</option>
+                <option value="幼兒園學前孩童（溫馨軟萌）">幼兒園學前孩童（溫馨軟萌）</option>
+                <option value="全體教職員工（專業穩重）">全體教職員工（專業穩重）</option>
+                <option value="學生家長與社區人士（親切溫暖）">學生家長與社區人士（親切溫暖）</option>
+                <option value="全校親師生共同參與（盛大歡樂）">全校親師生共同參與（盛大歡樂）</option>
+                <option value="__custom__">自訂...</option>
+              </select>
+              <!-- 自訂輸入框 (預設隱藏) -->
+              <input id="input-custom-audience" type="text" placeholder="請輸入自訂目標對象..." 
+                class="hidden mt-2 w-full px-3.5 py-2 rounded-lg border border-accent-400 bg-accent-50/50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500">
+            </div>
+
+            <!-- 藝術與視覺風格 -->
+            <div>
+              <label for="select-art-style" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                藝術與視覺風格
+              </label>
+              <select id="select-art-style" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all">
+                <option value="YouTube 吸引眼球縮圖風（高飽和、立體光影、鮮明輪廓）" selected>YouTube 吸引眼球縮圖風（高飽和、立體光影、鮮明輪廓）</option>
+                <option value="手繪塗鴉筆記風（溫暖線條、手帳插圖質感）">手繪塗鴉筆記風（溫暖線條、手帳插圖質感）</option>
+                <option value="日式清新動漫插畫風（柔和光影、細緻唯美）">日式清新動漫插畫風（柔和光影、細緻唯美）</option>
+                <option value="黑板粉筆手繪風（深綠黑板底色、多彩粉筆筆觸）">黑板粉筆手繪風（深綠黑板底色、多彩粉筆筆觸）</option>
+                <option value="3D 黏土立體微縮模型風（圓潤可愛、皮克斯質感）">3D 黏土立體微縮模型風（圓潤可愛、皮克斯質感）</option>
+                <option value="簡約扁平向量插畫風（乾淨幾何、現代設計感）">簡約扁平向量插畫風（乾淨幾何、現代設計感）</option>
+                <option value="溫暖水彩手繪風（清新暈染、透光柔和質感）">溫暖水彩手繪風（清新暈染、透光柔和質感）</option>
+                <option value="立體剪紙與紙雕層次風（精緻陰影、豐富層次感）">立體剪紙與紙雕層次風（精緻陰影、豐富層次感）</option>
+                <option value="像素復古遊戲點陣風（經典遊戲感、趣味像素）">像素復古遊戲點陣風（經典遊戲感、趣味像素）</option>
+                <option value="__custom__">自訂...</option>
+              </select>
+              <!-- 自訂輸入框 (預設隱藏) -->
+              <input id="input-custom-style" type="text" placeholder="請輸入自訂藝術風格..." 
+                class="hidden mt-2 w-full px-3.5 py-2 rounded-lg border border-accent-400 bg-accent-50/50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500">
+            </div>
+
+            <!-- 主色調偏好 -->
+            <div>
+              <label for="select-color-palette" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                主色調偏好
+              </label>
+              <select id="select-color-palette" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all">
+                <option value="明亮繽紛活力系（黃、橘、天藍，充滿朝氣）" selected>明亮繽紛活力系（黃、橘、天藍，充滿朝氣）</option>
+                <option value="專業科技藍青色系（深藍、青綠、白，沉穩現代）">專業科技藍青色系（深藍、青綠、白，沉穩現代）</option>
+                <option value="溫暖陽光暖橙色系（橙黃、杏仁白、金棕，親切熱情）">溫暖陽光暖橙色系（橙黃、杏仁白、金棕，親切熱情）</option>
+                <option value="清新自然森林綠系（草綠、薄荷綠、奶白，環保健康）">清新自然森林綠系（草綠、薄荷綠、奶白，環保健康）</option>
+                <option value="典雅節慶金紅暖色系（朱紅、暖金、棗紅，喜氣尊貴）">典雅節慶金紅暖色系（朱紅、暖金、棗紅，喜氣尊貴）</option>
+                <option value="柔和粉嫩馬卡龍色系（粉藍、淡粉、鵝黃，溫馨治癒）">柔和粉嫩馬卡龍色系（粉藍、淡粉、鵝黃，溫馨治癒）</option>
+                <option value="極簡文青大地色系（燕麥白、卡其、淺木色，乾淨舒適）">極簡文青大地色系（燕麥白、卡其、淺木色，乾淨舒適）</option>
+                <option value="__custom__">自訂...</option>
+              </select>
+              <!-- 自訂輸入框 (預設隱藏) -->
+              <input id="input-custom-color" type="text" placeholder="請輸入自訂色彩配置..." 
+                class="hidden mt-2 w-full px-3.5 py-2 rounded-lg border border-accent-400 bg-accent-50/50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500">
+            </div>
+
+            <!-- 圖片比例 -->
+            <div>
+              <label for="select-aspect-ratio" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                版面尺寸與比例
+              </label>
+              <select id="select-aspect-ratio" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all">
+                <option value="3:4" selected>3:4（直式海報、A4/A3 輸出海報最推薦）</option>
+                <option value="16:9">16:9（橫式大螢幕簡報、宣傳布條、首頁 Banner）</option>
+                <option value="1:1">1:1（正方形社群圖卡、FB/LINE 圖文貼文）</option>
+                <option value="9:16">9:16（直式手機滿版圖卡、限時動態、短影音封面）</option>
+                <option value="__custom__">自訂...</option>
+              </select>
+              <!-- 自訂輸入框 (預設隱藏) -->
+              <input id="input-custom-ratio" type="text" placeholder="請輸入自訂比例（如 4:5 或 21:9）..." 
+                class="hidden mt-2 w-full px-3.5 py-2 rounded-lg border border-accent-400 bg-accent-50/50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-accent-500">
+            </div>
+          </div>
+
+          <!-- 留白排版偏好 (為 Canva 後續加字量身打造) -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+              排版留白位置（保留乾淨背景給 Canva 上字）
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-teal-400 cursor-pointer bg-slate-50/70 transition-all text-xs font-medium has-[:checked]:bg-teal-50 has-[:checked]:border-teal-600 has-[:checked]:text-teal-900">
+                <input type="radio" name="layout-space" value="上方留白（最適合頂部放活動大標題）" checked class="text-teal-600 focus:ring-teal-500">
+                <span>上方大留白</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-teal-400 cursor-pointer bg-slate-50/70 transition-all text-xs font-medium has-[:checked]:bg-teal-50 has-[:checked]:border-teal-600 has-[:checked]:text-teal-900">
+                <input type="radio" name="layout-space" value="下方留白（適合底部放詳細時間、地點與說明）" class="text-teal-600 focus:ring-teal-500">
+                <span>下方大留白</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-teal-400 cursor-pointer bg-slate-50/70 transition-all text-xs font-medium has-[:checked]:bg-teal-50 has-[:checked]:border-teal-600 has-[:checked]:text-teal-900">
+                <input type="radio" name="layout-space" value="中央留白（視覺元素環繞四周，適合置中大標或獎狀）" class="text-teal-600 focus:ring-teal-500">
+                <span>中央留白框</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-teal-400 cursor-pointer bg-slate-50/70 transition-all text-xs font-medium has-[:checked]:bg-teal-50 has-[:checked]:border-teal-600 has-[:checked]:text-teal-900">
+                <input type="radio" name="layout-space" value="側邊留白（左圖右文或右圖左文，條列式資訊專用）" class="text-teal-600 focus:ring-teal-500">
+                <span>左右分欄留白</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 步驟 3: 目標 AI 工具選擇 (Radio Buttons) -->
+          <div class="pt-3 border-t border-slate-100">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5">
+              選擇產圖 AI 工具（自動優化提示詞結構）
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <label class="flex items-start gap-3 p-3 rounded-xl border-2 border-slate-200 hover:border-teal-300 cursor-pointer transition-all bg-white has-[:checked]:border-teal-600 has-[:checked]:bg-teal-50/40">
+                <input type="radio" name="ai-tool" value="chatgpt" checked class="mt-1 text-teal-600 focus:ring-teal-500">
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-robot text-teal-600"></i>
+                    <span class="font-bold text-sm text-slate-900">ChatGPT / Copilot</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-0.5">預設推薦，極簡清晰對話式指令</p>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-3 p-3 rounded-xl border-2 border-slate-200 hover:border-teal-300 cursor-pointer transition-all bg-white has-[:checked]:border-teal-600 has-[:checked]:bg-teal-50/40">
+                <input type="radio" name="ai-tool" value="gemini" class="mt-1 text-teal-600 focus:ring-teal-500">
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <i class="fa-brands fa-google text-blue-600"></i>
+                    <span class="font-bold text-sm text-slate-900">Google Gemini</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-0.5">Imagen 3 最佳化繁中指令</p>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-3 p-3 rounded-xl border-2 border-slate-200 hover:border-teal-300 cursor-pointer transition-all bg-white has-[:checked]:border-teal-600 has-[:checked]:bg-teal-50/40">
+                <input type="radio" name="ai-tool" value="midjourney" class="mt-1 text-teal-600 focus:ring-teal-500">
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic text-purple-600"></i>
+                    <span class="font-bold text-sm text-slate-900">Midjourney</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-0.5">專業英文 Prompt + 參數指令</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 產生指令按鈕 -->
+          <div class="pt-2">
+            <button id="btn-generate" type="button" class="w-full py-3.5 px-6 rounded-xl font-bold text-base text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 active:scale-[0.99] shadow-lg shadow-teal-600/25 transition-all duration-200 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-sparkles"></i>
+              <span>立即組裝並產生 AI 繪圖指令</span>
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================= 右側：輸出結果與歷史紀錄 (5 欄 Sticky) ================= -->
+      <section class="lg:col-span-5 space-y-6">
+        
+        <div class="lg:sticky lg:top-20 space-y-6">
+          
+          <!-- 輸出提示詞卡片 -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h3 class="font-bold text-slate-800 text-sm sm:text-base">產出之提示詞 (Prompt)</h3>
+              </div>
+              <span id="prompt-badge-tool" class="text-xs font-semibold px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 border border-teal-200">
+                ChatGPT
+              </span>
+            </div>
+
+            <!-- 提示詞編輯與檢視區 -->
+            <div class="relative">
+              <textarea id="output-prompt" rows="9" readonly 
+                placeholder="點擊左側「立即組裝並產生 AI 繪圖指令」後，此處將自動產生最優質的高畫質指令..." 
+                class="w-full p-3.5 rounded-xl bg-slate-900 text-emerald-400 font-mono text-xs sm:text-sm border border-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all resize-y leading-relaxed select-all"></textarea>
+            </div>
+
+            <!-- 操作按鈕組 -->
+            <div class="mt-3 flex flex-wrap items-center gap-2">
+              <!-- 一鍵複製 -->
+              <button id="btn-copy-prompt" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs sm:text-sm text-white bg-teal-600 hover:bg-teal-700 active:scale-95 transition-all shadow-md shadow-teal-600/20 flex items-center justify-center gap-2">
+                <i class="fa-regular fa-copy"></i>
+                <span id="copy-text">一鍵複製提示詞</span>
+              </button>
+
+              <!-- 允許手動編輯開關 -->
+              <button id="btn-toggle-edit" title="啟用/鎖定手動修改" class="p-2.5 px-3 rounded-xl border border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs flex items-center gap-1">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span class="hidden sm:inline">微調編輯</span>
+              </button>
+            </div>
+
+            <!-- 快速外部跳轉按鈕 (去哪裡生圖與排版) -->
+            <div class="mt-4 pt-3 border-t border-slate-100">
+              <div class="text-xs font-semibold text-slate-500 mb-2">快速前往 AI 工具生圖 & Canva 排版：</div>
+              <div class="grid grid-cols-4 gap-1.5">
+                <a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 text-center rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 border border-slate-200 text-xs font-medium transition-colors flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  <span>ChatGPT</span>
+                </a>
+                <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 text-center rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 text-xs font-medium transition-colors flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  <span>Gemini</span>
+                </a>
+                <a href="https://www.midjourney.com" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 text-center rounded-lg bg-slate-100 hover:bg-purple-50 hover:text-purple-700 border border-slate-200 text-xs font-medium transition-colors flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  <span>Midjourney</span>
+                </a>
+                <a href="https://www.canva.com" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2 text-center rounded-lg bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-300 text-xs font-bold transition-colors flex items-center justify-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-palette text-cyan-600"></i>
+                  <span>Canva 排版</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Canva 排版小秘訣 -->
+            <div class="mt-3 p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 leading-relaxed flex items-start gap-2">
+              <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5"></i>
+              <div>
+                <span class="font-bold">Canva 校園美工三步驟：</span><br>
+                1. 貼上指令到 AI 工具產出「純無文字背景圖」並下載。<br>
+                2. 上傳至 Canva 設定為背景。<br>
+                3. 在預留的留白處加上活動標題與行政處室字樣，完美避開 AI 亂碼！
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 歷史紀錄列表 -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+                <h3 class="font-bold text-slate-800 text-sm">最近產出紀錄</h3>
+              </div>
+              <span id="history-count" class="text-xs text-slate-400">0 筆紀錄</span>
+            </div>
+
+            <div id="history-list" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+              <div class="text-center py-6 text-xs text-slate-400">
+                尚未產生任何紀錄，立即試著產生第一筆指令吧！
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- 使用說明 Modal -->
+  <div id="modal-guide" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-teal-600"></i>
+          <span>使用指南與設計心法</span>
+        </h3>
+        <button id="btn-close-guide" class="text-slate-400 hover:text-slate-600 text-xl font-bold">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="text-sm text-slate-600 space-y-3 leading-relaxed">
+        <p>本工具專為<strong>台灣國中小學行政同仁與任課教師</strong>量身打造，解決 AI 算圖經常出現亂碼中文字、畫面太滿無法排版等痛點。</p>
+        
+        <div class="p-3 bg-teal-50 rounded-xl border border-teal-200">
+          <h4 class="font-bold text-teal-900 mb-1">💡 為什麼提示詞強調「不要文字」？</h4>
+          <p class="text-xs text-teal-800">目前所有 AI 繪圖模型（ChatGPT/DALL-E 3、Midjourney 等）在生成繁體中文時極易產生錯字或亂碼。最專業且高效的做法是由 AI 繪製<strong>高質感、乾淨的背景插圖</strong>，再移至 <strong>Canva</strong> 自由添加正確的標題與活動資訊。</p>
+        </div>
+
+        <ul class="list-disc list-inside text-xs space-y-1.5 text-slate-600">
+          <li><strong>一鍵填入範例</strong>：點擊右上方按鈕，即刻載入最道地的校園情境範本。</li>
+          <li><strong>自訂選項</strong>：所有下拉選單皆支援自訂輸入，彈性十足。</li>
+          <li><strong>歷史存檔</strong>：自動儲存最近產生的 10 筆提示詞，隨時一鍵重新載入。</li>
+        </ul>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button id="btn-guide-ok" class="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-medium text-sm transition-colors">
+          我知道了，開始使用
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告區 (Footer) -->
+  <footer class="mt-auto bg-white border-t border-slate-200 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+      <p class="text-xs sm:text-sm text-slate-600">
+        屏東縣後庄國小黃朝榮老師作品，免費分享，歡迎擴散推廣，嚴禁商用與任何侵權、不尊重著作權的行為。
+      </p>
+      <p class="text-xs text-teal-700 font-medium">
+        更多 Puti-AI 教學工具 <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank" rel="noopener noreferrer" class="underline hover:text-teal-900 font-bold ml-1 inline-flex items-center gap-1">點此前往 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- 核心 JavaScript 邏輯 -->
+  <script>
+    // ================= 16 大校園情境預設資料庫 =================
+    const SCENARIOS = [
+      {
+        id: 'workshop',
+        title: '研習與講座海報',
+        dept: '教務/輔導處',
+        deptColor: 'bg-blue-100 text-blue-700',
+        icon: 'fa-chalkboard-user',
+        defaultActivity: '113學年度教師數位增能與生成式 AI 融入教學實務工作坊',
+        defaultSubject: '一位充滿熱忱的老師與可愛的機器人助教站在講台前，周圍漂浮著發光的智慧筆記本、立體對話框與科技幾何星光',
+        targetAudience: '全體教職員工（專業穩重）',
+        artStyle: 'YouTube 吸引眼球縮圖風（高飽和、立體光影、鮮明輪廓）',
+        colorPalette: '專業科技藍青色系（深藍、青綠、白，沉穩現代）',
+        ratio: '3:4',
+        layoutSpace: '上方留白（最適合頂部放活動大標題）'
+      },
+      {
+        id: 'honor',
+        title: '榮譽榜/得獎賀圖',
+        dept: '學務/各處室',
+        deptColor: 'bg-amber-100 text-amber-700',
+        icon: 'fa-award',
+        defaultActivity: '賀！本校直笛合奏團榮獲全國音樂比賽特優第一名',
+        defaultSubject: '一座金光閃閃、精緻雕刻的榮譽獎盃與閃耀緞帶，周圍噴灑出燦爛的金色彩帶、金色五角星與高雅光暈',
+        targetAudience: '全校親師生共同參與（盛大歡樂）',
+        artStyle: '3D 黏土立體微縮模型風（圓潤可愛、皮克斯質感）',
+        colorPalette: '典雅節慶金紅暖色系（朱紅、暖金、棗紅，喜氣尊貴）',
+        ratio: '1:1',
+        layoutSpace: '中央留白（視覺元素環繞四周，適合置中大標或獎狀）'
+      },
+      {
+        id: 'advocacy',
+        title: '主題宣導海報',
+        dept: '學務/總務處',
+        deptColor: 'bg-emerald-100 text-emerald-700',
+        icon: 'fa-bullhorn',
+        defaultActivity: '校園反霸凌與友善校園宣導：彼此尊重，讓愛同行',
+        defaultSubject: '多位不同年齡的小學生牽著手圍成圓圈微笑，頭頂漂浮著愛心盾牌與溫暖發光的彩虹，象徵團結守護與友愛',
+        targetAudience: '國小中高年級學童（探索活力）',
+        artStyle: '簡約扁平向量插畫風（乾淨幾何、現代設計感）',
+        colorPalette: '明亮繽紛活力系（黃、橘、天藍，充滿朝氣）',
+        ratio: '3:4',
+        layoutSpace: '上方留白（最適合頂部放活動大標題）'
+      },
+      {
+        id: 'certificate',
+        title: '客製化特色獎狀',
+        dept: '教務/學務處',
+        deptColor: 'bg-indigo-100 text-indigo-700',
+        icon: 'fa-certificate',
+        defaultActivity: '學期閱讀小達人與品德優良楷模榮譽獎狀',
+        defaultSubject: '由月桂冠綠葉、金黃色星星、智慧羽毛筆與翻開的魔法書組成的精緻邊框花紋，畫面中央保留大面積純白或米黃色空間',
+        targetAudience: '國小低年級學童（活潑童趣）',
+        artStyle: '溫暖水彩手繪風（清新暈染、透光柔和質感）',
+        colorPalette: '極簡文青大地色系（燕麥白、卡其、淺木色，乾淨舒適）',
+        ratio: '3:4',
+        layoutSpace: '中央留白（視覺元素環繞四周，適合置中大標或獎狀）'
+      },
+      {
+        id: 'social',
+        title: '社群公告圖卡',
+        dept: '各處室/FB粉專',
+        deptColor: 'bg-cyan-100 text-cyan-700',
+        icon: 'fa-share-nodes',
+        defaultActivity: '本週五全校親師座談會暨家長日活動提醒通知',
+        defaultSubject: '一間充滿陽光的國小溫馨教室，黑板前擺放著小盆栽與便條紙，桌上有整齊的筆記本與一杯熱茶，氛圍親切溫馨',
+        targetAudience: '學生家長與社區人士（親切溫暖）',
+        artStyle: '手繪塗鴉筆記風（溫暖線條、手帳插圖質感）',
+        colorPalette: '柔和粉嫩馬卡龍色系（粉藍、淡粉、鵝黃，溫馨治癒）',
+        ratio: '1:1',
+        layoutSpace: '下方留白（適合底部放詳細時間、地點與說明）'
+      },
+      {
+        id: 'sports',
+        title: '校慶/運動會主視覺',
+        dept: '學務/體育組',
+        deptColor: 'bg-orange-100 text-orange-700',
+        icon: 'fa-flag-checkered',
+        defaultActivity: '113學年度創校60週年校慶暨親師生運動大會',
+        defaultSubject: '活力充沛的小學生在鮮紅色的 PU 跑道上全力奔馳衝刺，空中飄揚著彩色運動會旗幟、氣球與衝線勝利緞帶',
+        targetAudience: '全校親師生共同參與（盛大歡樂）',
+        artStyle: 'YouTube 吸引眼球縮圖風（高飽和、立體光影、鮮明輪廓）',
+        colorPalette: '溫暖陽光暖橙色系（橙黃、杏仁白、金棕，親切熱情）',
+        ratio: '16:9',
+        layoutSpace: '上方留白（最適合頂部放活動大標題）'
+      },
+      {
+        id: 'enrollment',
+        title: '招生與特色課程',
+        dept: '教務/幼兒園',
+        deptColor: 'bg-purple-100 text-purple-700',
+        icon: 'fa-graduation-cap',
+        defaultActivity: '114學年度附設幼兒園招生簡章與雙語創客特色課程體驗',
+        defaultSubject: '充滿好奇心的小孩戴著小小工程師帽子，正在桌上組裝積木機器人，身旁環繞著發光的小齒輪、星空投影與立體拼圖',
+        targetAudience: '幼兒園學前孩童（溫馨軟萌）',
+        artStyle: '3D 黏土立體微縮模型風（圓潤可愛、皮克斯質感）',
+        colorPalette: '柔和粉嫩馬卡龍色系（粉藍、淡粉、鵝黃，溫馨治癒）',
+        ratio: '3:4',
+        layoutSpace: '下方留白（適合底部放詳細時間、地點與說明）'
+      },
+      {
+        id: 'graduation',
+        title: '畢業典禮與邀請函',
+        dept: '學務/各處室',
+        deptColor: 'bg-teal-100 text-teal-700',
+        icon: 'fa-envelope-open-text',
+        defaultActivity: '第78屆畢業典禮：夢想起飛，勇敢翱翔',
+        defaultSubject: '多頂黑色學士帽高高拋向蔚藍晴空，湛藍天空中有白雲、隨風飄落的鳳凰木紅花、紙飛機與熱氣球',
+        targetAudience: '國小中高年級學童（探索活力）',
+        artStyle: '日式清新動漫插畫風（柔和光影、細緻唯美）',
+        colorPalette: '清新自然森林綠系（草綠、薄荷綠、奶白，環保健康）',
+        ratio: '3:4',
+        layoutSpace: '上方留白（最適合頂部放活動大標題）'
+      },
+      {
+        id: 'clubs',
+        title: '社團招選與成發',
+        dept: '學務/訓育組',
+        deptColor: 'bg-pink-100 text-pink-700',
+        icon: 'fa-masks-theater',
+        defaultActivity: '多元動態社團體驗日暨熱音街舞成果發表會',
+        defaultSubject: '一群手持木吉他、麥克風、直排輪與魔術方塊的熱血青少年，背後有動態舞台聚光燈射線與幾何塗鴉背景',
+        targetAudience: '國中青少年學生（熱血青春）',
+        artStyle: 'YouTube 吸引眼球縮圖風（高飽和、立體光影、鮮明輪廓）',
+        colorPalette: '專業科技藍青色系（深藍、青綠、白，沉穩現代）',
+        ratio: '3:4',
+        layoutSpace: '上方留白（最適合頂部放活動大標題）'
+      },
+      {
+        id: 'expo',
+        title: '博覽會與成果展背板',
+        dept: '教務/輔導處',
+        deptColor: 'bg-violet-100 text-violet-700',
+        icon: 'fa-cubes-stacked',
+        defaultActivity: '科學創客博覽會暨 SDGs 永續校園成果展舞台主背板',
+        defaultSubject: '一棵由數位電路板與綠色樹葉交織融合而成的巨大智慧之樹，樹枝上結滿了太陽能板、風力發電機與地球生態模型',
+        targetAudience: '全校親師生共同參與（盛大歡樂）',
+        artStyle: '立體剪紙與紙雕層次風（精緻陰影、豐富層次感）',
+        colorPalette: '清新自然森林綠系（草綠、薄荷綠、奶白，環保健康）',
+        ratio: '16:9',
+        layoutSpace: '中央留白（視覺元素環繞四周，適合置中大標或獎狀）'
+      },
+      {
+        id: 'safety',
+        title: '校園安全與環境指引',
+        dept: '總務/生教組',
+        deptColor: 'bg-red-100 text-red-700',
+        icon: 'fa-shield-halved',
+        defaultActivity: '國家防災日地震避難掩護演練與校園交通安全宣導',
+        defaultSubject: '戴著亮黃色安全防護頭套的小學生正按照「趴下、掩護、穩住」標準動作躲在課桌下，畫面生動逼真且富有教育意義',
+        targetAudience: '國小中高年級學童（探索活力）',
+        artStyle: '簡約扁平向量插畫風（乾淨幾何、現代設計感）',
+        colorPalette: '明亮繽紛活力系（黃、橘、天藍，充滿朝氣）',
+        ratio: '3:4',
+        layoutSpace: '上方留白（最適合頂部放活動大標題）'
+      },
+      {
+        id: 'holiday',
+        title: '節慶賀卡與公關圖',
+        dept: '校長室/各處室',
+        deptColor: 'bg-rose-100 text-rose-700',
+        icon: 'fa-gift',
+        defaultActivity: '春風化雨，感恩有您：教師節敬師賀卡與祝福問候',
+        defaultSubject: '講桌上整齊擺放著一束盛開的粉紅康乃馨與向日葵花束，旁邊有精緻手寫卡片、老花眼鏡與紅蘋果，透著窗外柔和晨光',
+        targetAudience: '全體教職員工（專業穩重）',
+        artStyle: '溫暖水彩手繪風（清新暈染、透光柔和質感）',
+        colorPalette: '溫暖陽光暖橙色系（橙黃、杏仁白、金棕，親切熱情）',
+        ratio: '1:1',
+        layoutSpace: '側邊留白（左圖右文或右圖左文，條列式資訊專用）'
+      },
+      {
+        id: 'classroom',
+        title: '班級佈置與情境圖',
+        dept: '班級導師',
+        deptColor: 'bg-lime-100 text-lime-700',
+        icon: 'fa-shapes',
+        defaultActivity: '六年三班教室後方佈告欄：夢想樹與值日生分工表主題背景',
+        defaultSubject: '一棵枝葉茂盛的童話大樹，樹梢掛滿了木質告示小掛牌、彩色熱氣球與在樹下看書的小松鼠與小鳥',
+        targetAudience: '國小中高年級學童（探索活力）',
+        artStyle: '手繪塗鴉筆記風（溫暖線條、手帳插圖質感）',
+        colorPalette: '清新自然森林綠系（草綠、薄荷綠、奶白，環保健康）',
+        ratio: '16:9',
+        layoutSpace: '中央留白（視覺元素環繞四周，適合置中大標或獎狀）'
+      },
+      {
+        id: 'worksheet',
+        title: '教學簡報/學習單插圖',
+        dept: '任課教師',
+        deptColor: 'bg-sky-100 text-sky-700',
+        icon: 'fa-book-open-reader',
+        defaultActivity: '自然與生活科技領域：水循環與天氣變化探究學習單插圖',
+        defaultSubject: '卡通擬人化的雲朵正在下雨，雨水匯聚成河流流向海洋，太陽在空中發光蒸發水滴，形成完整的水循環示意圖解概念',
+        targetAudience: '國小中高年級學童（探索活力）',
+        artStyle: '簡約扁平向量插畫風（乾淨幾何、現代設計感）',
+        colorPalette: '專業科技藍青色系（深藍、青綠、白，沉穩現代）',
+        ratio: '16:9',
+        layoutSpace: '上方留白（最適合頂部放活動大標題）'
+      },
+      {
+        id: 'parentNotice',
+        title: '家長通知/聯絡簿配圖',
+        dept: '班級導師',
+        deptColor: 'bg-emerald-100 text-emerald-700',
+        icon: 'fa-comments',
+        defaultActivity: '週末戶外教學防蚊防曬與行程確認家長通知單',
+        defaultSubject: '一個裝滿水壺、小帽子、放大鏡與地圖的小學生戶外探險背包，旁邊散落著落葉與指南針，風格輕快可愛',
+        targetAudience: '學生家長與社區人士（親切溫暖）',
+        artStyle: '手繪塗鴉筆記風（溫暖線條、手帳插圖質感）',
+        colorPalette: '極簡文青大地色系（燕麥白、卡其、淺木色，乾淨舒適）',
+        ratio: '1:1',
+        layoutSpace: '下方留白（適合底部放詳細時間、地點與說明）'
+      },
+      {
+        id: 'rewards',
+        title: '獎勵卡與集點卡',
+        dept: '導師/輔導處',
+        deptColor: 'bg-yellow-100 text-yellow-700',
+        icon: 'fa-star',
+        defaultActivity: '全校好兒童好禮貌集點卡與榮譽闖關卡',
+        defaultSubject: '一張橫式卡片背景，排列著10個可愛的空白小腳印與小星星戳章格子，角落有一隻豎起大拇指鼓勵的小熊吉祥物',
+        targetAudience: '國小低年級學童（活潑童趣）',
+        artStyle: '3D 黏土立體微縮模型風（圓潤可愛、皮克斯質感）',
+        colorPalette: '明亮繽紛活力系（黃、橘、天藍，充滿朝氣）',
+        ratio: '16:9',
+        layoutSpace: '中央留白（視覺元素環繞四周，適合置中大標或獎狀）'
+      }
+    ];
+
+    // ================= 狀態管理 =================
+    let currentScenarioId = 'workshop';
+    let historyRecords = [];
+
+    // ================= DOM 元素快取 =================
+    const scenarioGrid = document.getElementById('scenario-grid');
+    const inputActivityName = document.getElementById('input-activity-name');
+    const inputVisualSubject = document.getElementById('input-visual-subject');
+    
+    const selectTargetAudience = document.getElementById('select-target-audience');
+    const inputCustomAudience = document.getElementById('input-custom-audience');
+    
+    const selectArtStyle = document.getElementById('select-art-style');
+    const inputCustomStyle = document.getElementById('input-custom-style');
+    
+    const selectColorPalette = document.getElementById('select-color-palette');
+    const inputCustomColor = document.getElementById('input-custom-color');
+    
+    const selectAspectRatio = document.getElementById('select-aspect-ratio');
+    const inputCustomRatio = document.getElementById('input-custom-ratio');
+
+    const outputPrompt = document.getElementById('output-prompt');
+    const promptBadgeTool = document.getElementById('prompt-badge-tool');
+    const btnFillExample = document.getElementById('btn-fill-example');
+    const btnGenerate = document.getElementById('btn-generate');
+    const btnCopyPrompt = document.getElementById('btn-copy-prompt');
+    const copyText = document.getElementById('copy-text');
+    const btnToggleEdit = document.getElementById('btn-toggle-edit');
+    const historyList = document.getElementById('history-list');
+    const historyCount = document.getElementById('history-count');
+    const btnClearAllHistory = document.getElementById('btn-clear-all-history');
+
+    // Modal
+    const modalGuide = document.getElementById('modal-guide');
+    const btnOpenGuide = document.getElementById('btn-open-guide');
+    const btnCloseGuide = document.getElementById('btn-close-guide');
+    const btnGuideOk = document.getElementById('btn-guide-ok');
+
+    // ================= Toast 自訂提示系統 =================
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const bgClasses = {
+        success: 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-900/20',
+        info: 'bg-teal-700 text-white border-teal-600 shadow-teal-900/20',
+        warning: 'bg-amber-500 text-white border-amber-400 shadow-amber-900/20',
+        error: 'bg-rose-600 text-white border-rose-500 shadow-rose-900/20'
+      };
+
+      const icons = {
+        success: 'fa-circle-check',
+        info: 'fa-circle-info',
+        warning: 'fa-triangle-exclamation',
+        error: 'fa-circle-xmark'
+      };
+
+      toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium transition-all duration-300 pointer-events-auto transform translate-y-2 opacity-0 ${bgClasses[type] || bgClasses.info}`;
+      toast.innerHTML = `
+        <i class="fa-solid ${icons[type] || icons.info} text-base"></i>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      // 動畫淡入
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      // 3 秒後移除
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-[-8px]');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ================= 初始化渲染 16 大情境按鈕 =================
+    function renderScenarioButtons() {
+      scenarioGrid.innerHTML = '';
+      SCENARIOS.forEach(sc => {
+        const isSelected = sc.id === currentScenarioId;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset.id = sc.id;
+        btn.className = `p-3 rounded-xl border text-left transition-all duration-150 relative flex flex-col justify-between ${
+          isSelected 
+            ? 'bg-teal-50 border-teal-500 shadow-sm ring-2 ring-teal-500/20' 
+            : 'bg-slate-50/70 border-slate-200 hover:border-teal-300 hover:bg-white'
+        }`;
+
+        btn.innerHTML = `
+          <div class="flex items-start justify-between gap-1 mb-2">
+            <span class="badge-dept ${sc.deptColor}">${sc.dept}</span>
+            <i class="fa-solid ${sc.icon} ${isSelected ? 'text-teal-600' : 'text-slate-400'} text-base"></i>
+          </div>
+          <div class="font-bold text-xs sm:text-sm ${isSelected ? 'text-teal-950' : 'text-slate-700'} leading-tight">
+            ${sc.title}
+          </div>
+        `;
+
+        btn.addEventListener('click', () => {
+          selectScenario(sc.id, false);
+        });
+
+        scenarioGrid.appendChild(btn);
+      });
+    }
+
+    // 選取特定情境
+    function selectScenario(id, autoFill = false) {
+      currentScenarioId = id;
+      renderScenarioButtons();
+      const sc = SCENARIOS.find(s => s.id === id);
+      if (sc && autoFill) {
+        fillScenarioData(sc);
+      }
+    }
+
+    // 填入範例資料到表單
+    function fillScenarioData(sc) {
+      inputActivityName.value = sc.defaultActivity;
+      inputVisualSubject.value = sc.defaultSubject;
+      
+      // 目標對象
+      setSelectOrCustom(selectTargetAudience, inputCustomAudience, sc.targetAudience);
+      // 風格
+      setSelectOrCustom(selectArtStyle, inputCustomStyle, sc.artStyle);
+      // 色彩
+      setSelectOrCustom(selectColorPalette, inputCustomColor, sc.colorPalette);
+      // 比例
+      setSelectOrCustom(selectAspectRatio, inputCustomRatio, sc.ratio);
+
+      // 留白排版
+      const layoutRadio = document.querySelector(`input[name="layout-space"][value="${sc.layoutSpace}"]`);
+      if (layoutRadio) {
+        layoutRadio.checked = true;
+      }
+
+      // 橘黃色高亮閃爍視覺回饋
+      triggerGlowEffect();
+      showToast(`已成功套用「${sc.title}」之校園情境範例！`, 'info');
+    }
+
+    function setSelectOrCustom(selectEl, customInputEl, value) {
+      let matched = false;
+      for (let i = 0; i < selectEl.options.length; i++) {
+        if (selectEl.options[i].value === value) {
+          selectEl.selectedIndex = i;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) {
+        selectEl.value = '__custom__';
+        customInputEl.value = value;
+        customInputEl.classList.remove('hidden');
+      } else {
+        customInputEl.classList.add('hidden');
+      }
+    }
+
+    // 橘黃色閃爍動畫
+    function triggerGlowEffect() {
+      const targets = [
+        inputActivityName, 
+        inputVisualSubject, 
+        selectTargetAudience, 
+        selectArtStyle, 
+        selectColorPalette, 
+        selectAspectRatio
+      ];
+
+      targets.forEach(el => {
+        el.classList.remove('flash-highlight');
+        void el.offsetWidth; // 強制重繪
+        el.classList.add('flash-highlight');
+      });
+    }
+
+    // ================= 下拉選單自訂監聽 =================
+    function bindCustomSelect(selectEl, customInputEl) {
+      selectEl.addEventListener('change', () => {
+        if (selectEl.value === '__custom__') {
+          customInputEl.classList.remove('hidden');
+          customInputEl.focus();
+        } else {
+          customInputEl.classList.add('hidden');
+        }
+      });
+    }
+
+    bindCustomSelect(selectTargetAudience, inputCustomAudience);
+    bindCustomSelect(selectArtStyle, inputCustomStyle);
+    bindCustomSelect(selectColorPalette, inputCustomColor);
+    bindCustomSelect(selectAspectRatio, inputCustomRatio);
+
+    // ================= 獲取當前表單數值 =================
+    function getFormData() {
+      const activityName = inputActivityName.value.trim() || '校園活動主題海報';
+      const visualSubject = inputVisualSubject.value.trim() || '具有活力的校園意象與特色代表主體';
+
+      const audience = selectTargetAudience.value === '__custom__' 
+        ? (inputCustomAudience.value.trim() || '全體親師生') 
+        : selectTargetAudience.value;
+
+      const style = selectArtStyle.value === '__custom__' 
+        ? (inputCustomStyle.value.trim() || '質感插畫風格') 
+        : selectArtStyle.value;
+
+      const color = selectColorPalette.value === '__custom__' 
+        ? (inputCustomColor.value.trim() || '明亮和諧色彩') 
+        : selectColorPalette.value;
+
+      const ratio = selectAspectRatio.value === '__custom__' 
+        ? (inputCustomRatio.value.trim() || '3:4') 
+        : selectAspectRatio.value;
+
+      const layoutRadio = document.querySelector('input[name="layout-space"]:checked');
+      const layoutSpace = layoutRadio ? layoutRadio.value : '上方留白';
+
+      const aiToolRadio = document.querySelector('input[name="ai-tool"]:checked');
+      const aiTool = aiToolRadio ? aiToolRadio.value : 'chatgpt';
+
+      const scenario = SCENARIOS.find(s => s.id === currentScenarioId) || SCENARIOS[0];
+
+      return {
+        activityName,
+        visualSubject,
+        audience,
+        style,
+        color,
+        ratio,
+        layoutSpace,
+        aiTool,
+        scenarioTitle: scenario.title,
+        scenarioDept: scenario.dept
+      };
+    }
+
+    // ================= 生成生圖提示詞邏輯 =================
+    function generatePrompt() {
+      const data = getFormData();
+      let prompt = '';
+
+      if (data.aiTool === 'chatgpt' || data.aiTool === 'gemini') {
+        const toolName = data.aiTool === 'chatgpt' ? 'ChatGPT (DALL-E 3)' : 'Google Gemini (Imagen 3)';
+        promptBadgeTool.textContent = toolName;
+        promptBadgeTool.className = data.aiTool === 'chatgpt' 
+          ? 'text-xs font-semibold px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 border border-teal-200'
+          : 'text-xs font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200';
+
+        prompt = `請為我生成一張符合以下規格的高解析度「純視覺背景插圖」：
+
+【核心重要要求】
+⚠️ 請絕對不要在畫面中生成任何中文字、英文字、數字、標題或雜亂文字標籤！
+⚠️ 背景請保持簡潔俐落，必須保留大面積乾淨純粹的「排版留白空間」，方便我後續在 Canva 自行加入文字排版。
+
+【畫面設定條件】
+- 適用活動主題：${data.activityName}
+- 校園應用場景：${data.scenarioTitle}（${data.scenarioDept}）
+- 主要視覺焦點：${data.visualSubject}
+- 目標受眾族群：${data.audience}
+- 藝術視覺風格：${data.style}
+- 主色調與光影：${data.color}
+- 版面長寬比例：${data.ratio}
+- 構圖留白位置：${data.layoutSpace}
+- 畫面細節品質：8k 高畫質、細節清晰豐富、光影自然立體、色彩層次豐富、無任何文字、無浮水印。`;
+
+      } else if (data.aiTool === 'midjourney') {
+        promptBadgeTool.textContent = 'Midjourney v6';
+        promptBadgeTool.className = 'text-xs font-semibold px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200';
+
+        // 轉換比例為 MJ 格式
+        let mjRatio = '3:4';
+        if (data.ratio.includes('16:9')) mjRatio = '16:9';
+        else if (data.ratio.includes('1:1')) mjRatio = '1:1';
+        else if (data.ratio.includes('9:16')) mjRatio = '9:16';
+        else if (data.ratio.includes('3:4')) mjRatio = '3:4';
+        else if (data.ratio.includes(':')) mjRatio = data.ratio.split('（')[0].trim();
+
+        // 整理 Midjourney 英文 Prompt
+        prompt = `/imagine prompt: Clean school poster visual background, ${data.visualSubject}, professional educational atmosphere for ${data.activityName}, designed with ${data.style}, harmonic ${data.color}, intentional clean negative space on the top/bottom for typography layout, high aesthetic composition, crisp details, soft ambient volumetric lighting, 8k resolution, clean background, award-winning illustration, --no text, font, typography, letters, watermarks, logo, messy blur --ar ${mjRatio} --style raw --v 6.0`;
+      }
+
+      outputPrompt.value = prompt;
+      
+      // 儲存至歷史紀錄
+      saveToHistory({
+        id: Date.now(),
+        timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }),
+        scenarioTitle: data.scenarioTitle,
+        activityName: data.activityName,
+        aiTool: data.aiTool,
+        prompt: prompt
+      });
+
+      showToast('生圖提示詞產生成功！可直接複製至 AI 工具。', 'success');
+    }
+
+    // ================= 歷史紀錄管理 (localStorage) =================
+    const STORAGE_KEY = 'puti_ai_poster_prompt_history';
+
+    function loadHistory() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          historyRecords = JSON.parse(saved);
+        } else {
+          historyRecords = [];
+        }
+      } catch (e) {
+        historyRecords = [];
+      }
+      renderHistory();
+    }
+
+    function saveToHistory(record) {
+      historyRecords.unshift(record);
+      if (historyRecords.length > 10) {
+        historyRecords.pop(); // 最多保留 10 筆
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(historyRecords));
+      } catch (e) {}
+      renderHistory();
+    }
+
+    function renderHistory() {
+      historyCount.textContent = `${historyRecords.length} 筆紀錄`;
+      
+      if (historyRecords.length === 0) {
+        historyList.innerHTML = `
+          <div class="text-center py-6 text-xs text-slate-400">
+            尚未產生任何紀錄，立即試著產生第一筆指令吧！
+          </div>
+        `;
+        return;
+      }
+
+      historyList.innerHTML = '';
+      historyRecords.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-teal-50/40 hover:border-teal-300 transition-all text-xs flex items-center justify-between gap-2 group';
+        
+        const toolBadge = item.aiTool === 'midjourney' ? 'MJ' : (item.aiTool === 'gemini' ? 'Gemini' : 'ChatGPT');
+
+        card.innerHTML = `
+          <div class="flex-1 min-w-0 cursor-pointer" title="點擊載入此筆紀錄">
+            <div class="flex items-center gap-1.5 mb-1">
+              <span class="font-bold text-slate-800 truncate">${item.activityName}</span>
+              <span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 text-[10px] font-semibold">${toolBadge}</span>
+            </div>
+            <div class="text-slate-400 text-[11px] truncate">${item.scenarioTitle} · ${item.timestamp}</div>
+          </div>
+          <div class="flex items-center gap-1 opacity-80 group-hover:opacity-100">
+            <button class="btn-copy-history p-1.5 rounded-lg text-slate-500 hover:text-teal-700 hover:bg-white" title="快速複製">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+            <button class="btn-delete-history p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-white" title="刪除此筆">
+              <i class="fa-regular fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+
+        // 點擊載入到輸出框
+        card.querySelector('.min-w-0').addEventListener('click', () => {
+          outputPrompt.value = item.prompt;
+          promptBadgeTool.textContent = item.aiTool;
+          showToast(`已重新載入「${item.activityName}」的提示詞`, 'info');
+        });
+
+        // 複製按鈕
+        card.querySelector('.btn-copy-history').addEventListener('click', (e) => {
+          e.stopPropagation();
+          navigator.clipboard.writeText(item.prompt).then(() => {
+            showToast('已複製歷史紀錄指令！', 'success');
+          });
+        });
+
+        // 刪除按鈕
+        card.querySelector('.btn-delete-history').addEventListener('click', (e) => {
+          e.stopPropagation();
+          historyRecords.splice(index, 1);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(historyRecords));
+          renderHistory();
+          showToast('已刪除該筆紀錄', 'info');
+        });
+
+        historyList.appendChild(card);
+      });
+    }
+
+    // ================= 事件綁定 =================
+
+    // 一鍵填入範例按鈕
+    btnFillExample.addEventListener('click', () => {
+      const sc = SCENARIOS.find(s => s.id === currentScenarioId) || SCENARIOS[0];
+      fillScenarioData(sc);
+    });
+
+    // 產生指令按鈕
+    btnGenerate.addEventListener('click', () => {
+      generatePrompt();
+    });
+
+    // 一鍵複製提示詞按鈕
+    btnCopyPrompt.addEventListener('click', () => {
+      const text = outputPrompt.value.trim();
+      if (!text) {
+        showToast('請先產生提示詞後再進行複製！', 'warning');
+        return;
+      }
+
+      navigator.clipboard.writeText(text).then(() => {
+        copyText.textContent = '已成功複製！';
+        btnCopyPrompt.classList.remove('bg-teal-600', 'hover:bg-teal-700');
+        btnCopyPrompt.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+        showToast('提示詞已複製到剪貼簿！可直接貼至 AI 生圖工具。', 'success');
+        
+        setTimeout(() => {
+          copyText.textContent = '一鍵複製提示詞';
+          btnCopyPrompt.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+          btnCopyPrompt.classList.add('bg-teal-600', 'hover:bg-teal-700');
+        }, 2500);
+      }).catch(() => {
+        showToast('複製失敗，請手動全選複製', 'error');
+      });
+    });
+
+    // 手動微調編輯開關
+    let isEditing = false;
+    btnToggleEdit.addEventListener('click', () => {
+      isEditing = !isEditing;
+      outputPrompt.readOnly = !isEditing;
+      if (isEditing) {
+        outputPrompt.focus();
+        btnToggleEdit.classList.add('bg-teal-100', 'text-teal-800', 'border-teal-300');
+        showToast('已解鎖編輯模式，您可直接在黑色視窗中修改內容。', 'info');
+      } else {
+        btnToggleEdit.classList.remove('bg-teal-100', 'text-teal-800', 'border-teal-300');
+        showToast('已鎖定提示詞視窗。', 'info');
+      }
+    });
+
+    // 清除全部紀錄
+    btnClearAllHistory.addEventListener('click', () => {
+      if (historyRecords.length === 0) {
+        showToast('目前沒有任何歷史紀錄！', 'info');
+        return;
+      }
+      historyRecords = [];
+      localStorage.removeItem(STORAGE_KEY);
+      renderHistory();
+      showToast('已清除全部歷史紀錄！', 'success');
+    });
+
+    // 使用說明 Modal 開關
+    btnOpenGuide.addEventListener('click', () => modalGuide.classList.remove('hidden'));
+    btnCloseGuide.addEventListener('click', () => modalGuide.classList.add('hidden'));
+    btnGuideOk.addEventListener('click', () => modalGuide.classList.add('hidden'));
+    modalGuide.addEventListener('click', (e) => {
+      if (e.target === modalGuide) modalGuide.classList.add('hidden');
+    });
+
+    // ================= 初始化執行 =================
+    window.addEventListener('DOMContentLoaded', () => {
+      renderScenarioButtons();
+      loadHistory();
+      // 預設填入第一個情境範例
+      const defaultScenario = SCENARIOS[0];
+      fillScenarioData(defaultScenario);
+      generatePrompt();
+    });
+  </script>
+</body>
+</html>

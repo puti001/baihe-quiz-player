@@ -684,7 +684,12 @@
                 return;
             }
 
-            activeYears = data.years;
+            // 依年度「最新到最舊 (降冪)」排列：115, 114, 113... 099
+            activeYears = [...data.years].sort((a, b) => {
+                const ya = parseInt(a.year) || 0;
+                const yb = parseInt(b.year) || 0;
+                return yb - ya;
+            });
             
             let officialTotalQs = 0;
             if (typeof fullBaihe5YearsDatabase !== 'undefined') {

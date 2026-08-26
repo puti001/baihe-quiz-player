@@ -763,8 +763,9 @@
             const pct = Math.round(((currentQIdx + 1) / yearObj.questions.length) * 100);
             document.getElementById('energy-bar').style.width = `${pct}%`;
 
+            const cleanTitle = (raw, i) => `[${i + 1}] ` + (raw ? raw.replace(/^(\[\d+\]|\(\d+\)|\d+[\.、\s\)]+)\s*/, '') : '');
             document.getElementById('progress-text').innerText = `${currentQIdx + 1} / ${yearObj.questions.length}`;
-            document.getElementById('question-title').innerText = q.title;
+            document.getElementById('question-title').innerText = cleanTitle(q.title, currentQIdx);
             document.getElementById('status-hint').innerText = "🎯 瞄準選項並點擊擊發！";
 
             const list = document.getElementById('options-list');

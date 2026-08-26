@@ -1059,9 +1059,11 @@
 
                 // 答錯：3秒倒數計時自動進入下一題
                 let remainingSec = 3;
+                const isImgQ = isImageQuestion(q);
+                const imgTip = isImgQ ? `<br><span style="font-size:12px; color:#d97706; font-weight:700;">🖼️ 本題官方試卷包含圖形/符號對照，建議直接記憶官方標準解答！</span>` : '';
                 const exp = document.getElementById('explanation-card');
                 const updateExpText = () => {
-                    exp.innerHTML = `💡 <b>官方標準正解：第 (${q.answer + 1}) 項</b> — ${q.explain || '檢定真題標準解答'}<br><span style="font-size:12px; color:#dc2626; font-weight:800;">⏱️ ${remainingSec} 秒後自動進入下一題（或點擊右下方按鈕立即跳過）...</span>`;
+                    exp.innerHTML = `💡 <b>官方標準正解：第 (${q.answer + 1}) 項</b> — ${q.explain || '檢定真題標準解答'}${imgTip}<br><span style="font-size:12px; color:#dc2626; font-weight:800;">⏱️ ${remainingSec} 秒後自動進入下一題（或點擊右下方按鈕立即跳過）...</span>`;
                 };
                 updateExpText();
                 exp.style.display = 'block';
@@ -1524,6 +1526,18 @@
             loadQuestion();
         }
 
+        function cleanQuestionTitle(rawTitle, index) {
+            if (!rawTitle) return '';
+            const textWithoutNum = rawTitle.replace(/^(\[\d+\]|\(\d+\)|\d+[\.、\s\)]+)\s*/, '');
+            return `[${index + 1}] ${textWithoutNum}`;
+        }
+
+        function isImageQuestion(q) {
+            if (!q) return false;
+            const pattern = /(如圖|附圖|如左圖|如右圖|如圖示|下圖|圖\(|圖示|如上圖|符號圖)/;
+            return pattern.test(q.title || '') || (q.options && q.options.some(opt => pattern.test(opt)));
+        }
+
         function loadQuestion() {
             clearAutoTimers();
             answered = false;
@@ -1538,9 +1552,18 @@
             }
 
             const q = yearObj.questions[currentQIdx];
+            const isImgQ = isImageQuestion(q);
+            const timerBadge = document.getElementById('briefing-timer');
+            if (isImgQ) {
+                timerBadge.innerHTML = `🖼️ <span style="color:#d97706; font-weight:800;">附圖參考題</span>`;
+            } else {
+                timerBadge.innerHTML = `⚡ 瞄準敵機擊破`;
+            }
+
+            const formattedTitle = cleanQuestionTitle(q.title, currentQIdx);
             document.getElementById('q-progress').innerText = `第 ${currentQIdx + 1} / ${yearObj.questions.length} 題`;
-            document.getElementById('briefing-text').innerText = `[${currentQIdx + 1}] ${q.title}`;
-            document.getElementById('card-q-title').innerText = `${currentQIdx + 1}. ${q.title}`;
+            document.getElementById('briefing-text').innerText = formattedTitle;
+            document.getElementById('card-q-title').innerText = `${currentQIdx + 1}. ${formattedTitle.replace(/^\[\d+\]\s*/, '')}`;
 
             setupDronesForCurrentQuestion();
             renderCardModeOptions(q);

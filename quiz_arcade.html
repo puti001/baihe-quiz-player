@@ -80,7 +80,7 @@
             gap: 6px;
         }
 
-        .header-tools { display: flex; gap: 6px; align-items: center; }
+        .header-tools { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 
         .btn-pill {
             background: #f8fafc;
@@ -150,7 +150,7 @@
             to { transform: scale(1.15) rotate(2deg); }
         }
 
-        /* 職類與年度選擇器 (完整防跑版寬度封鎖) */
+        /* 職類與年度選擇器 */
         .controls-row {
             display: grid;
             grid-template-columns: 1fr 1.3fr;
@@ -568,6 +568,9 @@
             <span>🚀</span> Puti-AI | 7 大職類官方真題 (電競街機版)
         </div>
         <div class="header-tools">
+            <button class="btn-pill" id="shield-mode-btn" onclick="toggleShieldMode()" title="切換 3 顆心挑戰模式 / ♾️ 無限練習模式">
+                <span id="shield-mode-icon">♾️</span> <span id="shield-mode-text">無限練習模式</span>
+            </button>
             <a href="index.html" class="btn-pill" title="回到原本精心打磨的電競射擊爆破版">
                 🎯 原版播放器
             </a>
@@ -585,7 +588,7 @@
         <div class="hud-bar">
             <div class="hud-item">
                 <span class="hud-label">🛡️ 基地護盾 (HP)</span>
-                <span class="shield-hearts" id="hud-shield">❤️❤️❤️</span>
+                <span class="shield-hearts" id="hud-shield">♾️ 無限防護</span>
             </div>
             <div class="hud-item">
                 <span class="hud-label">🎯 作戰得分</span>
@@ -631,9 +634,10 @@
         <!-- 街機主遊戲戰場 -->
         <div class="arcade-container" id="arena-card">
             <div class="arena-header">
-                <div style="display:flex; align-items:center; gap:6px;">
+                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                     <span style="background:#dcfce7; color:#15803d; font-size:11.5px; font-weight:800; padding:2px 8px; border-radius:6px;" id="subject-badge">00700 室內配線</span>
-                    <span style="font-size:12.5px; color:var(--text-muted); font-weight:800;" id="q-progress">第 1 / 80 題</span>
+                    <!-- 題號隨選快速跳轉器 -->
+                    <select id="jump-q-select" onchange="jumpToQuestion(this.value)" style="border:1.5px solid #cbd5e1; background:#f8fafc; font-size:12px; font-weight:800; color:#334155; padding:2px 6px; border-radius:8px; cursor:pointer;" title="快速跳轉至指定題號"></select>
                 </div>
                 <div class="mode-toggle-group">
                     <button class="mode-btn active" id="btn-mode-arcade" onclick="switchMode('arcade')">🎮 街機戰鬥</button>
@@ -678,7 +682,7 @@
         </div>
     </main>
 
-    <!-- 戰況結算 Modal (鎖定在畫面正中心) -->
+    <!-- 戰況結算 Modal (鎖定在畫面正中心，提供原地滿血復活繼續刷題) -->
     <div class="modal-overlay" id="mission-modal">
         <div class="modal-box">
             <h2 style="font-size:20px; font-weight:900; color:#1e1b4b;" id="modal-result-title">🏆 任務結算報告</h2>
@@ -704,13 +708,19 @@
                 </div>
             </div>
 
-            <div style="display:flex; gap:8px; width:100%; margin-top:8px;">
-                <button onclick="restartMission()" style="flex:1; background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:11px; border-radius:12px; font-size:13.5px; font-weight:800; cursor:pointer;">
-                    🔄 滿血重試
+            <!-- 多元選擇：原地滿血復活 / 重練 / 換試卷 -->
+            <div style="display:flex; flex-direction:column; gap:8px; width:100%; margin-top:8px;">
+                <button id="modal-btn-resume" onclick="resumeMission()" style="background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:12px; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+                    ⚡ 原地滿血續戰（繼續從第 <span id="resume-q-num">1</span> 題刷題）
                 </button>
-                <button onclick="closeMissionModal()" style="flex:1; background:#f1f5f9; color:#475569; border:none; padding:11px; border-radius:12px; font-size:13.5px; font-weight:800; cursor:pointer;">
-                    📋 繼續挑戰
-                </button>
+                <div style="display:flex; gap:8px; width:100%;">
+                    <button onclick="restartFromBeginning()" style="flex:1; background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:10px; border-radius:12px; font-size:13px; font-weight:800; cursor:pointer;">
+                        🔄 從第 1 題重練
+                    </button>
+                    <button onclick="closeMissionModal()" style="flex:1; background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:10px; border-radius:12px; font-size:13px; font-weight:800; cursor:pointer;">
+                        📋 換其他試卷
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -729,6 +739,7 @@
         let customDatabases = {};
         let currentMode = 'arcade';
 
+        let isInfiniteShield = true; // 預設無限練習模式，答錯不終止，保證刷完全卷 80 題
         let score = 0;
         let combo = 0;
         let maxCombo = 0;
@@ -751,6 +762,26 @@
                 clearInterval(countdownInterval);
                 countdownInterval = null;
             }
+        }
+
+        function toggleShieldMode() {
+            isInfiniteShield = !isInfiniteShield;
+            const btn = document.getElementById('shield-mode-btn');
+            const icon = document.getElementById('shield-mode-icon');
+            const text = document.getElementById('shield-mode-text');
+
+            if (isInfiniteShield) {
+                btn.classList.remove('active');
+                icon.innerText = "♾️";
+                text.innerText = "無限練習模式";
+                shieldHp = MAX_SHIELD;
+            } else {
+                btn.classList.add('active');
+                icon.innerText = "⚡";
+                text.innerText = "3心挑戰模式";
+                shieldHp = MAX_SHIELD;
+            }
+            updateHUD();
         }
 
         /* ===== Web Audio API 原生音效合成引擎 ===== */
@@ -1034,7 +1065,9 @@
 
             } else {
                 combo = 0;
-                shieldHp = Math.max(0, shieldHp - 1);
+                if (!isInfiniteShield) {
+                    shieldHp = Math.max(0, shieldHp - 1);
+                }
                 targetDrone.state = 'shield';
                 targetDrone.shieldAlpha = 1.0;
                 
@@ -1052,7 +1085,7 @@
 
                 if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
 
-                if (shieldHp <= 0) {
+                if (!isInfiniteShield && shieldHp <= 0) {
                     setTimeout(() => showMissionDebrief(false), 800);
                     return;
                 }
@@ -1083,7 +1116,7 @@
                 }, 1000);
 
                 autoAdvanceTimer = setTimeout(() => {
-                    if (shieldHp > 0) {
+                    if (isInfiniteShield || shieldHp > 0) {
                         nextQuestion();
                     }
                 }, 3000);
@@ -1105,7 +1138,7 @@
                     x, y,
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed,
-                    radius: Math.random() * 6 + 3,
+                    radius: Math.random() * 3.5 + 1.5,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     alpha: 1,
                     decay: Math.random() * 0.03 + 0.02,
@@ -1538,6 +1571,27 @@
             return pattern.test(q.title || '') || (q.options && q.options.some(opt => pattern.test(opt)));
         }
 
+        function updateQuestionJumpDropdown() {
+            const select = document.getElementById('jump-q-select');
+            if (!select) return;
+            select.innerHTML = '';
+            const yearObj = activeYears[currentYearIdx];
+            if (!yearObj || !yearObj.questions) return;
+            yearObj.questions.forEach((q, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `第 ${i + 1} / ${yearObj.questions.length} 題`;
+                if (i === currentQIdx) opt.selected = true;
+                select.appendChild(opt);
+            });
+        }
+
+        function jumpToQuestion(idx) {
+            clearAutoTimers();
+            currentQIdx = parseInt(idx);
+            loadQuestion();
+        }
+
         function loadQuestion() {
             clearAutoTimers();
             answered = false;
@@ -1560,8 +1614,9 @@
                 timerBadge.innerHTML = `⚡ 瞄準敵機擊破`;
             }
 
+            updateQuestionJumpDropdown();
+
             const formattedTitle = cleanQuestionTitle(q.title, currentQIdx);
-            document.getElementById('q-progress').innerText = `第 ${currentQIdx + 1} / ${yearObj.questions.length} 題`;
             document.getElementById('briefing-text').innerText = formattedTitle;
             document.getElementById('card-q-title').innerText = `${currentQIdx + 1}. ${formattedTitle.replace(/^\[\d+\]\s*/, '')}`;
 
@@ -1606,11 +1661,15 @@
         function updateHUD() {
             document.getElementById('hud-score').innerText = score;
             
-            let heartsStr = '';
-            for (let i = 0; i < MAX_SHIELD; i++) {
-                heartsStr += (i < shieldHp) ? '❤️' : '🖤';
+            if (isInfiniteShield) {
+                document.getElementById('hud-shield').innerText = '♾️ 無限練習';
+            } else {
+                let heartsStr = '';
+                for (let i = 0; i < MAX_SHIELD; i++) {
+                    heartsStr += (i < shieldHp) ? '❤️' : '🖤';
+                }
+                document.getElementById('hud-shield').innerText = heartsStr;
             }
-            document.getElementById('hud-shield').innerText = heartsStr;
 
             const comboBadge = document.getElementById('hud-combo-badge');
             const comboText = document.getElementById('hud-combo-text');
@@ -1634,6 +1693,7 @@
             const titleEl = document.getElementById('modal-result-title');
             const rankEl = document.getElementById('modal-rank');
             const descEl = document.getElementById('modal-result-desc');
+            const resumeBtn = document.getElementById('modal-btn-resume');
 
             const acc = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 100;
 
@@ -1643,27 +1703,44 @@
                 else if (acc >= 75) { rankEl.innerText = "A"; descEl.innerText = "優秀指揮官！精準命中目標！"; }
                 else if (acc >= 60) { rankEl.innerText = "B"; descEl.innerText = "檢定順利及格！防線固若金湯！"; }
                 else { rankEl.innerText = "C"; descEl.innerText = "通過挑戰！建議多加強化弱點題型！"; }
+                resumeBtn.style.display = 'none';
             } else {
                 titleEl.innerText = "🚨 基地護盾歸零！任務失守";
                 rankEl.innerText = "D";
-                descEl.innerText = "別氣餒！立刻重整裝備再次迎擊！";
+                descEl.innerText = "別氣餒！可以原地滿血繼續答題，或重新挑戰！";
+                resumeBtn.style.display = 'block';
+                document.getElementById('resume-q-num').innerText = currentQIdx + 1;
             }
 
             document.getElementById('res-score').innerText = score;
             document.getElementById('res-accuracy').innerText = `${acc}%`;
             document.getElementById('res-combo').innerText = `${maxCombo} COMBO`;
 
-            let heartsStr = '';
-            for (let i = 0; i < MAX_SHIELD; i++) {
-                heartsStr += (i < shieldHp) ? '❤️' : '🖤';
+            if (isInfiniteShield) {
+                document.getElementById('res-shield').innerText = '♾️ (無限練習)';
+            } else {
+                let heartsStr = '';
+                for (let i = 0; i < MAX_SHIELD; i++) {
+                    heartsStr += (i < shieldHp) ? '❤️' : '🖤';
+                }
+                document.getElementById('res-shield').innerText = heartsStr;
             }
-            document.getElementById('res-shield').innerText = heartsStr;
 
             document.body.style.overflow = 'hidden';
             modal.style.display = 'flex';
         }
 
-        function restartMission() {
+        // 原地滿血復活繼續答題
+        function resumeMission() {
+            clearAutoTimers();
+            shieldHp = MAX_SHIELD;
+            updateHUD();
+            closeMissionModal();
+            loadQuestion();
+        }
+
+        // 從第 1 題重新開始
+        function restartFromBeginning() {
             clearAutoTimers();
             shieldHp = MAX_SHIELD;
             score = 0;

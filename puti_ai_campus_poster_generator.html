@@ -193,7 +193,21 @@
             </div>
           </div>
 
-          <!-- 欄位 2: 主要視覺主體 -->
+          <!-- 欄位 2: 附加文本需求 (選填) -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="input-extra-info" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                附加文本需求（如研習時地、報名資訊、標語，選填）
+              </label>
+              <span class="text-xs text-amber-600 font-medium"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>提示詞會要求 AI 摘要</span>
+            </div>
+            <div class="relative">
+              <input id="input-extra-info" type="text" placeholder="例如：時間：10/25(五) 13:30、地點：電腦教室二、即日起至校務系統報名" 
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all text-sm">
+            </div>
+          </div>
+
+          <!-- 欄位 3: 主要視覺主體 -->
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <label for="input-visual-subject" class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
@@ -446,13 +460,13 @@
         <p>本工具專為<strong>台灣國中小學行政同仁與任課教師</strong>設計，快速組裝高品質、精簡扼要的 AI 生圖提示詞。</p>
         
         <div class="p-3 bg-teal-50 rounded-xl border border-teal-200">
-          <h4 class="font-bold text-teal-900 mb-1">💡 繁體中文標題特色</h4>
-          <p class="text-xs text-teal-800">提示詞中直接指定繁體中文主標題與視覺重點，讓 ChatGPT (DALL-E 3)、Gemini (Imagen 3) 等現代 AI 模型精準生成正確且美觀的中文海報文字。</p>
+          <h4 class="font-bold text-teal-900 mb-1">💡 繁體中文標題與附加文本摘要</h4>
+          <p class="text-xs text-teal-800">提示詞中直接指定繁體中文主標題，並智慧提醒 AI 僅摘要精簡關鍵字排版於海報次要位置（如時地、報名方式），避免過多雜訊文字破壞主視覺。</p>
         </div>
 
         <ul class="list-disc list-inside text-xs space-y-1.5 text-slate-600">
           <li><strong>一鍵填入範例</strong>：點擊按鈕即刻載入最道地的校園情境範本。</li>
-          <li><strong>自訂選項</strong>：所有下拉選單皆支援自訂輸入。</li>
+          <li><strong>附加文本</strong>：可自由輸入時地、主辦處室等資訊，提示詞會自動加上「請AI精簡摘要排版」指令。</li>
           <li><strong>歷史存檔</strong>：自動儲存最近產生的 10 筆提示詞，隨時一鍵重新載入。</li>
         </ul>
       </div>
@@ -488,6 +502,7 @@
         deptColor: 'bg-blue-100 text-blue-700',
         icon: 'fa-chalkboard-user',
         defaultActivity: '113學年度教師數位增能工作坊',
+        defaultExtraInfo: '時間：10/25(五) 13:30-16:30、地點：電腦教室二、講師：黃老師、線上報名',
         defaultSubject: '熱忱的教師與可愛的機器人助教站在講台前，周圍漂浮著智慧筆記本與科技星光',
         targetAudience: '全體教職員工',
         artStyle: 'YouTube 縮圖風格',
@@ -501,6 +516,7 @@
         deptColor: 'bg-amber-100 text-amber-700',
         icon: 'fa-award',
         defaultActivity: '全國音樂比賽特優第一名',
+        defaultExtraInfo: '恭賀直笛隊全體獲獎師生！屏東縣後庄國小全體師生同賀',
         defaultSubject: '金光閃閃的榮譽獎盃與緞帶，周圍噴灑出燦爛的金色彩帶、五角星與高雅光暈',
         targetAudience: '全校親師生',
         artStyle: '3D 黏土微縮模型風',
@@ -514,6 +530,7 @@
         deptColor: 'bg-emerald-100 text-emerald-700',
         icon: 'fa-bullhorn',
         defaultActivity: '友善校園週反霸凌宣導',
+        defaultExtraInfo: '尊重他人・拒絕霸凌・求助專線 1953・學務處宣導',
         defaultSubject: '小學生牽著手圍成圓圈微笑，頭頂漂浮著愛心盾牌與溫暖彩虹，象徵團結守護',
         targetAudience: '國小中高年級學童',
         artStyle: '簡約扁平向量插畫風',
@@ -527,6 +544,7 @@
         deptColor: 'bg-indigo-100 text-indigo-700',
         icon: 'fa-certificate',
         defaultActivity: '學期閱讀小達人榮譽獎狀',
+        defaultExtraInfo: '中華民國113學年度第一學期 屏東縣後庄國小',
         defaultSubject: '月桂冠綠葉、金色星星、羽毛筆與翻開的魔法書組成的精緻邊框',
         targetAudience: '國小低年級學童',
         artStyle: '溫暖水彩手繪風',
@@ -540,6 +558,7 @@
         deptColor: 'bg-cyan-100 text-cyan-700',
         icon: 'fa-share-nodes',
         defaultActivity: '全校親師座談會活動通知',
+        defaultExtraInfo: '日期：本週五 19:00、地點：各班教室、歡迎家長踴躍出席',
         defaultSubject: '陽光明媚的教室，黑板前擺放著綠意盆栽與便條紙，氛圍親切溫馨',
         targetAudience: '學生家長與社區人士',
         artStyle: '手繪塗鴉筆記風',
@@ -553,6 +572,7 @@
         deptColor: 'bg-orange-100 text-orange-700',
         icon: 'fa-flag-checkered',
         defaultActivity: '創校60週年校慶運動大會',
+        defaultExtraInfo: '時間：11月15日(六) 08:30、地點：大操場、歡迎親師生蒞臨',
         defaultSubject: '小學生在紅色跑道上奮力奔馳衝刺，空中飄揚著彩色旗幟與氣球',
         targetAudience: '全校親師生',
         artStyle: 'YouTube 縮圖風格',
@@ -566,6 +586,7 @@
         deptColor: 'bg-purple-100 text-purple-700',
         icon: 'fa-graduation-cap',
         defaultActivity: '幼兒園招生暨特色課程體驗',
+        defaultExtraInfo: '報名日期：即日起至4/30、諮詢電話：(08)779-xxxx、教務處',
         defaultSubject: '戴著工程師帽的幼童正在組裝積木機器人，身旁環繞著發光齒輪與星空拼圖',
         targetAudience: '幼兒園學前孩童',
         artStyle: '3D 黏土微縮模型風',
@@ -579,6 +600,7 @@
         deptColor: 'bg-teal-100 text-teal-700',
         icon: 'fa-envelope-open-text',
         defaultActivity: '畢業典禮：夢想起飛',
+        defaultExtraInfo: '典禮時間：6月18日(三) 09:00、地點：活動中心大禮堂',
         defaultSubject: '多頂學士帽拋向蔚藍晴空，天空中有白雲、隨風飄落的鳳凰木紅花與紙飛機',
         targetAudience: '國小中高年級學童',
         artStyle: '日式動漫插畫風',
@@ -592,6 +614,7 @@
         deptColor: 'bg-pink-100 text-pink-700',
         icon: 'fa-masks-theater',
         defaultActivity: '多元社團博覽會暨成果發表',
+        defaultExtraInfo: '時間：每週三下午第七節、地點：各專科教室、訓育組主辦',
         defaultSubject: '青少年手持木吉他、麥克風、直排輪與魔術方塊，背後有動態舞台聚光燈',
         targetAudience: '國中青少年學生',
         artStyle: 'YouTube 縮圖風格',
@@ -605,6 +628,7 @@
         deptColor: 'bg-violet-100 text-violet-700',
         icon: 'fa-cubes-stacked',
         defaultActivity: '科學創客博覽會成果展',
+        defaultExtraInfo: '展覽時間：12/10-12/12、地點：多功能創客教室、自由參觀',
         defaultSubject: '數位電路板與綠色樹葉交織融合的智慧之樹，樹上結滿太陽能板與地球模型',
         targetAudience: '全校親師生',
         artStyle: '立體剪紙層次風',
@@ -618,6 +642,7 @@
         deptColor: 'bg-red-100 text-red-700',
         icon: 'fa-shield-halved',
         defaultActivity: '國家防災日地震避難演練',
+        defaultExtraInfo: '演練時間：9月21日 09:21、趴下・掩護・穩住、總務處生教組',
         defaultSubject: '戴著亮黃色防護頭套的小學生按照「趴下、掩護、穩住」標準動作躲在課桌下',
         targetAudience: '國小中高年級學童',
         artStyle: '簡約扁平向量插畫風',
@@ -631,6 +656,7 @@
         deptColor: 'bg-rose-100 text-rose-700',
         icon: 'fa-gift',
         defaultActivity: '教師節敬師賀卡：感恩有您',
+        defaultExtraInfo: '敬祝 全校教職員工 教師節快樂！校長室暨家長會敬賀',
         defaultSubject: '講桌上擺放著粉紅康乃馨花束、精緻手寫卡片、眼鏡與蘋果，透著晨光',
         targetAudience: '全體教職員工',
         artStyle: '溫暖水彩手繪風',
@@ -644,6 +670,7 @@
         deptColor: 'bg-lime-100 text-lime-700',
         icon: 'fa-shapes',
         defaultActivity: '班級夢想樹公佈欄',
+        defaultExtraInfo: '六年三班 我們的夢想天空・榮譽榜・值日生輪值表',
         defaultSubject: '童話大樹掛滿了木質告示牌與彩色熱氣球，樹下有看書的小動物',
         targetAudience: '國小中高年級學童',
         artStyle: '手繪塗鴉筆記風',
@@ -657,6 +684,7 @@
         deptColor: 'bg-sky-100 text-sky-700',
         icon: 'fa-book-open-reader',
         defaultActivity: '水循環與天氣變化探究學習',
+        defaultExtraInfo: '自然科學領域・單元三・班級/座號/姓名填寫欄',
         defaultSubject: '擬人化的雲朵下雨匯入河流，陽光蒸發水滴形成完整水循環概念圖解',
         targetAudience: '國小中高年級學童',
         artStyle: '簡約扁平向量插畫風',
@@ -670,6 +698,7 @@
         deptColor: 'bg-emerald-100 text-emerald-700',
         icon: 'fa-comments',
         defaultActivity: '戶外教育行前家長通知單',
+        defaultExtraInfo: '攜帶水壺與遮陽帽・集合時間 07:40・請家長簽名回條',
         defaultSubject: '裝滿水壺、遮陽帽、放大鏡與地圖的小學生探險背包與指南針',
         targetAudience: '學生家長與社區人士',
         artStyle: '手繪塗鴉筆記風',
@@ -683,6 +712,7 @@
         deptColor: 'bg-yellow-100 text-yellow-700',
         icon: 'fa-star',
         defaultActivity: '好兒童榮譽集點卡',
+        defaultExtraInfo: '集滿10點可兌換榮譽小禮物一份！輔導處印製',
         defaultSubject: '排列整齊的空白星星蓋章格子，角落有豎起大拇指的小熊吉祥物',
         targetAudience: '國小低年級學童',
         artStyle: '3D 黏土微縮模型風',
@@ -698,6 +728,7 @@
     // ================= DOM 元素快取 =================
     const scenarioGrid = document.getElementById('scenario-grid');
     const inputActivityName = document.getElementById('input-activity-name');
+    const inputExtraInfo = document.getElementById('input-extra-info');
     const inputVisualSubject = document.getElementById('input-visual-subject');
     
     const selectTargetAudience = document.getElementById('select-target-audience');
@@ -813,6 +844,7 @@
     // 填入範例資料到表單
     function fillScenarioData(sc) {
       inputActivityName.value = sc.defaultActivity;
+      inputExtraInfo.value = sc.defaultExtraInfo || '';
       inputVisualSubject.value = sc.defaultSubject;
       
       // 目標對象
@@ -851,6 +883,7 @@
     function triggerGlowEffect() {
       const targets = [
         inputActivityName, 
+        inputExtraInfo,
         inputVisualSubject, 
         selectTargetAudience, 
         selectArtStyle, 
@@ -885,6 +918,7 @@
     // ================= 獲取當前表單數值 =================
     function getFormData() {
       const activityName = inputActivityName.value.trim() || '校園活動主題海報';
+      const extraInfo = inputExtraInfo.value.trim();
       const visualSubject = inputVisualSubject.value.trim() || '具有活力的校園意象與特色主體';
 
       const audience = selectTargetAudience.value === '__custom__' 
@@ -910,6 +944,7 @@
 
       return {
         activityName,
+        extraInfo,
         visualSubject,
         audience,
         style,
@@ -933,8 +968,12 @@
           ? 'text-xs font-semibold px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 border border-teal-200'
           : 'text-xs font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200';
 
+        const extraInfoPrompt = data.extraInfo 
+          ? `\n- 附加資訊（請AI簡潔摘要）：${data.extraInfo}（⚠️ 請僅擷取簡要關鍵字，以繁體中文排版在海報次要角落，字體勿過大喧賓奪主）` 
+          : '';
+
         prompt = `請生成一張高畫質校園活動海報：
-- 繁體中文主標題：「${data.activityName}」（請務必以清晰、正確的繁體中文字體呈現在海報主標題位置）
+- 繁體中文主標題：「${data.activityName}」（請務必以清晰、正確的繁體中文字體呈現在海報主標題位置）${extraInfoPrompt}
 - 視覺主體：${data.visualSubject}
 - 應用情境：${data.scenarioTitle}
 - 目標對象：${data.audience}
@@ -950,7 +989,9 @@
         let mjRatio = data.ratio.trim();
         if (!mjRatio.includes(':')) mjRatio = '3:4';
 
-        prompt = `/imagine prompt: Educational school poster for "${data.activityName}", featuring ${data.visualSubject}, with large prominent Traditional Chinese typography title "${data.activityName}", in ${data.style} style, ${data.color} palette, professional graphic design, 8k resolution, crisp details --ar ${mjRatio} --v 6.0`;
+        const mjExtra = data.extraInfo ? `, secondary concise Traditional Chinese details "${data.extraInfo}"` : '';
+
+        prompt = `/imagine prompt: Educational school poster for "${data.activityName}", featuring ${data.visualSubject}, with large prominent Traditional Chinese typography title "${data.activityName}"${mjExtra}, in ${data.style} style, ${data.color} palette, professional graphic design, 8k resolution, crisp details --ar ${mjRatio} --v 6.0`;
       }
 
       outputPrompt.value = prompt;

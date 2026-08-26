@@ -9,7 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.9/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.9/dist/pdf-lib.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -1959,7 +1959,38 @@
       showToast('PDF 頁面順序已反轉');
     });
 
-    // Native Lossless PDF Export with PDF-Lib
+    // Helper to get PDFLib safely or dynamically load
+    async function getPDFLibInstance() {
+      if (typeof window.PDFLib !== 'undefined') return window.PDFLib;
+      if (typeof PDFLib !== 'undefined') return PDFLib;
+      if (typeof window.pdfLib !== 'undefined') return window.pdfLib;
+
+      // Try dynamic loading from fallback CDNs
+      const cdnUrls = [
+        'https://unpkg.com/pdf-lib@1.17.9/dist/pdf-lib.min.js',
+        'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.9/dist/pdf-lib.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.9/pdf-lib.min.js'
+      ];
+
+      for (const url of cdnUrls) {
+        try {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+          });
+          if (typeof window.PDFLib !== 'undefined') return window.PDFLib;
+          if (typeof PDFLib !== 'undefined') return PDFLib;
+        } catch (e) {
+          console.warn('Failed to load PDFLib from', url);
+        }
+      }
+      return null;
+    }
+
+    // Native Lossless PDF Export with PDF-Lib (with Canvas Fallback)
     mgrExportDirectPdfBtn.addEventListener('click', async () => {
       if (!mgrPdfBytes || mgrPages.length === 0) {
         showToast('請先上傳 PDF 文件！');
@@ -1977,34 +2008,84 @@
       mgrProgressStatus.style.display = 'block';
       mgrProgressBar.style.width = '20%';
 
+      let fileName = mgrOutputFileName.value.trim() || 'Rotated_Document.pdf';
+      if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
+
       try {
-        const { PDFDocument, degrees } = window.PDFLib;
-        const srcDoc = await PDFDocument.load(mgrPdfBytes.slice(0));
-        const outDoc = await PDFDocument.create();
+        const lib = await getPDFLibInstance();
 
-        mgrProgressBar.style.width = '50%';
+        if (lib && lib.PDFDocument) {
+          // ===============================
+          // FAST LOSSLESS VECTOR MODE
+          // ===============================
+          const { PDFDocument, degrees } = lib;
+          const srcDoc = await PDFDocument.load(mgrPdfBytes.slice(0));
+          const outDoc = await PDFDocument.create();
 
-        // Copy and rotate pages
-        for (let i = 0; i < activePages.length; i++) {
-          const item = activePages[i];
-          const [copiedPage] = await outDoc.copyPages(srcDoc, [item.pageIndex]);
+          mgrProgressBar.style.width = '50%';
 
-          const curAngle = copiedPage.getRotation().angle || 0;
-          const newAngle = (curAngle + item.rotationDelta) % 360;
-          copiedPage.setRotation(degrees((newAngle + 360) % 360));
+          for (let i = 0; i < activePages.length; i++) {
+            const item = activePages[i];
+            const [copiedPage] = await outDoc.copyPages(srcDoc, [item.pageIndex]);
 
-          outDoc.addPage(copiedPage);
+            const curAngle = copiedPage.getRotation().angle || 0;
+            const newAngle = (curAngle + item.rotationDelta) % 360;
+            copiedPage.setRotation(degrees((newAngle + 360) % 360));
+
+            outDoc.addPage(copiedPage);
+            mgrProgressBar.style.width = `${50 + Math.round(((i + 1) / activePages.length) * 40)}%`;
+          }
+
+          mgrProgressBar.style.width = '95%';
+          const pdfBytes = await outDoc.save();
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          saveAs(blob, fileName);
+          showToast('🎉 無損極速 PDF 旋轉完成並已下載！');
+
+        } else {
+          // ===============================
+          // HIGH-RES CANVAS FALLBACK MODE
+          // ===============================
+          showToast('正在以高解析度渲染匯出 PDF...');
+          const { jsPDF } = window.jspdf;
+          let fallbackDoc = null;
+
+          for (let i = 0; i < activePages.length; i++) {
+            const item = activePages[i];
+            mgrProgressStatus.textContent = `正在渲染第 ${i + 1} / ${activePages.length} 頁...`;
+            mgrProgressBar.style.width = `${Math.round(((i + 1) / activePages.length) * 100)}%`;
+
+            const page = await mgrPdfDoc.getPage(item.originalPageNum);
+            const scale = 2.5; // High-Res
+            const viewport = page.getViewport({ scale: scale, rotation: ((item.rotationDelta % 360) + 360) % 360 });
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+            const pageW_mm = viewport.width * 0.264583;
+            const pageH_mm = viewport.height * 0.264583;
+            const orientation = pageW_mm >= pageH_mm ? 'landscape' : 'portrait';
+
+            if (i === 0) {
+              fallbackDoc = new jsPDF({ orientation, unit: 'mm', format: [pageW_mm, pageH_mm], compress: true });
+            } else {
+              fallbackDoc.addPage([pageW_mm, pageH_mm], orientation);
+            }
+
+            fallbackDoc.addImage(dataUrl, 'JPEG', 0, 0, pageW_mm, pageH_mm, undefined, 'FAST');
+          }
+
+          fallbackDoc.save(fileName);
+          showToast('🎉 PDF 旋轉完成並已下載！');
         }
 
-        mgrProgressBar.style.width = '80%';
-        const pdfBytes = await outDoc.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-
-        let fileName = mgrOutputFileName.value.trim() || 'Rotated_Document.pdf';
-        if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
-
-        saveAs(blob, fileName);
-        showToast('🎉 無損極速 PDF 旋轉完成並已下載！');
       } catch (err) {
         console.error(err);
         showToast('匯出失敗：' + err.message);

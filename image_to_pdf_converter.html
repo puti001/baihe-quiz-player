@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Puti-AI | 圖片與PDF雙向轉換排版神器 (即時預覽 / 多圖拼頁 / PDF拆圖 / 圖文浮水印)</title>
+  <title>Puti-AI | 圖片與PDF雙向轉換排版神器 (PDF旋轉修整 / 多圖拼頁 / PDF拆圖 / 圖文浮水印)</title>
   
-  <!-- CDN Libraries: jsPDF, SortableJS, PDF.js, JSZip, FileSaver -->
+  <!-- CDN Libraries: jsPDF, SortableJS, PDF.js, pdf-lib, JSZip, FileSaver -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.9/pdf-lib.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -22,6 +23,7 @@
       --primary-hover: #1d4ed8;
       --primary-light: #eff6ff;
       --accent: #0284c7;
+      --accent-light: #f0f9ff;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #0f172a;
@@ -57,7 +59,7 @@
     .header {
       background: #ffffff;
       border-bottom: 1px solid var(--border);
-      padding: 0.9rem 1.5rem;
+      padding: 0.75rem 1.5rem;
       position: sticky;
       top: 0;
       z-index: 50;
@@ -111,6 +113,37 @@
       font-weight: 600;
     }
 
+    /* Mode Navigation Tabs */
+    .mode-nav {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+      gap: 4px;
+    }
+
+    .mode-tab-btn {
+      padding: 0.45rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .mode-tab-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
     .main-layout {
       max-width: 1420px;
       margin: 1.25rem auto;
@@ -128,14 +161,14 @@
       }
     }
 
-    /* Left: Workspace */
+    /* Workspace */
     .workspace {
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
     }
 
-    /* Upload Area */
+    /* Dropzones */
     .dropzone-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -152,7 +185,7 @@
       background: #ffffff;
       border: 2px dashed #cbd5e1;
       border-radius: var(--radius);
-      padding: 1.3rem 1.2rem;
+      padding: 1.25rem;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -199,36 +232,6 @@
     .dropzone-subtitle {
       font-size: 0.78rem;
       color: var(--text-muted);
-    }
-
-    /* PDF Extraction Panel */
-    .pdf-extract-panel {
-      background: #fff8f8;
-      border: 1px solid #fecdd3;
-      border-radius: var(--radius);
-      padding: 1.1rem;
-      display: none;
-      flex-direction: column;
-      gap: 0.9rem;
-    }
-
-    .pdf-extract-panel.active {
-      display: flex;
-    }
-
-    .pdf-panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .pdf-panel-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #9f1239;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
 
     /* Control Toolbar */
@@ -441,13 +444,13 @@
       z-index: 2;
     }
 
-    .badge-source {
+    .badge-rotation {
       position: absolute;
       top: 6px;
       right: 6px;
-      background: rgba(225, 29, 72, 0.85);
+      background: rgba(37, 99, 235, 0.85);
       color: white;
-      font-size: 0.62rem;
+      font-size: 0.65rem;
       font-weight: 600;
       padding: 2px 5px;
       border-radius: 4px;
@@ -652,7 +655,7 @@
       font-size: 0.72rem;
     }
 
-    /* Watermark Box & 9-Grid Position Selector */
+    /* Watermark Box */
     .watermark-box {
       background: #f8fafc;
       border: 1px solid var(--border);
@@ -765,7 +768,7 @@
       transition: width 0.15s ease;
     }
 
-    /* Full-Screen / Modal PDF Live Preview Overlay */
+    /* Full-Screen PDF Live Preview Overlay */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -865,6 +868,36 @@
       color: var(--text-main);
     }
 
+    /* Section Visibility */
+    .mode-section {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .mode-section.active {
+      display: flex;
+    }
+
+    /* Batch Rotate Box in PDF Manager */
+    .batch-rotate-panel {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .batch-btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     /* Footer / Copyright */
     .footer {
       background: #ffffff;
@@ -929,8 +962,14 @@
         </div>
       </div>
 
-      <div style="font-size: 0.82rem; color: var(--text-muted);">
-        ✨ 支援即時PDF效果預覽 / 多圖拼一頁(1/2/4/6/9圖) / 剪裁虛線 / PDF拆圖 / 圖文浮水印
+      <!-- Mode Switcher Tabs -->
+      <div class="mode-nav">
+        <button class="mode-tab-btn active" id="tabModeImages">
+          🖼️ 圖片轉 PDF / 多圖拼頁
+        </button>
+        <button class="mode-tab-btn" id="tabModePdfManager">
+          🔄 PDF 旋轉與頁面修整 (無損極速)
+        </button>
       </div>
     </div>
   </header>
@@ -940,142 +979,246 @@
     
     <!-- Left Workspace -->
     <section class="workspace">
-      <!-- Upload Zones (Image & PDF) -->
-      <div class="dropzone-container">
-        <!-- Image Upload Dropzone -->
-        <div class="dropzone" id="imageDropzone">
-          <div class="dropzone-icon">🖼️</div>
-          <div class="dropzone-title">點此上傳圖片</div>
-          <div class="dropzone-subtitle">JPG, PNG, WEBP, GIF (支援拖曳 / Ctrl+V 貼上)</div>
-          <input type="file" id="imageFileInput" multiple accept="image/*" style="display: none;">
+
+      <!-- ============================================== -->
+      <!-- MODE 1: IMAGE TO PDF & N-UP WORKSPACE          -->
+      <!-- ============================================== -->
+      <div class="mode-section active" id="sectionImageToPdf">
+        <!-- Upload Zones -->
+        <div class="dropzone-container">
+          <div class="dropzone" id="imageDropzone">
+            <div class="dropzone-icon">🖼️</div>
+            <div class="dropzone-title">點此上傳圖片</div>
+            <div class="dropzone-subtitle">JPG, PNG, WEBP, GIF (支援拖曳 / Ctrl+V 貼上)</div>
+            <input type="file" id="imageFileInput" multiple accept="image/*" style="display: none;">
+          </div>
+
+          <div class="dropzone pdf-drop" id="pdfDropzone">
+            <div class="dropzone-icon">📑</div>
+            <div class="dropzone-title">點此上傳 PDF 拆成圖片</div>
+            <div class="dropzone-subtitle">將 PDF 每一頁解析為獨立高清圖片</div>
+            <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;">
+          </div>
         </div>
 
-        <!-- PDF Split & Extract Dropzone -->
-        <div class="dropzone pdf-drop" id="pdfDropzone">
-          <div class="dropzone-icon">📑</div>
-          <div class="dropzone-title">點此上傳 PDF 拆成圖片</div>
-          <div class="dropzone-subtitle">將 PDF 每一頁解析為獨立高清圖片</div>
-          <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;">
+        <!-- PDF Extraction Control Panel -->
+        <div class="pdf-extract-panel" id="pdfExtractPanel" style="display: none; background: #fff8f8; border: 1px solid #fecdd3; border-radius: var(--radius); padding: 1.1rem; flex-direction: column; gap: 0.9rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 0.9rem; font-weight: 700; color: #9f1239; display: flex; align-items: center; gap: 0.5rem;">
+              <span>⚙️ PDF 拆解設定：</span>
+              <strong id="pdfCurrentFileName" style="color: #be123c;">未選擇檔案</strong>
+              <span id="pdfTotalPageCount" style="font-size: 0.8rem; color: var(--text-muted);">(共 0 頁)</span>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="closePdfPanelBtn">✕ 關閉</button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; align-items: end;">
+            <div class="form-group">
+              <label for="pdfPageRange">抽取頁面範圍</label>
+              <input type="text" id="pdfPageRange" placeholder="全部，或例如 1-5, 8, 10" value="all">
+            </div>
+
+            <div class="form-group">
+              <label for="pdfScaleDpi">輸出解析度 (DPI)</label>
+              <select id="pdfScaleDpi">
+                <option value="1.5">標準清晰度 (150 DPI)</option>
+                <option value="2.0" selected>高解析度 (200 DPI 推薦)</option>
+                <option value="3.0">超高解析度 (300 DPI 印刷級)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="pdfExportFormat">圖片格式</label>
+              <select id="pdfExportFormat">
+                <option value="image/jpeg" selected>JPG (體積較小)</option>
+                <option value="image/png">PNG (無損透明)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="btnExtractToGrid">
+              📥 解析並加入清單 (重排/拼頁/轉PDF)
+            </button>
+            <button class="btn btn-success" id="btnExtractToZip">
+              📦 一鍵打包下載全部圖片 (ZIP 壓縮包)
+            </button>
+          </div>
+
+          <div class="progress-bar-container" id="pdfProgressContainer">
+            <div class="progress-bar" id="pdfProgressBar"></div>
+          </div>
+          <div id="pdfProgressStatus" style="font-size: 0.8rem; color: #be123c; text-align: center; display: none;">
+            正在拆解 PDF 頁面...
+          </div>
+        </div>
+
+        <!-- Sorting & Batch Operations Toolbar -->
+        <div class="toolbar-card">
+          <div class="toolbar-left">
+            <div class="sort-group">
+              <label for="sortSelect">⚡ 智能排序：</label>
+              <select id="sortSelect">
+                <option value="custom">手動自由拖曳順序</option>
+                <option value="name-asc">檔名升冪 (A → Z, 1 → 9)</option>
+                <option value="name-desc">檔名降冪 (Z → A, 9 → 1)</option>
+                <option value="time-asc">修改時間 (舊 → 新)</option>
+                <option value="time-desc">修改時間 (新 → 舊)</option>
+                <option value="size-asc">檔案大小 (小 → 大)</option>
+                <option value="size-desc">檔案大小 (大 → 小)</option>
+                <option value="upload-asc">上傳順序 (原始)</option>
+                <option value="upload-desc">上傳順序 (倒序)</option>
+              </select>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="reverseBtn" title="將目前所有圖片順序顛倒">
+              🔄 順序反轉
+            </button>
+          </div>
+
+          <div class="toolbar-right">
+            <button class="btn btn-preview btn-sm" id="openPreviewBtn" title="即時預覽轉換後的 PDF 頁面效果">
+              👁️ 預覽 PDF 效果
+            </button>
+            <button class="btn btn-secondary btn-sm" id="downloadAllImagesZipBtn" title="將目前清單的所有圖片(含浮水印設定)打包為 ZIP 下載">
+              💾 下載圖片包 (ZIP)
+            </button>
+            <button class="btn btn-secondary btn-sm" id="rotateAllBtn" title="所有圖片順時針旋轉 90°">
+              ↻ 全部旋轉 90°
+            </button>
+            <button class="btn btn-danger btn-sm" id="clearAllBtn">
+              🗑️ 清空
+            </button>
+          </div>
+        </div>
+
+        <!-- Image Grid Preview -->
+        <div class="gallery-container">
+          <div class="gallery-header">
+            <h2>
+              🖼️ 圖片清單與預覽 
+              <span style="font-size: 0.85rem; font-weight: normal; color: var(--text-muted);" id="imageCountText">(0 張圖片)</span>
+            </h2>
+            <small style="color: var(--text-muted);">💡 提示：可直接滑鼠拖曳卡片自訂順序，支援單張下載與旋轉</small>
+          </div>
+
+          <div class="gallery-grid" id="galleryGrid">
+            <div class="empty-state" id="emptyState">
+              <div style="font-size: 2.5rem; opacity: 0.6;">📂</div>
+              <p>尚未匯入任何圖片</p>
+              <span style="font-size: 0.8rem;">您可以上傳圖片組合成 PDF，或上傳 PDF 拆成一張張圖片！</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- PDF Extraction Control Panel -->
-      <div class="pdf-extract-panel" id="pdfExtractPanel">
-        <div class="pdf-panel-header">
-          <div class="pdf-panel-title">
-            <span>⚙️ PDF 拆解設定：</span>
-            <strong id="pdfCurrentFileName" style="color: #be123c;">未選擇檔案</strong>
-            <span id="pdfTotalPageCount" style="font-size: 0.8rem; color: var(--text-muted);">(共 0 頁)</span>
+      <!-- ============================================== -->
+      <!-- MODE 2: PDF ROTATION & PAGE MANAGER WORKSPACE  -->
+      <!-- ============================================== -->
+      <div class="mode-section" id="sectionPdfManager">
+        
+        <!-- Upload PDF for Direct Manager -->
+        <div class="dropzone pdf-drop" id="pdfManagerDropzone">
+          <div class="dropzone-icon">🔄</div>
+          <div class="dropzone-title">點此上傳欲旋轉/修整的 PDF 文件</div>
+          <div class="dropzone-subtitle">支援奇偶頁旋轉、直橫統一、頁面刪除重排、無損極速秒出</div>
+          <input type="file" id="pdfManagerFileInput" accept="application/pdf" style="display: none;">
+        </div>
+
+        <!-- Batch Rotate & Fix Operations Bar -->
+        <div class="batch-rotate-panel" id="pdfBatchPanel" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem;">
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">
+              📑 檔案：<span id="mgrDocName" style="color: var(--primary);">未選擇</span>
+              <span id="mgrDocPages" style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">(共 0 頁)</span>
+            </div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button class="btn btn-secondary btn-sm" id="mgrResetAllBtn" title="還原所有旋轉與頁面">
+                ↺ 全部重設還原
+              </button>
+              <button class="btn btn-secondary btn-sm" id="mgrReverseOrderBtn" title="將 PDF 頁面順序完全顛倒">
+                🔄 頁面順序反轉
+              </button>
+            </div>
           </div>
-          <button class="btn btn-secondary btn-sm" id="closePdfPanelBtn">✕ 關閉</button>
-        </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; align-items: end;">
-          <div class="form-group">
-            <label for="pdfPageRange">抽取頁面範圍</label>
-            <input type="text" id="pdfPageRange" placeholder="全部，或例如 1-5, 8, 10" value="all">
+          <!-- Quick Rotate Action Buttons -->
+          <div class="batch-btn-row">
+            <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">⚡ 全體旋轉：</span>
+            <button class="btn btn-secondary btn-sm" onclick="rotateAllMgrPages(90)">↻ 全部順時針 90°</button>
+            <button class="btn btn-secondary btn-sm" onclick="rotateAllMgrPages(-90)">↺ 全部逆時針 90°</button>
+            <button class="btn btn-secondary btn-sm" onclick="rotateAllMgrPages(180)">🔃 全部 180° 翻轉</button>
           </div>
 
-          <div class="form-group">
-            <label for="pdfScaleDpi">輸出解析度 (DPI)</label>
-            <select id="pdfScaleDpi">
-              <option value="1.5">標準清晰度 (150 DPI)</option>
-              <option value="2.0" selected>高解析度 (200 DPI 推薦)</option>
-              <option value="3.0">超高解析度 (300 DPI 印刷級)</option>
-            </select>
+          <!-- Odd / Even Page Rotate Actions (Solving double-sided scan issue) -->
+          <div class="batch-btn-row">
+            <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">📄 奇偶頁獨立：</span>
+            <button class="btn btn-secondary btn-sm" onclick="rotateOddEvenPages('even', 180)" title="常見於雙面掃描反面倒立問題">
+              📑 僅偶數頁 180° 翻轉 (雙面掃描校正)
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="rotateOddEvenPages('even', 90)">
+              📑 偶數頁順轉 90°
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="rotateOddEvenPages('odd', 90)">
+              📄 奇數頁順轉 90°
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="rotateOddEvenPages('odd', 180)">
+              📄 奇數頁 180°
+            </button>
           </div>
 
-          <div class="form-group">
-            <label for="pdfExportFormat">圖片格式</label>
-            <select id="pdfExportFormat">
-              <option value="image/jpeg" selected>JPG (體積較小)</option>
-              <option value="image/png">PNG (無損透明)</option>
-            </select>
+          <!-- Smart Orientation Alignment -->
+          <div class="batch-btn-row">
+            <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">📐 智慧轉正：</span>
+            <button class="btn btn-secondary btn-sm" onclick="alignAllOrientation('portrait')" title="自動將橫向頁面轉為直向">
+              📏 一鍵統一為直向 (Portrait)
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="alignAllOrientation('landscape')" title="自動將直向頁面轉為橫向">
+              📐 一鍵統一為橫向 (Landscape)
+            </button>
+          </div>
+
+          <!-- Specific Page Range Rotate -->
+          <div class="batch-btn-row" style="background: #f8fafc; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid var(--border);">
+            <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">🎯 指定頁碼旋轉：</span>
+            <input type="text" id="mgrCustomRangeInput" placeholder="例如: 2, 4-6" style="width: 130px; font-size: 0.8rem; padding: 0.3rem 0.5rem;">
+            <button class="btn btn-secondary btn-sm" onclick="rotateCustomRange(90)">↻ 順轉 90°</button>
+            <button class="btn btn-secondary btn-sm" onclick="rotateCustomRange(-90)">↺ 逆轉 90°</button>
+            <button class="btn btn-secondary btn-sm" onclick="rotateCustomRange(180)">🔃 180°</button>
           </div>
         </div>
 
-        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
-          <button class="btn btn-secondary" id="btnExtractToGrid">
-            📥 解析並加入清單 (重排/拼頁/轉PDF)
-          </button>
-          <button class="btn btn-success" id="btnExtractToZip">
-            📦 一鍵打包下載全部圖片 (ZIP 壓縮包)
-          </button>
+        <!-- PDF Pages Visual Grid Preview & Management -->
+        <div class="gallery-container" id="pdfManagerContainer">
+          <div class="gallery-header">
+            <h2>
+              📑 PDF 頁面清單 
+              <span style="font-size: 0.85rem; font-weight: normal; color: var(--text-muted);" id="mgrPageCountText">(0 頁)</span>
+            </h2>
+            <small style="color: var(--text-muted);">💡 提示：可直接拖曳頁面卡片調整順序，點擊卡片上按鈕獨立旋轉或刪除</small>
+          </div>
+
+          <div class="gallery-grid" id="pdfManagerGrid">
+            <div class="empty-state" id="mgrEmptyState">
+              <div style="font-size: 2.5rem; opacity: 0.6;">📄</div>
+              <p>尚未匯入 PDF 文件</p>
+              <span style="font-size: 0.8rem;">請將 PDF 拖曳至上方區域或點擊上傳</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Extraction Progress -->
-        <div class="progress-bar-container" id="pdfProgressContainer">
-          <div class="progress-bar" id="pdfProgressBar"></div>
-        </div>
-        <div id="pdfProgressStatus" style="font-size: 0.8rem; color: #be123c; text-align: center; display: none;">
-          正在拆解 PDF 頁面...
-        </div>
       </div>
 
-      <!-- Sorting & Batch Operations Toolbar -->
-      <div class="toolbar-card">
-        <div class="toolbar-left">
-          <div class="sort-group">
-            <label for="sortSelect">⚡ 智能排序：</label>
-            <select id="sortSelect">
-              <option value="custom">手動自由拖曳順序</option>
-              <option value="name-asc">檔名升冪 (A → Z, 1 → 9)</option>
-              <option value="name-desc">檔名降冪 (Z → A, 9 → 1)</option>
-              <option value="time-asc">修改時間 (舊 → 新)</option>
-              <option value="time-desc">修改時間 (新 → 舊)</option>
-              <option value="size-asc">檔案大小 (小 → 大)</option>
-              <option value="size-desc">檔案大小 (大 → 小)</option>
-              <option value="upload-asc">上傳順序 (原始)</option>
-              <option value="upload-desc">上傳順序 (倒序)</option>
-            </select>
-          </div>
-          <button class="btn btn-secondary btn-sm" id="reverseBtn" title="將目前所有圖片順序顛倒">
-            🔄 順序反轉
-          </button>
-        </div>
-
-        <div class="toolbar-right">
-          <button class="btn btn-preview btn-sm" id="openPreviewBtn" title="即時預覽轉換後的 PDF 頁面效果">
-            👁️ 預覽 PDF 效果
-          </button>
-          <button class="btn btn-secondary btn-sm" id="downloadAllImagesZipBtn" title="將目前清單的所有圖片(含浮水印設定)打包為 ZIP 下載">
-            💾 下載圖片包 (ZIP)
-          </button>
-          <button class="btn btn-secondary btn-sm" id="rotateAllBtn" title="所有圖片順時針旋轉 90°">
-            ↻ 全部旋轉 90°
-          </button>
-          <button class="btn btn-danger btn-sm" id="clearAllBtn">
-            🗑️ 清空
-          </button>
-        </div>
-      </div>
-
-      <!-- Image Grid Preview -->
-      <div class="gallery-container">
-        <div class="gallery-header">
-          <h2>
-            🖼️ 圖片清單與預覽 
-            <span style="font-size: 0.85rem; font-weight: normal; color: var(--text-muted);" id="imageCountText">(0 張圖片)</span>
-          </h2>
-          <small style="color: var(--text-muted);">💡 提示：可直接滑鼠拖曳卡片自訂順序，支援單張下載與旋轉</small>
-        </div>
-
-        <div class="gallery-grid" id="galleryGrid">
-          <div class="empty-state" id="emptyState">
-            <div style="font-size: 2.5rem; opacity: 0.6;">📂</div>
-            <p>尚未匯入任何圖片</p>
-            <span style="font-size: 0.8rem;">您可以上傳圖片組合成 PDF，或上傳 PDF 拆成一張張圖片！</span>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- Right Settings Sidebar -->
     <aside class="sidebar">
-      <div class="settings-card">
+
+      <!-- ============================================== -->
+      <!-- SIDEBAR FOR MODE 1: IMAGE TO PDF               -->
+      <!-- ============================================== -->
+      <div class="settings-card" id="sidebarImageToPdf">
         <div class="settings-title">⚙️ PDF 匯出與版面設定</div>
 
-        <!-- PDF Output File Name -->
         <div class="form-group">
           <label for="pdfFileName">輸出 PDF 檔名</label>
           <input type="text" id="pdfFileName" value="Converted_Document.pdf" placeholder="例如：我的講義.pdf">
@@ -1123,7 +1266,7 @@
           </div>
         </div>
 
-        <!-- N-Up Extra options (Gap & Cut Border Lines) -->
+        <!-- N-Up Extra options -->
         <div id="nupExtraOptions" style="display: none; background: #f1f5f9; padding: 0.6rem 0.75rem; border-radius: 8px; flex-direction: column; gap: 0.5rem;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
             <div class="form-group">
@@ -1199,7 +1342,7 @@
 
         <hr style="border: none; border-top: 1px solid var(--border); margin: 0.1rem 0;">
 
-        <!-- Advanced Watermark Master Control -->
+        <!-- Watermark Master Control -->
         <div class="form-group">
           <label class="checkbox-label">
             <input type="checkbox" id="enableWatermark">
@@ -1207,16 +1350,13 @@
           </label>
         </div>
 
-        <!-- Watermark Settings Detail Box -->
+        <!-- Watermark Settings Box -->
         <div class="watermark-box" id="watermarkBox">
-          
-          <!-- Watermark Type Switcher -->
           <div class="watermark-type-switch">
             <button type="button" class="wm-type-btn active" id="wmTypeTextBtn">🔤 文字浮水印</button>
             <button type="button" class="wm-type-btn" id="wmTypeImageBtn">🖼️ 圖片/LOGO浮水印</button>
           </div>
 
-          <!-- Text Watermark Options -->
           <div id="wmTextSection" style="display: flex; flex-direction: column; gap: 0.6rem;">
             <div class="form-group">
               <label for="wmTextContent">浮水印文字</label>
@@ -1235,7 +1375,6 @@
             </div>
           </div>
 
-          <!-- Image Watermark Options -->
           <div id="wmImageSection" style="display: none; flex-direction: column; gap: 0.6rem;">
             <div class="form-group">
               <label for="wmImageFileInput">選擇浮水印圖片 (PNG/JPG)</label>
@@ -1251,7 +1390,6 @@
             </div>
           </div>
 
-          <!-- Common Watermark Settings: Opacity, Angle, Position -->
           <div class="form-group">
             <label for="wmOpacity">透明度: <span id="wmOpacityVal" style="color: var(--primary);">35</span>%</label>
             <div class="range-group">
@@ -1268,11 +1406,9 @@
             </div>
           </div>
 
-          <!-- Position Selector -->
           <div class="form-group">
             <label>浮水印放置位置</label>
             <div style="display: flex; gap: 0.75rem; align-items: center;">
-              <!-- 9 Grid Buttons -->
               <div class="pos-grid" id="posGrid">
                 <button type="button" class="pos-btn" data-pos="top-left" title="左上">↖</button>
                 <button type="button" class="pos-btn" data-pos="top-center" title="中上">↑</button>
@@ -1304,7 +1440,6 @@
           正在生成 PDF...
         </div>
 
-        <!-- Generate Button & Live Preview Button -->
         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
           <button class="btn btn-preview btn-large" id="sidePreviewBtn" style="border-radius: 8px;">
             👁️ 預覽 PDF 排版效果 (所見即所得)
@@ -1314,6 +1449,42 @@
           </button>
         </div>
       </div>
+
+      <!-- ============================================== -->
+      <!-- SIDEBAR FOR MODE 2: PDF MANAGER DIRECT EXPORT  -->
+      <!-- ============================================== -->
+      <div class="settings-card" id="sidebarPdfManager" style="display: none;">
+        <div class="settings-title">⚡ PDF 旋轉修整匯出</div>
+
+        <div class="form-group">
+          <label for="mgrOutputFileName">另存 PDF 檔名</label>
+          <input type="text" id="mgrOutputFileName" value="Rotated_Document.pdf">
+        </div>
+
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.75rem; font-size: 0.8rem; color: #166534; line-height: 1.5;">
+          <strong>💎 原生無損直出特點：</strong><br>
+          • 0.1 秒秒速生成<br>
+          • 100% 保留原始清晰度與向量字體<br>
+          • 檔案大小不膨脹不失真
+        </div>
+
+        <!-- Progress Bar for PDF Manager -->
+        <div class="progress-bar-container" id="mgrProgressContainer">
+          <div class="progress-bar" id="mgrProgressBar"></div>
+        </div>
+        <div id="mgrProgressStatus" style="font-size: 0.8rem; color: var(--primary); text-align: center; display: none;">
+          正在輸出旋轉後的 PDF...
+        </div>
+
+        <button class="btn btn-primary btn-large" id="mgrExportDirectPdfBtn">
+          🚀 無損極速下載新 PDF
+        </button>
+
+        <button class="btn btn-secondary btn-large" id="mgrImportToWorkspaceBtn" title="將旋轉後的頁面轉入拼頁工作區加浮水印或拼頁">
+          📥 轉入排版工作區 (加浮水印/拼頁)
+        </button>
+      </div>
+
     </aside>
 
   </main>
@@ -1366,26 +1537,37 @@
     // PDF.js worker configuration
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    // State management
+    // State management: Mode 1 (Images)
     let imageList = [];
     let uploadCounter = 0;
     let currentPdfDoc = null;
     let currentPdfFile = null;
-
-    // N-Up Layout State
     let currentNUp = { cols: 1, rows: 1, key: '1x1' };
 
     // Watermark State
-    let watermarkType = 'text'; // 'text' | 'image'
+    let watermarkType = 'text';
     let watermarkPosition = 'center';
     let watermarkImageDataUrl = null;
     let watermarkImageNaturalWidth = 0;
     let watermarkImageNaturalHeight = 0;
 
+    // State management: Mode 2 (PDF Manager)
+    let mgrPdfFile = null;
+    let mgrPdfBytes = null;
+    let mgrPdfDoc = null; // PDF.js doc for rendering previews
+    let mgrPages = []; // [{ pageIndex: 0, originalPageNum: 1, rotationDelta: 0, previewDataUrl: '', width: 0, height: 0, isDeleted: false }]
+
     // Preview Modal State
     let currentPreviewPage = 1;
 
-    // Elements
+    // UI Elements
+    const tabModeImages = document.getElementById('tabModeImages');
+    const tabModePdfManager = document.getElementById('tabModePdfManager');
+    const sectionImageToPdf = document.getElementById('sectionImageToPdf');
+    const sectionPdfManager = document.getElementById('sectionPdfManager');
+    const sidebarImageToPdf = document.getElementById('sidebarImageToPdf');
+    const sidebarPdfManager = document.getElementById('sidebarPdfManager');
+
     const imageDropzone = document.getElementById('imageDropzone');
     const imageFileInput = document.getElementById('imageFileInput');
     const pdfDropzone = document.getElementById('pdfDropzone');
@@ -1446,6 +1628,24 @@
     const posLabel = document.getElementById('posLabel');
     const wmTileMode = document.getElementById('wmTileMode');
 
+    // PDF Manager Elements
+    const pdfManagerDropzone = document.getElementById('pdfManagerDropzone');
+    const pdfManagerFileInput = document.getElementById('pdfManagerFileInput');
+    const pdfBatchPanel = document.getElementById('pdfBatchPanel');
+    const mgrDocName = document.getElementById('mgrDocName');
+    const mgrDocPages = document.getElementById('mgrDocPages');
+    const pdfManagerGrid = document.getElementById('pdfManagerGrid');
+    const mgrEmptyState = document.getElementById('mgrEmptyState');
+    const mgrPageCountText = document.getElementById('mgrPageCountText');
+    const mgrResetAllBtn = document.getElementById('mgrResetAllBtn');
+    const mgrReverseOrderBtn = document.getElementById('mgrReverseOrderBtn');
+    const mgrOutputFileName = document.getElementById('mgrOutputFileName');
+    const mgrExportDirectPdfBtn = document.getElementById('mgrExportDirectPdfBtn');
+    const mgrImportToWorkspaceBtn = document.getElementById('mgrImportToWorkspaceBtn');
+    const mgrProgressContainer = document.getElementById('mgrProgressContainer');
+    const mgrProgressBar = document.getElementById('mgrProgressBar');
+    const mgrProgressStatus = document.getElementById('mgrProgressStatus');
+
     // Preview Elements
     const openPreviewBtn = document.getElementById('openPreviewBtn');
     const sidePreviewBtn = document.getElementById('sidePreviewBtn');
@@ -1465,8 +1665,27 @@
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toastMsg');
 
-    // Initialize SortableJS
-    const sortable = new Sortable(galleryGrid, {
+    // Tab Navigation Switch
+    tabModeImages.addEventListener('click', () => {
+      tabModeImages.classList.add('active');
+      tabModePdfManager.classList.remove('active');
+      sectionImageToPdf.classList.add('active');
+      sectionPdfManager.classList.remove('active');
+      sidebarImageToPdf.style.display = 'flex';
+      sidebarPdfManager.style.display = 'none';
+    });
+
+    tabModePdfManager.addEventListener('click', () => {
+      tabModePdfManager.classList.add('active');
+      tabModeImages.classList.remove('active');
+      sectionPdfManager.classList.add('active');
+      sectionImageToPdf.classList.remove('active');
+      sidebarPdfManager.style.display = 'flex';
+      sidebarImageToPdf.style.display = 'none';
+    });
+
+    // Initialize SortableJS for Images & PDF Manager Grid
+    new Sortable(galleryGrid, {
       animation: 180,
       ghostClass: 'sortable-ghost',
       draggable: '.image-card',
@@ -1478,6 +1697,17 @@
       }
     });
 
+    new Sortable(pdfManagerGrid, {
+      animation: 180,
+      ghostClass: 'sortable-ghost',
+      draggable: '.pdf-mgr-card',
+      onEnd: function () {
+        syncMgrStateFromDOM();
+        renderMgrGallery();
+        showToast('已自訂調整 PDF 頁面順序');
+      }
+    });
+
     function showToast(msg) {
       toastMsg.textContent = msg;
       toast.classList.add('show');
@@ -1486,7 +1716,345 @@
       }, 2500);
     }
 
-    // N-Up Selector Logic
+    // ==========================================
+    // MODE 2: PDF MANAGER & ROTATION ENGINE
+    // ==========================================
+    pdfManagerDropzone.addEventListener('click', () => pdfManagerFileInput.click());
+    pdfManagerDropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      pdfManagerDropzone.classList.add('dragover');
+    });
+    pdfManagerDropzone.addEventListener('dragleave', () => pdfManagerDropzone.classList.remove('dragover'));
+    pdfManagerDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      pdfManagerDropzone.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handlePdfManagerFile(e.dataTransfer.files[0]);
+      }
+    });
+    pdfManagerFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        handlePdfManagerFile(e.target.files[0]);
+        pdfManagerFileInput.value = '';
+      }
+    });
+
+    async function handlePdfManagerFile(file) {
+      if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
+        showToast('請選擇標準的 PDF 檔案！');
+        return;
+      }
+
+      try {
+        showToast('正在解析 PDF 頁面縮圖...');
+        mgrPdfFile = file;
+        mgrOutputFileName.value = file.name.replace(/\.pdf$/i, '_已旋轉.pdf');
+        mgrPdfBytes = await file.arrayBuffer();
+
+        const loadingTask = pdfjsLib.getDocument({ data: mgrPdfBytes.slice(0) });
+        mgrPdfDoc = await loadingTask.promise;
+
+        mgrDocName.textContent = file.name;
+        mgrDocPages.textContent = `(共 ${mgrPdfDoc.numPages} 頁)`;
+        pdfBatchPanel.style.display = 'flex';
+
+        mgrPages = [];
+        for (let i = 1; i <= mgrPdfDoc.numPages; i++) {
+          const page = await mgrPdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale: 0.6 });
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+          mgrPages.push({
+            id: 'page_' + i + '_' + Date.now(),
+            pageIndex: i - 1,
+            originalPageNum: i,
+            rotationDelta: 0,
+            previewDataUrl: dataUrl,
+            width: viewport.width,
+            height: viewport.height,
+            isDeleted: false
+          });
+        }
+
+        renderMgrGallery();
+        showToast(`🎉 成功載入 ${file.name}（共 ${mgrPages.length} 頁）`);
+      } catch (err) {
+        console.error(err);
+        showToast('解析失敗：' + err.message);
+      }
+    }
+
+    function syncMgrStateFromDOM() {
+      const cardElements = pdfManagerGrid.querySelectorAll('.pdf-mgr-card');
+      const newOrderList = [];
+      cardElements.forEach(card => {
+        const id = card.dataset.id;
+        const item = mgrPages.find(p => p.id === id);
+        if (item) newOrderList.push(item);
+      });
+      if (newOrderList.length === mgrPages.length) {
+        mgrPages = newOrderList;
+      }
+    }
+
+    function renderMgrGallery() {
+      const activePages = mgrPages.filter(p => !p.isDeleted);
+      mgrPageCountText.textContent = `(${activePages.length} 頁)`;
+
+      if (mgrPages.length === 0 || activePages.length === 0) {
+        pdfManagerGrid.innerHTML = '';
+        pdfManagerGrid.appendChild(mgrEmptyState);
+        return;
+      }
+
+      pdfManagerGrid.innerHTML = '';
+      let displayOrder = 1;
+
+      mgrPages.forEach((pageItem) => {
+        if (pageItem.isDeleted) return;
+
+        const card = document.createElement('div');
+        card.className = 'image-card pdf-mgr-card';
+        card.dataset.id = pageItem.id;
+
+        const normAngle = ((pageItem.rotationDelta % 360) + 360) % 360;
+        const rotBadge = normAngle !== 0 ? `<div class="badge-rotation">↻ ${normAngle}°</div>` : '';
+
+        card.innerHTML = `
+          <div class="badge-index">#${displayOrder} (原P.${pageItem.originalPageNum})</div>
+          ${rotBadge}
+          <div class="image-preview-wrapper">
+            <img src="${pageItem.previewDataUrl}" class="image-preview" style="transform: rotate(${pageItem.rotationDelta}deg);" alt="Page ${pageItem.originalPageNum}">
+          </div>
+          <div class="image-info">
+            <div class="image-filename">第 ${pageItem.originalPageNum} 頁</div>
+            <div class="image-meta">
+              <span>旋轉角度: ${normAngle}°</span>
+              <span style="color: var(--primary); font-weight: 600;">${displayOrder % 2 === 0 ? '偶數頁' : '奇數頁'}</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <div class="action-btn-group">
+              <button class="icon-btn" onclick="rotateSingleMgrPage('${pageItem.id}', -90)" title="逆時針 90°">↺</button>
+              <button class="icon-btn" onclick="rotateSingleMgrPage('${pageItem.id}', 90)" title="順時針 90°">↻</button>
+              <button class="icon-btn" onclick="rotateSingleMgrPage('${pageItem.id}', 180)" title="180° 翻轉">🔃</button>
+            </div>
+            <div class="action-btn-group">
+              <button class="icon-btn danger" onclick="deleteSingleMgrPage('${pageItem.id}')" title="刪除此頁">✕</button>
+            </div>
+          </div>
+        `;
+
+        pdfManagerGrid.appendChild(card);
+        displayOrder++;
+      });
+    }
+
+    window.rotateSingleMgrPage = function (id, delta) {
+      const page = mgrPages.find(p => p.id === id);
+      if (page) {
+        page.rotationDelta = (page.rotationDelta + delta) % 360;
+        renderMgrGallery();
+      }
+    };
+
+    window.deleteSingleMgrPage = function (id) {
+      const page = mgrPages.find(p => p.id === id);
+      if (page) {
+        page.isDeleted = true;
+        renderMgrGallery();
+        showToast(`已刪除原第 ${page.originalPageNum} 頁`);
+      }
+    };
+
+    window.rotateAllMgrPages = function (delta) {
+      mgrPages.forEach(p => {
+        if (!p.isDeleted) p.rotationDelta = (p.rotationDelta + delta) % 360;
+      });
+      renderMgrGallery();
+      showToast(`全部頁面已旋轉 ${delta > 0 ? '+' : ''}${delta}°`);
+    };
+
+    window.rotateOddEvenPages = function (type, delta) {
+      // type: 'even' | 'odd'
+      let count = 0;
+      mgrPages.forEach((p, idx) => {
+        if (p.isDeleted) return;
+        const currentOrder = idx + 1;
+        const isMatch = (type === 'even' && currentOrder % 2 === 0) || (type === 'odd' && currentOrder % 2 !== 0);
+        if (isMatch) {
+          p.rotationDelta = (p.rotationDelta + delta) % 360;
+          count++;
+        }
+      });
+      renderMgrGallery();
+      showToast(`已為 ${count} 個${type === 'even' ? '偶數' : '奇數'}頁旋轉 ${delta}°`);
+    };
+
+    window.alignAllOrientation = function (target) {
+      // target: 'portrait' | 'landscape'
+      let count = 0;
+      mgrPages.forEach(p => {
+        if (p.isDeleted) return;
+        const totalRot = ((p.rotationDelta % 360) + 360) % 360;
+        const isRotated90 = (totalRot === 90 || totalRot === 270);
+        const curW = isRotated90 ? p.height : p.width;
+        const curH = isRotated90 ? p.width : p.height;
+        const isLandscape = curW > curH;
+
+        if (target === 'portrait' && isLandscape) {
+          p.rotationDelta = (p.rotationDelta + 90) % 360;
+          count++;
+        } else if (target === 'landscape' && !isLandscape) {
+          p.rotationDelta = (p.rotationDelta + 90) % 360;
+          count++;
+        }
+      });
+      renderMgrGallery();
+      showToast(`已智慧轉正 ${count} 個頁面為${target === 'portrait' ? '直向' : '橫向'}`);
+    };
+
+    window.rotateCustomRange = function (delta) {
+      const rangeStr = document.getElementById('mgrCustomRangeInput').value;
+      if (!rangeStr.trim()) {
+        showToast('請輸入指定頁碼，例如 2, 4-6');
+        return;
+      }
+      const activePages = mgrPages.filter(p => !p.isDeleted);
+      const targetIndices = parsePageRange(rangeStr, activePages.length);
+
+      let count = 0;
+      targetIndices.forEach(idx => {
+        const p = activePages[idx - 1];
+        if (p) {
+          p.rotationDelta = (p.rotationDelta + delta) % 360;
+          count++;
+        }
+      });
+      renderMgrGallery();
+      showToast(`已旋轉指定範圍共 ${count} 頁`);
+    };
+
+    mgrResetAllBtn.addEventListener('click', () => {
+      mgrPages.forEach(p => {
+        p.rotationDelta = 0;
+        p.isDeleted = false;
+      });
+      renderMgrGallery();
+      showToast('已重設所有頁面與旋轉角度');
+    });
+
+    mgrReverseOrderBtn.addEventListener('click', () => {
+      mgrPages.reverse();
+      renderMgrGallery();
+      showToast('PDF 頁面順序已反轉');
+    });
+
+    // Native Lossless PDF Export with PDF-Lib
+    mgrExportDirectPdfBtn.addEventListener('click', async () => {
+      if (!mgrPdfBytes || mgrPages.length === 0) {
+        showToast('請先上傳 PDF 文件！');
+        return;
+      }
+
+      const activePages = mgrPages.filter(p => !p.isDeleted);
+      if (activePages.length === 0) {
+        showToast('所有頁面皆已被刪除！');
+        return;
+      }
+
+      mgrExportDirectPdfBtn.disabled = true;
+      mgrProgressContainer.style.display = 'block';
+      mgrProgressStatus.style.display = 'block';
+      mgrProgressBar.style.width = '20%';
+
+      try {
+        const { PDFDocument, degrees } = window.PDFLib;
+        const srcDoc = await PDFDocument.load(mgrPdfBytes.slice(0));
+        const outDoc = await PDFDocument.create();
+
+        mgrProgressBar.style.width = '50%';
+
+        // Copy and rotate pages
+        for (let i = 0; i < activePages.length; i++) {
+          const item = activePages[i];
+          const [copiedPage] = await outDoc.copyPages(srcDoc, [item.pageIndex]);
+
+          const curAngle = copiedPage.getRotation().angle || 0;
+          const newAngle = (curAngle + item.rotationDelta) % 360;
+          copiedPage.setRotation(degrees((newAngle + 360) % 360));
+
+          outDoc.addPage(copiedPage);
+        }
+
+        mgrProgressBar.style.width = '80%';
+        const pdfBytes = await outDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+        let fileName = mgrOutputFileName.value.trim() || 'Rotated_Document.pdf';
+        if (!fileName.toLowerCase().endsWith('.pdf')) fileName += '.pdf';
+
+        saveAs(blob, fileName);
+        showToast('🎉 無損極速 PDF 旋轉完成並已下載！');
+      } catch (err) {
+        console.error(err);
+        showToast('匯出失敗：' + err.message);
+      } finally {
+        setTimeout(() => {
+          mgrProgressContainer.style.display = 'none';
+          mgrProgressStatus.style.display = 'none';
+          mgrExportDirectPdfBtn.disabled = false;
+        }, 1000);
+      }
+    });
+
+    // Import Rotated PDF Pages to Workspace Mode 1
+    mgrImportToWorkspaceBtn.addEventListener('click', async () => {
+      const activePages = mgrPages.filter(p => !p.isDeleted);
+      if (activePages.length === 0) {
+        showToast('沒有可轉入的頁面！');
+        return;
+      }
+
+      showToast('正在將旋轉後頁面轉入排版工作區...');
+
+      for (let i = 0; i < activePages.length; i++) {
+        const item = activePages[i];
+        uploadCounter++;
+        const paddedNum = String(i + 1).padStart(3, '0');
+
+        imageList.push({
+          id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          file: null,
+          name: `${mgrPdfFile.name.replace(/\.pdf$/i, '')}_P${paddedNum}.jpg`,
+          size: Math.round((item.previewDataUrl.length * 3) / 4),
+          lastModified: Date.now(),
+          uploadIndex: uploadCounter,
+          dataUrl: item.previewDataUrl,
+          width: item.width,
+          height: item.height,
+          rotation: (item.rotationDelta % 360 + 360) % 360,
+          source: 'pdf'
+        });
+      }
+
+      tabModeImages.click();
+      renderGallery();
+      showToast(`已成功轉入 ${activePages.length} 頁至排版工作區！`);
+    });
+
+    // ==========================================
+    // MODE 1: IMAGE TO PDF & N-UP SYSTEM LOGIC
+    // ==========================================
     nupSelector.addEventListener('click', (e) => {
       const option = e.target.closest('.nup-option');
       if (!option) return;
@@ -1518,7 +2086,6 @@
       }
     }
 
-    // Toggle Watermark Box
     enableWatermark.addEventListener('change', () => {
       watermarkBox.classList.toggle('active', enableWatermark.checked);
     });
@@ -1554,12 +2121,8 @@
       }
     });
 
-    wmFontSize.addEventListener('input', () => {
-      wmFontSizeVal.textContent = wmFontSize.value;
-    });
-    wmImgScale.addEventListener('input', () => {
-      wmImgScaleVal.textContent = wmImgScale.value;
-    });
+    wmFontSize.addEventListener('input', () => wmFontSizeVal.textContent = wmFontSize.value);
+    wmImgScale.addEventListener('input', () => wmImgScaleVal.textContent = wmImgScale.value);
     wmOpacity.addEventListener('input', () => {
       wmOpacityVal.textContent = wmOpacity.value;
       wmOpacityDisp.textContent = `${wmOpacity.value}%`;
@@ -1596,7 +2159,6 @@
       marginGroup.style.display = isFit ? 'none' : 'flex';
     });
 
-    // Image Dropzone Events
     imageDropzone.addEventListener('click', () => imageFileInput.click());
     imageDropzone.addEventListener('dragover', (e) => {
       e.preventDefault();
@@ -1617,7 +2179,6 @@
       }
     });
 
-    // PDF Dropzone Events
     pdfDropzone.addEventListener('click', () => pdfFileInput.click());
     pdfDropzone.addEventListener('dragover', (e) => {
       e.preventDefault();
@@ -1639,10 +2200,9 @@
     });
 
     closePdfPanelBtn.addEventListener('click', () => {
-      pdfExtractPanel.classList.remove('active');
+      pdfExtractPanel.style.display = 'none';
     });
 
-    // Clipboard Paste support
     window.addEventListener('paste', (e) => {
       const items = e.clipboardData?.items;
       if (!items) return;
@@ -1659,7 +2219,6 @@
       }
     });
 
-    // Process uploaded images
     async function handleImageFiles(files) {
       const validFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
       if (validFiles.length === 0) {
@@ -1692,7 +2251,6 @@
       showToast(`已成功加入 ${validFiles.length} 張圖片`);
     }
 
-    // Process Uploaded PDF
     async function handlePdfFile(file) {
       if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
         showToast('請選擇標準的 PDF 檔案！');
@@ -1707,7 +2265,7 @@
 
         pdfCurrentFileName.textContent = file.name;
         pdfTotalPageCount.textContent = `(共 ${currentPdfDoc.numPages} 頁)`;
-        pdfExtractPanel.classList.add('active');
+        pdfExtractPanel.style.display = 'flex';
         showToast(`已載入 PDF：${file.name}（共 ${currentPdfDoc.numPages} 頁）`);
       } catch (err) {
         console.error(err);
@@ -1740,32 +2298,6 @@
       return Array.from(pages).sort((a, b) => a - b);
     }
 
-    async function renderPdfPageToDataUrl(pdfDoc, pageNumber, scale = 2.0, format = 'image/jpeg') {
-      const page = await pdfDoc.getPage(pageNumber);
-      const viewport = page.getViewport({ scale: scale });
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const renderContext = {
-        canvasContext: ctx,
-        viewport: viewport
-      };
-
-      await page.render(renderContext).promise;
-      const dataUrl = canvas.toDataURL(format, 0.92);
-      return {
-        dataUrl,
-        width: canvas.width,
-        height: canvas.height
-      };
-    }
-
     btnExtractToGrid.addEventListener('click', async () => {
       if (!currentPdfDoc) return;
       const rangeStr = document.getElementById('pdfPageRange').value;
@@ -1792,20 +2324,29 @@
           pdfProgressStatus.textContent = `正在拆解第 ${pageNum} 頁 (${i + 1}/${pagesToExtract.length})...`;
           pdfProgressBar.style.width = `${Math.round(((i + 1) / pagesToExtract.length) * 100)}%`;
 
-          const rendered = await renderPdfPageToDataUrl(currentPdfDoc, pageNum, scale, format);
-          uploadCounter++;
+          const page = await currentPdfDoc.getPage(pageNum);
+          const viewport = page.getViewport({ scale: scale });
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          const dataUrl = canvas.toDataURL(format, 0.92);
 
+          uploadCounter++;
           const paddedNum = String(pageNum).padStart(3, '0');
           imageList.push({
             id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
             file: null,
             name: `${baseName}_頁碼_${paddedNum}.${ext}`,
-            size: Math.round((rendered.dataUrl.length * 3) / 4),
+            size: Math.round((dataUrl.length * 3) / 4),
             lastModified: Date.now(),
             uploadIndex: uploadCounter,
-            dataUrl: rendered.dataUrl,
-            width: rendered.width,
-            height: rendered.height,
+            dataUrl: dataUrl,
+            width: canvas.width,
+            height: canvas.height,
             rotation: 0,
             source: 'pdf'
           });
@@ -1854,8 +2395,18 @@
           pdfProgressStatus.textContent = `正在生成圖片 ${pageNum} 頁 (${i + 1}/${pagesToExtract.length})...`;
           pdfProgressBar.style.width = `${Math.round(((i + 1) / pagesToExtract.length) * 100)}%`;
 
-          const rendered = await renderPdfPageToDataUrl(currentPdfDoc, pageNum, scale, format);
-          const base64Data = rendered.dataUrl.split(',')[1];
+          const page = await currentPdfDoc.getPage(pageNum);
+          const viewport = page.getViewport({ scale: scale });
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          const dataUrl = canvas.toDataURL(format, 0.92);
+
+          const base64Data = dataUrl.split(',')[1];
           const paddedNum = String(pageNum).padStart(3, '0');
           zip.file(`${baseName}_第${paddedNum}頁.${ext}`, base64Data, { base64: true });
         }
@@ -1933,7 +2484,7 @@
 
         const currentW = (item.rotation % 180 === 0) ? item.width : item.height;
         const currentH = (item.rotation % 180 === 0) ? item.height : item.width;
-        const sourceBadge = item.source === 'pdf' ? `<div class="badge-source">PDF拆圖</div>` : '';
+        const sourceBadge = item.source === 'pdf' ? `<div class="badge-source" style="position: absolute; top: 6px; right: 6px; background: rgba(225, 29, 72, 0.85); color: white; font-size: 0.62rem; font-weight: 600; padding: 2px 5px; border-radius: 4px; z-index: 2;">PDF拆圖</div>` : '';
 
         card.innerHTML = `
           <div class="badge-index">#${index + 1}</div>
@@ -2049,7 +2600,6 @@
       showToast('圖片順序已反轉');
     });
 
-    // Watermark rendering logic
     function drawWatermarkOnCanvas(ctx, canvasWidth, canvasHeight) {
       if (!enableWatermark.checked) return;
 
@@ -2243,9 +2793,7 @@
       letter: [215.9, 279.4]
     };
 
-    // ==========================================
-    // 👁️ LIVE PREVIEW RENDERING ENGINE
-    // ==========================================
+    // Live Preview Engine
     async function renderPreviewPage(pageIndex) {
       if (imageList.length === 0) return;
 
@@ -2259,7 +2807,6 @@
       if (pageIndex > totalPdfPages) pageIndex = totalPdfPages;
       currentPreviewPage = pageIndex;
 
-      // Update Pagination UI
       previewPageIndicator.textContent = `第 ${currentPreviewPage} / ${totalPdfPages} 頁`;
       previewPageInfoText.textContent = `(第 ${currentPreviewPage} 頁 / 共 ${totalPdfPages} 頁)`;
       prevPreviewPageBtn.disabled = currentPreviewPage <= 1;
@@ -2276,7 +2823,6 @@
       const endIdx = Math.min(startIdx + imagesPerPage, totalImages);
       const pageImageItems = imageList.slice(startIdx, endIdx);
 
-      // Determine dimensions in mm
       let pageW_mm, pageH_mm;
       if (imagesPerPage === 1 && selectedPageSize === 'fit') {
         const singleItem = pageImageItems[0];
@@ -2302,7 +2848,6 @@
         }
       }
 
-      // Convert mm to Preview Canvas Pixels (Scale Factor ~ 4 px/mm for crisp rendering)
       const scale = 4;
       const canvasW = Math.round(pageW_mm * scale);
       const canvasH = Math.round(pageH_mm * scale);
@@ -2311,7 +2856,6 @@
       previewCanvas.height = canvasH;
       const ctx = previewCanvas.getContext('2d');
 
-      // Clear Canvas to pure white paper
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, canvasW, canvasH);
 
@@ -2323,7 +2867,6 @@
       const cellW = (availW - (gap * (cols - 1))) / cols;
       const cellH = (availH - (gap * (rows - 1))) / rows;
 
-      // Draw Grid Images
       for (let i = 0; i < pageImageItems.length; i++) {
         const item = pageImageItems[i];
         const processed = await getProcessedImageData(item, 0.9, true);
@@ -2334,7 +2877,6 @@
         const cellX = margin + c * (cellW + gap);
         const cellY = margin + r * (cellH + gap);
 
-        // Draw Cutting Lines
         if (imagesPerPage > 1 && borderMode !== 'none') {
           ctx.save();
           ctx.strokeStyle = '#b0b8c4';
@@ -2346,7 +2888,6 @@
           ctx.restore();
         }
 
-        // Draw Image Aspect Fit
         const img = new Image();
         await new Promise((resolve) => {
           img.onload = () => {
@@ -2375,7 +2916,6 @@
         });
       }
 
-      // Draw Page Number
       if (addPageNums) {
         ctx.save();
         ctx.font = `bold ${Math.round(3.5 * scale)}px 'Noto Sans TC', sans-serif`;
@@ -2386,7 +2926,6 @@
       }
     }
 
-    // Open Preview Modal
     function openPreview() {
       if (imageList.length === 0) {
         showToast('請先加入至少一張圖片！');
@@ -2398,13 +2937,11 @@
 
     openPreviewBtn.addEventListener('click', openPreview);
     sidePreviewBtn.addEventListener('click', openPreview);
-
     closePreviewBtn.addEventListener('click', () => previewModal.classList.remove('show'));
     closePreviewBtn2.addEventListener('click', () => previewModal.classList.remove('show'));
     previewModal.addEventListener('click', (e) => {
       if (e.target === previewModal) previewModal.classList.remove('show');
     });
-
     prevPreviewPageBtn.addEventListener('click', () => renderPreviewPage(currentPreviewPage - 1));
     nextPreviewPageBtn.addEventListener('click', () => renderPreviewPage(currentPreviewPage + 1));
     modalDownloadPdfBtn.addEventListener('click', () => {
@@ -2412,9 +2949,7 @@
       convertBtn.click();
     });
 
-    // ==========================================
-    // PDF GENERATION & EXPORT
-    // ==========================================
+    // PDF Generation Mode 1
     convertBtn.addEventListener('click', async () => {
       if (imageList.length === 0) {
         showToast('請先加入至少一張圖片！');

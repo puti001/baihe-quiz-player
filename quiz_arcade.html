@@ -29,20 +29,20 @@
 
         body {
             background-color: var(--bg-main); color: var(--text-dark);
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 12px 16px;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 12px 14px;
             overflow-x: hidden; position: relative; user-select: none;
         }
 
         /* 頂部導航列 */
         header {
             width: 100%; max-width: 960px; display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; background: var(--panel-bg); border-radius: 18px;
+            padding: 12px 18px; background: var(--panel-bg); border-radius: 18px;
             box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 12px;
             flex-wrap: wrap; gap: 10px;
         }
 
         .brand-logo {
-            font-size: 20px; font-weight: 800; font-family: 'Fredoka', cursive;
+            font-size: 19px; font-weight: 800; font-family: 'Fredoka', cursive;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             display: flex; align-items: center; gap: 8px;
@@ -64,7 +64,7 @@
         /* 戰鬥電競 HUD 儀表板 */
         .hud-bar {
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-            border-radius: 18px; padding: 12px 20px; color: white;
+            border-radius: 18px; padding: 12px 18px; color: white;
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
             align-items: center; box-shadow: 0 10px 25px rgba(49, 46, 129, 0.25);
             border: 2px solid #6366f1; position: relative; overflow: hidden;
@@ -72,13 +72,13 @@
 
         .hud-item { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .hud-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #a5b4fc; letter-spacing: 0.5px; }
-        .hud-value { font-size: 20px; font-weight: 900; font-family: 'Black Ops One', 'Orbitron', sans-serif; color: #fbbf24; }
+        .hud-value { font-size: 19px; font-weight: 900; font-family: 'Black Ops One', 'Orbitron', sans-serif; color: #fbbf24; }
 
-        .shield-hearts { font-size: 18px; letter-spacing: 2px; }
+        .shield-hearts { font-size: 17px; letter-spacing: 2px; }
 
         .combo-badge {
             background: linear-gradient(135deg, #f59e0b, #ef4444);
-            padding: 2px 10px; border-radius: 20px; font-size: 13px; font-weight: 900;
+            padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 900;
             font-family: 'Black Ops One', sans-serif; color: white;
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
             animation: pulseCombo 0.4s infinite alternate;
@@ -91,7 +91,7 @@
 
         /* 職類與年度選擇器 */
         .controls-row {
-            display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 12px;
+            display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 10px;
         }
         @media (max-width: 768px) {
             .controls-row { grid-template-columns: 1fr; }
@@ -99,13 +99,13 @@
         }
 
         .selector-card {
-            background: var(--panel-bg); border-radius: 16px; padding: 12px 16px;
+            background: var(--panel-bg); border-radius: 16px; padding: 10px 14px;
             box-shadow: var(--shadow); border: 1px solid var(--border);
-            display: flex; flex-direction: column; gap: 8px;
+            display: flex; flex-direction: column; gap: 6px;
         }
 
         select.subject-dropdown {
-            width: 100%; padding: 9px 12px; border: 2px solid var(--primary);
+            width: 100%; padding: 8px 12px; border: 2px solid var(--primary);
             border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--text-dark);
             background: #f8fafc; outline: none; cursor: pointer;
         }
@@ -130,74 +130,80 @@
 
         /* 街機主遊戲舞台 (Arcade Battle Arena) */
         .arcade-container {
-            background: var(--panel-bg); border-radius: 22px; padding: 14px;
+            background: var(--panel-bg); border-radius: 20px; padding: 14px;
             box-shadow: var(--shadow); border: 2px solid #c7d2fe;
-            display: flex; flex-direction: column; gap: 12px; position: relative;
+            display: flex; flex-direction: column; gap: 10px; position: relative;
             overflow: hidden;
         }
 
         .arena-header {
             display: flex; justify-content: space-between; align-items: center;
-            background: #f8fafc; padding: 8px 14px; border-radius: 12px; border: 1px solid var(--border);
+            background: #f8fafc; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border);
         }
 
         .mode-toggle-group {
             display: flex; gap: 4px; background: #e2e8f0; padding: 3px; border-radius: 10px;
         }
         .mode-btn {
-            border: none; background: transparent; padding: 5px 12px; border-radius: 8px;
+            border: none; background: transparent; padding: 5px 10px; border-radius: 8px;
             font-size: 12px; font-weight: 700; cursor: pointer; color: #475569; transition: all 0.2s;
         }
         .mode-btn.active {
             background: white; color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
+        /* 戰術情報簡報框 (題幹：獨立於畫布上方，絕對不遮擋選項) */
+        .tactical-briefing {
+            background: #ffffff;
+            border: 2px solid #6366f1;
+            border-radius: 14px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+            transition: all 0.3s;
+        }
+        .briefing-tag {
+            font-size: 11px; font-weight: 900; color: #4f46e5; text-transform: uppercase;
+            letter-spacing: 1px; display: flex; justify-content: space-between; margin-bottom: 6px;
+        }
+        .briefing-text {
+            font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.55;
+            word-break: break-word;
+        }
+
         /* 戰術 Canvas 舞台 */
         .canvas-wrapper {
-            width: 100%; height: 490px; position: relative; border-radius: 16px;
-            overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%; height: 380px; position: relative; border-radius: 16px;
+            overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.08);
             background: linear-gradient(to bottom, #dbeafe 0%, #e0f2fe 60%, #bae6fd 100%);
             border: 2px solid #93c5fd;
+        }
+        @media (max-width: 640px) {
+            .canvas-wrapper { height: 350px; }
+            .briefing-text { font-size: 15px; }
         }
 
         #game-canvas {
             width: 100%; height: 100%; display: block; cursor: crosshair;
         }
 
-        /* 戰術情報簡報框 (題幹) */
-        .tactical-briefing {
-            position: absolute; top: 12px; left: 16px; right: 16px;
-            background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(6px);
-            border: 2px solid #6366f1; border-radius: 14px; padding: 12px 18px;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15); pointer-events: none;
-            z-index: 5; transition: all 0.3s;
-        }
-        .briefing-tag {
-            font-size: 11px; font-weight: 900; color: #4f46e5; text-transform: uppercase;
-            letter-spacing: 1px; display: flex; justify-content: space-between; margin-bottom: 4px;
-        }
-        .briefing-text {
-            font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.5;
-        }
-
         /* 底部操作與熱鍵提示 */
         .arena-footer {
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
-            padding: 4px 6px;
+            padding: 4px 4px;
         }
         .hotkey-badges {
             display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--text-muted); font-weight: 700;
         }
         .kbd-key {
             background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 6px;
-            padding: 2px 7px; font-family: monospace; font-size: 12px; color: #334155;
+            padding: 2px 6px; font-family: monospace; font-size: 12px; color: #334155;
             box-shadow: 0 2px 0 #cbd5e1;
         }
 
         .next-btn {
             background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
-            color: white; border: none; padding: 10px 24px; border-radius: 12px;
-            font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+            color: white; border: none; padding: 9px 20px; border-radius: 12px;
+            font-size: 13.5px; font-weight: 800; cursor: pointer; transition: all 0.2s;
             box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35); display: flex; align-items: center; gap: 6px;
         }
         .next-btn:hover:not(:disabled) {
@@ -210,8 +216,8 @@
         /* 解析與答案彈出列 */
         .explanation-card {
             background: #f0fdf4; border: 2px solid #86efac; border-radius: 14px;
-            padding: 12px 18px; font-size: 14px; color: #166534; font-weight: 600;
-            display: none; animation: fadeIn 0.25s ease-out;
+            padding: 12px 16px; font-size: 13.5px; color: #166534; font-weight: 600;
+            display: none; animation: fadeIn 0.25s ease-out; line-height: 1.5;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-4px); }
@@ -220,11 +226,11 @@
 
         /* 經典卡片模式清單 (Pro Mode) */
         .card-mode-container {
-            display: none; flex-direction: column; gap: 10px; margin-top: 6px;
+            display: none; flex-direction: column; gap: 8px; margin-top: 4px;
         }
         .card-option {
             background: #f8fafc; border: 2px solid var(--border); border-radius: 14px;
-            padding: 14px 18px; font-size: 15px; font-weight: 600; cursor: pointer;
+            padding: 12px 16px; font-size: 14.5px; font-weight: 600; cursor: pointer;
             display: flex; justify-content: space-between; align-items: center;
             transition: all 0.15s;
         }
@@ -257,7 +263,7 @@
         }
 
         .modal-box {
-            background: white; border-radius: 24px; width: 95%; max-width: 540px; padding: 28px;
+            background: white; border-radius: 24px; width: 95%; max-width: 500px; padding: 24px;
             display: flex; flex-direction: column; align-items: center; text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #e2e8f0;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -268,20 +274,20 @@
         }
 
         .rank-badge {
-            font-size: 54px; font-weight: 900; font-family: 'Black Ops One', sans-serif;
+            font-size: 50px; font-weight: 900; font-family: 'Black Ops One', sans-serif;
             background: linear-gradient(135deg, #f59e0b, #ef4444);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin: 8px 0; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4));
+            margin: 6px 0; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4));
         }
 
         .stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin: 16px 0;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin: 14px 0;
         }
         .stat-card {
-            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px;
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 10px;
         }
         .stat-card-label { font-size: 11px; font-weight: 700; color: var(--text-muted); }
-        .stat-card-val { font-size: 20px; font-weight: 900; color: var(--text-dark); font-family: 'Orbitron', sans-serif; }
+        .stat-card-val { font-size: 18px; font-weight: 900; color: var(--text-dark); font-family: 'Orbitron', sans-serif; }
 
         footer {
             width: 100%; max-width: 960px; margin-top: 16px; padding: 14px;
@@ -302,7 +308,7 @@
         </div>
         <div class="header-tools">
             <a href="index.html" class="btn-pill" title="回到原本精心打磨的電競射擊爆破版">
-                🎯 回到原版播放器
+                🎯 原版播放器
             </a>
             <button class="btn-pill active" id="sound-btn" onclick="toggleSound()">
                 <span id="sound-icon">🔊</span> 音效開
@@ -374,16 +380,18 @@
                 </div>
             </div>
 
-            <!-- Canvas 戰鬥空間 -->
-            <div class="canvas-wrapper" id="canvas-wrapper">
-                <div class="tactical-briefing" id="tactical-briefing">
-                    <div class="briefing-tag">
-                        <span>🎯 任務情報 / 考題指令</span>
-                        <span id="briefing-timer">⚡ 瞄準敵機擊破</span>
-                    </div>
-                    <div class="briefing-text" id="briefing-text">正在載入任務題目...</div>
+            <!-- 題目情報簡報框 (在戰場上方獨立排列，絕不遮擋無人機選項) -->
+            <div class="tactical-briefing" id="tactical-briefing">
+                <div class="briefing-tag">
+                    <span>🎯 任務情報 / 考題指令</span>
+                    <span id="briefing-timer">⚡ 瞄準敵機擊破</span>
                 </div>
-                <canvas id="game-canvas" width="920" height="490"></canvas>
+                <div class="briefing-text" id="briefing-text">正在載入任務題目...</div>
+            </div>
+
+            <!-- Canvas 戰鬥空間 (專屬容納 4 架無人機與砲塔) -->
+            <div class="canvas-wrapper" id="canvas-wrapper">
+                <canvas id="game-canvas" width="920" height="380"></canvas>
             </div>
 
             <!-- 刷題模式清單 (Pro Card Mode) -->
@@ -468,6 +476,21 @@
         let shieldHp = 3;
         const MAX_SHIELD = 3;
         let soundEnabled = true;
+
+        // 自動跳題定時器
+        let autoAdvanceTimer = null;
+        let countdownInterval = null;
+
+        function clearAutoTimers() {
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        }
 
         /* ===== Web Audio API 原生音效合成引擎 ===== */
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -578,23 +601,23 @@
         let particles = [];
         let shockwaves = [];
         let clouds = [];
-        let mousePos = { x: 460, y: 240 };
+        let mousePos = { x: 460, y: 180 };
         let turretAngle = -Math.PI / 2;
         let hoveredDroneIdx = -1;
 
         for (let i = 0; i < 6; i++) {
             clouds.push({
                 x: Math.random() * 920,
-                y: Math.random() * 180 + 20,
+                y: Math.random() * 150 + 20,
                 speed: Math.random() * 0.3 + 0.1,
-                size: Math.random() * 40 + 50
+                size: Math.random() * 40 + 40
             });
         }
 
         function resizeGameCanvas() {
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width || 920;
-            canvas.height = rect.height || 490;
+            canvas.height = rect.height || 380;
             repositionDrones();
         }
         window.addEventListener('resize', resizeGameCanvas);
@@ -638,9 +661,10 @@
 
         function repositionDrones() {
             const W = canvas.width;
+            const H = canvas.height;
             const cellW = W / 2;
-            const startY = 175;
-            const rowH = 110;
+            const startY = 65;
+            const rowH = 115;
 
             drones.forEach((d, i) => {
                 const col = i % 2;
@@ -649,6 +673,8 @@
                 d.targetY = startY + (row * rowH);
                 d.x = d.targetX;
                 d.y = d.targetY;
+                d.width = Math.min(W * 0.46, 390);
+                d.height = 70;
             });
         }
 
@@ -668,8 +694,8 @@
                     y: 0,
                     targetX: 0,
                     targetY: 0,
-                    width: Math.min(canvas.width * 0.44, 380),
-                    height: 72,
+                    width: Math.min(canvas.width * 0.46, 390),
+                    height: 70,
                     propellerAngle: Math.random() * Math.PI,
                     hoverOffset: Math.random() * Math.PI * 2,
                     isTargeted: false,
@@ -688,17 +714,17 @@
 
             const targetDrone = drones[targetIdx];
             const launcherX = canvas.width / 2;
-            const launcherY = canvas.height - 30;
+            const launcherY = canvas.height - 20;
 
             turretAngle = Math.atan2(targetDrone.y - launcherY, targetDrone.x - launcherX);
             playMissileLaunchSound();
 
             missiles.push({
                 x: launcherX,
-                y: launcherY - 20,
+                y: launcherY - 15,
                 target: targetDrone,
                 targetIdx: targetIdx,
-                speed: 16
+                speed: 18
             });
         }
 
@@ -720,6 +746,12 @@
                 playCorrectChime(combo);
 
                 if (navigator.vibrate) navigator.vibrate([40, 30, 50]);
+
+                // 答對：特效播放 0.5 秒後立即跳下一題
+                autoAdvanceTimer = setTimeout(() => {
+                    nextQuestion();
+                }, 550);
+
             } else {
                 combo = 0;
                 shieldHp = Math.max(0, shieldHp - 1);
@@ -742,17 +774,41 @@
 
                 if (shieldHp <= 0) {
                     setTimeout(() => showMissionDebrief(false), 800);
+                    return;
                 }
+
+                // 答錯：3秒倒數計時自動進入下一題
+                let remainingSec = 3;
+                const exp = document.getElementById('explanation-card');
+                const updateExpText = () => {
+                    exp.innerHTML = `💡 <b>官方標準正解：第 (${q.answer + 1}) 項</b> — ${q.explain || '檢定真題標準解答'}<br><span style="font-size:12px; color:#dc2626; font-weight:800;">⏱️ ${remainingSec} 秒後自動進入下一題（或點擊右下方按鈕立即跳過）...</span>`;
+                };
+                updateExpText();
+                exp.style.display = 'block';
+
+                document.getElementById('next-btn').disabled = false;
+                document.getElementById('next-btn').innerHTML = `跳過倒數 (${remainingSec}s) ➔`;
+
+                countdownInterval = setInterval(() => {
+                    remainingSec--;
+                    if (remainingSec > 0) {
+                        updateExpText();
+                        document.getElementById('next-btn').innerHTML = `跳過倒數 (${remainingSec}s) ➔`;
+                    } else {
+                        clearInterval(countdownInterval);
+                        countdownInterval = null;
+                    }
+                }, 1000);
+
+                autoAdvanceTimer = setTimeout(() => {
+                    if (shieldHp > 0) {
+                        nextQuestion();
+                    }
+                }, 3000);
             }
 
             updateHUD();
-
-            const exp = document.getElementById('explanation-card');
-            exp.innerHTML = `💡 <b>官方標準正解：第 (${q.answer + 1}) 項</b> — ${q.explain || '檢定真題標準解答'}`;
-            exp.style.display = 'block';
-
             updateCardModeView(selectedIdx, q.answer);
-            document.getElementById('next-btn').disabled = false;
         }
 
         function createExplosion(x, y, isBig) {
@@ -819,7 +875,7 @@
                 if (d.state === 'destroyed') return;
 
                 d.propellerAngle += 0.45;
-                const hoverY = Math.sin(now * 3 + d.hoverOffset) * 4;
+                const hoverY = Math.sin(now * 3 + d.hoverOffset) * 3.5;
                 const drawX = d.x;
                 const drawY = d.y + hoverY;
 
@@ -895,9 +951,9 @@
                 ctx.fillText(`${d.optionNum}`, -d.width/2 + 24, 1);
 
                 ctx.fillStyle = '#1e293b';
-                ctx.font = '700 13.5px "Noto Sans TC"';
+                ctx.font = '700 13px "Noto Sans TC"';
                 ctx.textAlign = 'left';
-                wrapText(ctx, d.text, -d.width/2 + 48, -12, d.width - 60, 18);
+                wrapText(ctx, d.text, -d.width/2 + 48, -12, d.width - 56, 17);
 
                 ctx.restore();
             });
@@ -990,7 +1046,7 @@
 
             ctx.fillStyle = '#1e293b';
             ctx.beginPath();
-            ctx.arc(0, 0, 36, Math.PI, 0);
+            ctx.arc(0, 0, 34, Math.PI, 0);
             ctx.fill();
             ctx.strokeStyle = '#4f46e5';
             ctx.lineWidth = 3;
@@ -998,9 +1054,9 @@
 
             ctx.rotate(turretAngle);
             ctx.fillStyle = '#334155';
-            ctx.fillRect(0, -7, 42, 14);
+            ctx.fillRect(0, -6, 38, 12);
             ctx.fillStyle = '#6366f1';
-            ctx.fillRect(36, -5, 8, 10);
+            ctx.fillRect(32, -4, 8, 8);
 
             ctx.restore();
 
@@ -1130,6 +1186,7 @@
         }
 
         function onSubjectChange() {
+            clearAutoTimers();
             currentSubjectKey = document.getElementById('subject-select').value;
             score = 0;
             combo = 0;
@@ -1171,6 +1228,7 @@
                 btn.className = `year-tab ${idx === currentYearIdx ? 'active' : ''}`;
                 btn.innerText = `📅 ${y.year} 年度`;
                 btn.onclick = () => {
+                    clearAutoTimers();
                     currentYearIdx = idx;
                     renderYearTabs();
                     loadYear(idx);
@@ -1180,14 +1238,17 @@
         }
 
         function loadYear(yearIdx) {
+            clearAutoTimers();
             currentYearIdx = yearIdx;
             currentQIdx = 0;
             loadQuestion();
         }
 
         function loadQuestion() {
+            clearAutoTimers();
             answered = false;
             document.getElementById('next-btn').disabled = true;
+            document.getElementById('next-btn').innerHTML = `下一題 ➔`;
             document.getElementById('explanation-card').style.display = 'none';
 
             const yearObj = activeYears[currentYearIdx];
@@ -1198,7 +1259,7 @@
 
             const q = yearObj.questions[currentQIdx];
             document.getElementById('q-progress').innerText = `第 ${currentQIdx + 1} / ${yearObj.questions.length} 題`;
-            document.getElementById('briefing-text').innerText = q.title;
+            document.getElementById('briefing-text').innerText = `[${currentQIdx + 1}] ${q.title}`;
             document.getElementById('card-q-title').innerText = `${currentQIdx + 1}. ${q.title}`;
 
             setupDronesForCurrentQuestion();
@@ -1229,6 +1290,7 @@
         }
 
         function nextQuestion() {
+            clearAutoTimers();
             const yearObj = activeYears[currentYearIdx];
             if (currentQIdx + 1 >= yearObj.questions.length) {
                 showMissionDebrief(true);
@@ -1264,6 +1326,7 @@
         }
 
         function showMissionDebrief(isVictory) {
+            clearAutoTimers();
             const modal = document.getElementById('mission-modal');
             const titleEl = document.getElementById('modal-result-title');
             const rankEl = document.getElementById('modal-rank');
@@ -1297,6 +1360,7 @@
         }
 
         function restartMission() {
+            clearAutoTimers();
             shieldHp = MAX_SHIELD;
             score = 0;
             combo = 0;

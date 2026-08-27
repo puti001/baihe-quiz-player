@@ -103,7 +103,7 @@
         </div>
         <div>
           <h1 class="text-lg font-bold text-slate-900 leading-tight">Puti-AI 智慧旅遊行程設計器</h1>
-          <p class="text-xs text-slate-500">輸入目的地與天數 ‧ AI 一鍵規劃全行程</p>
+          <p class="text-xs text-slate-500">輸入目的地與天數 ‧ 雙 AI 自動備援秒生成</p>
         </div>
       </div>
 
@@ -150,7 +150,7 @@
         <div class="flex flex-wrap items-center gap-2 mb-3">
           <button onclick="openSettingsModal()" class="glow-btn-gold inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 text-xs font-bold shadow-md cursor-pointer transition">
             <i data-lucide="key" class="w-3.5 h-3.5"></i>
-            第一步：點此免費申請 API Key (Groq秒回 / Gemini)
+            第一步：免費申請 API Key (支援 Groq & Gemini 雙向自動備援)
           </button>
           <button onclick="openGuideModal()" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-sky-300 text-xs font-medium backdrop-blur-md transition">
             <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
@@ -327,16 +327,16 @@
         <!-- 旅遊小精靈提示 -->
         <div class="bg-gradient-to-br from-indigo-50 to-sky-50 rounded-2xl p-5 border border-indigo-100 text-indigo-950">
           <div class="flex items-center gap-2 mb-2">
-            <i data-lucide="sparkle" class="w-5 h-5 text-indigo-600"></i>
-            <h3 class="text-sm font-bold">雙軌 AI 智慧引擎</h3>
+            <i data-lucide="shield-check" class="w-5 h-5 text-indigo-600"></i>
+            <h3 class="text-sm font-bold">雙 AI 自動容錯備援</h3>
           </div>
           <p class="text-xs text-indigo-800 leading-relaxed mb-3">
-            支援 <strong>Google Gemini</strong> 與 <strong>Groq (Llama 3.3)</strong> 極速雙引擎：
+            同時支援 <strong>Groq (Llama 3.3)</strong> 與 <strong>Google Gemini</strong>：
           </p>
           <ul class="text-xs space-y-1.5 text-indigo-900/80">
             <li class="flex items-start gap-1.5">
               <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0"></i>
-              <span>輸入免費 API Key (Gemini 或 Groq)，整趟 3~7 天行程一鍵秒成！</span>
+              <span>同時填入兩把 Key，若遇任一引擎額度耗盡或故障，系統<strong>自動無縫切換</strong>另一把 Key 重試！</span>
             </li>
             <li class="flex items-start gap-1.5">
               <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0"></i>
@@ -389,7 +389,7 @@
             先填免費 API Key（極速解鎖全自動生成）
           </h4>
           <p class="text-amber-800">
-            點擊上方金黃色按鈕 <strong>「1. 先申請 API Key」</strong>，申請 Groq（秒回推薦）或 Google Gemini 免費 Key 填入，純留在您的本機，永久免費！
+            點擊上方金黃色按鈕 <strong>「1. 先申請 API Key」</strong>，申請 Groq（秒回推薦）或 Google Gemini 免費 Key 填入。系統支援<strong>雙向自動切換備援</strong>，永久免費！
           </p>
         </div>
 
@@ -741,7 +741,7 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-slate-900">1. 免費申請 AI API Key</h3>
-            <p class="text-xs text-slate-500">只要 1 分鐘，綁定後即可享受 AI 一秒自動全排行程</p>
+            <p class="text-xs text-slate-500">支援雙引擎自動切換備援 (純本機儲存)</p>
           </div>
         </div>
         <button onclick="closeModal('settingsModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -750,9 +750,17 @@
       </div>
 
       <div class="space-y-4">
+        <!-- 備援提示 -->
+        <div class="bg-gradient-to-r from-amber-50 to-indigo-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-950 flex items-start gap-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
+          <p class="leading-relaxed">
+            <strong>雙引擎自動備援啟動：</strong> 若您同時填入 Groq 與 Gemini，系統會以預設引擎為主；若遇故障或額度滿，<strong>會自動無縫切換至另一把 Key</strong>！
+          </p>
+        </div>
+
         <!-- 選擇預設 AI 引擎 -->
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">推薦引擎選擇：</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">優先使用的主要 AI 引擎：</label>
           <div class="grid grid-cols-2 gap-2">
             <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 transition" id="labelProviderGroq">
               <input type="radio" name="aiProvider" value="groq" onchange="switchAiProvider('groq')">
@@ -784,9 +792,9 @@
               <span>👉 點此免費獲取 Groq Key</span>
             </a>
           </div>
-          <input type="password" id="groqApiKeyInput" placeholder="貼上 gsk_開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <input type="password" id="groqApiKeyInput" placeholder="貼上 gsk_ 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
           <p class="text-[11px] text-slate-500 leading-relaxed">
-            💡 Groq 申請步驟：點右上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入此處即可！
+            💡 Groq 申請：點上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入。
           </p>
         </div>
 
@@ -802,7 +810,7 @@
           </div>
           <input type="password" id="geminiApiKeyInput" placeholder="貼上 AIzaSy 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
           <p class="text-[11px] text-slate-500 leading-relaxed">
-            💡 Gemini 申請步驟：點右上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入。
+            💡 Gemini 申請：點上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入。
           </p>
         </div>
 
@@ -831,8 +839,8 @@
   <!-- JavaScript 核心邏輯 -->
   <script>
     // ==================== 預設資料與狀態 ====================
-    const STORAGE_KEY = 'puti_travel_planner_data_v4';
-    const SETTINGS_KEY = 'puti_travel_planner_settings_v4';
+    const STORAGE_KEY = 'puti_travel_planner_data_v5';
+    const SETTINGS_KEY = 'puti_travel_planner_settings_v5';
 
     let currentDayIndex = 0;
     let selectedAiPreference = '在地小吃/排隊美食';
@@ -870,7 +878,7 @@
       toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
       setTimeout(() => {
         toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
-      }, 2500);
+      }, 3500);
     }
 
     function loadFromStorage() {
@@ -941,6 +949,93 @@
       openModal('guideModal');
     }
 
+    // ==================== 雙引擎自動備援 (Auto Failover) 呼叫核心 ====================
+    async function callGroqDirect(prompt, systemPrompt) {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userSettings.groqApiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: systemPrompt || 'You are a professional travel planner. Always output valid JSON matching the requested schema.' },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.5
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message || 'Groq API 連線失敗');
+      
+      let text = data.choices[0].message.content.trim();
+      const jsonMatch = text.match(/[\{\[][\s\S]*[\}\]]/);
+      if (jsonMatch) text = jsonMatch[0];
+      return JSON.parse(text);
+    }
+
+    async function callGeminiDirect(prompt) {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userSettings.geminiApiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { responseMimeType: "application/json" }
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message || 'Gemini API 連線失敗');
+
+      const rawText = data.candidates[0].content.parts[0].text;
+      return JSON.parse(rawText);
+    }
+
+    // 核心雙引擎自動切換機制
+    async function executeAiWithFailover(prompt, systemPrompt) {
+      const hasGroq = !!userSettings.groqApiKey;
+      const hasGemini = !!userSettings.geminiApiKey;
+
+      if (!hasGroq && !hasGemini) {
+        throw new Error('NO_KEYS');
+      }
+
+      const primary = userSettings.aiProvider || 'groq';
+
+      if (primary === 'groq') {
+        if (hasGroq) {
+          try {
+            return await callGroqDirect(prompt, systemPrompt);
+          } catch (groqErr) {
+            console.warn('Groq 失敗，嘗試切換 Gemini 備援：', groqErr);
+            if (hasGemini) {
+              showToast('⚡ Groq 異常，已自動切換至 Google Gemini 備援！', 'sparkles');
+              return await callGeminiDirect(prompt);
+            }
+            throw groqErr;
+          }
+        } else if (hasGemini) {
+          return await callGeminiDirect(prompt);
+        }
+      } else {
+        if (hasGemini) {
+          try {
+            return await callGeminiDirect(prompt);
+          } catch (geminiErr) {
+            console.warn('Gemini 失敗，嘗試切換 Groq 備援：', geminiErr);
+            if (hasGroq) {
+              showToast('⚡ Gemini 異常，已自動切換至 Groq 備援！', 'sparkles');
+              return await callGroqDirect(prompt, systemPrompt);
+            }
+            throw geminiErr;
+          }
+        } else if (hasGroq) {
+          return await callGroqDirect(prompt, systemPrompt);
+        }
+      }
+      throw new Error('無法取得有效的 AI 回應');
+    }
+
     // ==================== AI 一鍵全行程生成 Wizard ====================
     function openWizardModal() {
       document.getElementById('wizardDestInput').value = document.getElementById('quickDestInput').value || '';
@@ -973,7 +1068,7 @@
       return `你是一位頂級專業的旅遊規劃導遊。請為我規劃【${dest}】共【${days} 天】的旅遊行程。
 旅行風格：【${style}】${extra ? `，特殊要求：【${extra}】` : ''}。
 請確保每天行程順路不繞路，並安排合理的時間與景點停留。
-請嚴格以 JSON 格式回傳（只回傳純 JSON，不要包含 markdown 標籤或任何解釋文字）：
+請嚴格以 JSON 物件格式回傳（只回傳純 JSON，不要包含 markdown 標籤或任何解釋文字）：
 {
   "title": "${dest} ${days}天${days > 1 ? (days-1)+'夜' : ''}精彩之旅",
   "days": [
@@ -1025,65 +1120,14 @@
       const style = document.getElementById('wizardStyleSelect').value;
       const extra = document.getElementById('wizardExtraInput').value.trim();
 
-      const isGroq = userSettings.aiProvider === 'groq';
-      const activeKey = isGroq ? userSettings.groqApiKey : userSettings.geminiApiKey;
-
-      if (!activeKey) {
-        if (confirm(`尚未設定 ${isGroq ? 'Groq' : 'Gemini'} API Key！是否現在前往設定？（亦可點擊「複製到 ChatGPT」去網頁版生成）`)) {
-          closeModal('wizardModal');
-          openSettingsModal();
-        }
-        return;
-      }
-
       const btn = document.getElementById('btnExecuteWizard');
       const originalText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> AI 生成中 (${days} 天)...`;
+      btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> AI 智慧規劃中 (${days} 天)...`;
 
       try {
         const prompt = buildFullTripPrompt(dest, days, style, extra);
-        let resultJson = null;
-
-        if (isGroq) {
-          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${userSettings.groqApiKey}`
-            },
-            body: JSON.stringify({
-              model: 'llama-3.3-70b-versatile',
-              messages: [
-                { role: 'system', content: 'You are a professional travel planner. Always output valid JSON object matching the requested schema.' },
-                { role: 'user', content: prompt }
-              ],
-              temperature: 0.6
-            })
-          });
-          const data = await res.json();
-          if (data.error) throw new Error(data.error.message);
-
-          let text = data.choices[0].message.content.trim();
-          const jsonMatch = text.match(/\{[\s\S]*\}/);
-          if (jsonMatch) text = jsonMatch[0];
-          resultJson = JSON.parse(text);
-
-        } else {
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userSettings.geminiApiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          });
-          const data = await res.json();
-          if (data.error) throw new Error(data.error.message);
-
-          const rawText = data.candidates[0].content.parts[0].text;
-          resultJson = JSON.parse(rawText);
-        }
+        const resultJson = await executeAiWithFailover(prompt, 'You are a professional travel planner. Always output valid JSON matching the requested schema.');
 
         if (resultJson && resultJson.days) {
           resultJson.days.forEach(d => {
@@ -1116,7 +1160,14 @@
         }
 
       } catch (err) {
-        alert('生成失敗：' + err.message + '\n請檢查 API Key 或網路連線。');
+        if (err.message === 'NO_KEYS') {
+          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可點擊「複製到 ChatGPT」去網頁版生成）')) {
+            closeModal('wizardModal');
+            openSettingsModal();
+          }
+        } else {
+          alert('生成失敗：' + err.message + '\n若兩組 Key 皆故障，請檢查網路或重新申請。');
+        }
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -1526,76 +1577,32 @@
     }
 
     async function triggerDirectAiFetch() {
-      const isGroq = userSettings.aiProvider === 'groq';
-      const activeKey = isGroq ? userSettings.groqApiKey : userSettings.geminiApiKey;
-
-      if (!activeKey) {
-        if (confirm(`尚未設定 ${isGroq ? 'Groq' : 'Gemini'} API Key！是否現在前往設定？（亦可直接點擊「複製 Prompt」手動去 ChatGPT 生成）`)) {
-          closeModal('aiRecModal');
-          openSettingsModal();
-        }
-        return;
-      }
-
       const container = document.getElementById('aiRecResultsContainer');
       container.innerHTML = `
         <div class="text-center py-12 space-y-3">
           <div class="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p class="text-xs text-indigo-900 font-medium">${isGroq ? 'Groq' : 'Gemini'} 正在極速探索 ${currentSpotForAi.name} 周邊順路寶藏...</p>
+          <p class="text-xs text-indigo-900 font-medium">AI 正在探索 ${currentSpotForAi.name} 周邊順路寶藏 (支援雙引擎備援)...</p>
         </div>
       `;
 
       try {
         const prompt = buildAiPrompt(currentSpotForAi.name, selectedAiPreference);
-        let recommendations = [];
-
-        if (isGroq) {
-          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${userSettings.groqApiKey}`
-            },
-            body: JSON.stringify({
-              model: 'llama-3.3-70b-versatile',
-              messages: [
-                { role: 'system', content: 'You are a helpful travel planner assistant. Always respond with a valid JSON array.' },
-                { role: 'user', content: prompt }
-              ],
-              temperature: 0.5
-            })
-          });
-          const data = await res.json();
-          if (data.error) throw new Error(data.error.message);
-          
-          let contentStr = data.choices[0].message.content.trim();
-          const jsonMatch = contentStr.match(/\[[\s\S]*\]/);
-          if (jsonMatch) contentStr = jsonMatch[0];
-          recommendations = JSON.parse(contentStr);
-
-        } else {
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userSettings.geminiApiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          });
-          const data = await res.json();
-          if (data.error) throw new Error(data.error.message);
-
-          const rawJsonText = data.candidates[0].content.parts[0].text;
-          recommendations = JSON.parse(rawJsonText);
-        }
-
+        const recommendations = await executeAiWithFailover(prompt, 'You are a helpful travel planner assistant. Always respond with a valid JSON array.');
         renderAiDirectRecommendations(recommendations);
       } catch (err) {
-        container.innerHTML = `
-          <div class="bg-rose-50 text-rose-700 p-4 rounded-xl text-xs border border-rose-200 space-y-2">
-            <p class="font-bold">連線或解析失敗：${err.message}</p>
-          </div>
-        `;
+        if (err.message === 'NO_KEYS') {
+          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可直接點擊「複製 Prompt」手動去 ChatGPT 生成）')) {
+            closeModal('aiRecModal');
+            openSettingsModal();
+          }
+        } else {
+          container.innerHTML = `
+            <div class="bg-rose-50 text-rose-700 p-4 rounded-xl text-xs border border-rose-200 space-y-2">
+              <p class="font-bold">連線失敗：${err.message}</p>
+              <p>請檢查 API Key 是否正確，或點擊下方按鈕直接複製提示詞至 ChatGPT 網頁版。</p>
+            </div>
+          `;
+        }
       }
     }
 

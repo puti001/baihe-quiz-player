@@ -104,7 +104,7 @@
         </div>
         <div>
           <h1 class="text-lg font-bold text-slate-900 leading-tight">Puti-AI 智慧旅遊行程設計器</h1>
-          <p class="text-xs text-slate-500">全天連續一覽 ‧ 一鍵複製整趟行程 ‧ 雙 AI 自動備援</p>
+          <p class="text-xs text-slate-500">真實地圖景點 ‧ 全天連續一覽 ‧ 雙 AI 自動備援</p>
         </div>
       </div>
 
@@ -126,7 +126,7 @@
         <!-- 動態 API Key 狀態按鈕 (Navbar) -->
         <button onclick="openSettingsModal()" id="navApiKeyBtn" class="glow-btn-gold px-3 py-1.5 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition border shadow-sm">
           <i data-lucide="key" class="w-4 h-4" id="navApiKeyIcon"></i>
-          <span id="navApiKeyLabel">1. 先申請 API Key</span>
+          <span id="navApiKeyLabel">1. 申請 Key</span>
         </button>
 
         <!-- 發光按鈕 2: 再看使用指南 -->
@@ -163,7 +163,7 @@
         <div class="flex flex-wrap items-center gap-2 mb-3">
           <button onclick="openSettingsModal()" id="bannerApiKeyStatusBtn" class="glow-btn-gold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-md cursor-pointer transition">
             <i data-lucide="key" class="w-3.5 h-3.5" id="bannerApiKeyIcon"></i>
-            <span id="bannerApiKeyStatusLabel">第一步：點此免費申請 API Key (Groq秒回 / Gemini)</span>
+            <span id="bannerApiKeyStatusLabel">第一步：點此免費申請 API Key (推薦 Google Gemini 地名最準確)</span>
           </button>
           <button onclick="openMagicPasteModal()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-indigo-500/30 hover:bg-indigo-500/50 text-indigo-200 text-xs font-bold backdrop-blur-md border border-indigo-400/40 transition">
             <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
@@ -179,13 +179,13 @@
           想去哪裡玩？讓 AI 當您的專屬旅遊副駕駛
         </h2>
         <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-          不用從零手動排，只要選擇目的地與天數，AI 自動幫您串連順路動線、經典地標與必吃美食！
+          不用從零手動排，只要選擇目的地與天數，AI 自動幫您串連順路動線、真實知名地標與在地必吃美食！
         </p>
 
         <!-- 快捷規劃表單列 -->
         <div class="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-white/10 p-2.5 rounded-2xl backdrop-blur-md border border-white/15">
           <div class="sm:col-span-4">
-            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：台東、京都、東京、首爾、花蓮" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
+            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：墾丁、台東、京都、東京、花蓮" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
           </div>
           <div class="sm:col-span-3">
             <select id="quickDaysInput" class="w-full h-11 px-3 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium">
@@ -219,10 +219,10 @@
         <!-- 熱門城市快速按鈕 -->
         <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-slate-300">
           <span class="text-slate-400 text-[11px]">熱門推薦：</span>
+          <button onclick="setQuickCity('墾丁', 3, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 墾丁 3天</button>
           <button onclick="setQuickCity('台東', 3, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 台東 3天</button>
           <button onclick="setQuickCity('京都', 4, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 京都 4天</button>
           <button onclick="setQuickCity('東京', 5, '經典必去打卡')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 東京 5天</button>
-          <button onclick="setQuickCity('大阪京都', 5, '在地美食吃貨之旅')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 關西 5天</button>
           <button onclick="setQuickCity('花蓮', 3, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 花蓮 3天</button>
         </div>
       </div>
@@ -377,7 +377,7 @@
             免費申請 API Key（全自動秒出行程）
           </h4>
           <p class="text-amber-800">
-            填入 Groq 或 Google Gemini 免費 Key，即可直接在橫幅輸入城市天數，AI 一鍵秒排順路行程！
+            推薦優先使用 <strong>Google Gemini</strong>（地名最精準真實），填入免費 Key 即可在橫幅輸入城市天數，AI 一秒排好順路行程！
           </p>
         </div>
 
@@ -399,7 +399,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-slate-900">AI 一鍵規劃整趟旅遊行程</h3>
-            <p class="text-xs text-slate-500">輸入目的地與天數，AI 自動為您量身打造最佳動線</p>
+            <p class="text-xs text-slate-500">輸入目的地與天數，AI 自動為您安排真實地標與最佳動線</p>
           </div>
         </div>
         <button onclick="closeModal('wizardModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -411,7 +411,7 @@
         
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">1. 目的地城市 / 地區 <span class="text-rose-500">*</span></label>
-          <input type="text" id="wizardDestInput" placeholder="例如：台東、京都、東京、首爾、曼谷、清邁、花蓮、沖繩" class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="wizardDestInput" placeholder="例如：墾丁、台東、京都、東京、首爾、曼谷、清邁、花蓮" class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -442,7 +442,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">4. 額外特殊要求 (可選)</label>
-          <input type="text" id="wizardExtraInput" placeholder="例如：想去伯朗大道、一定要吃米苔目、要有雨天室內備案..." class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="wizardExtraInput" placeholder="例如：想去鵝鑾鼻燈塔、一定要吃海鮮、要有雨天室內備案..." class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs">
@@ -487,7 +487,7 @@
         
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">景點 / 店家名稱 <span class="text-rose-500">*</span></label>
-          <input type="text" id="spotNameInput" required placeholder="例如：伯朗大道、初鹿牧場、榕樹下米苔目" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="spotNameInput" required placeholder="例如：鵝鑾鼻燈塔、後壁湖漁港、伯朗大道" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -529,12 +529,12 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">預約號碼 / 電話 / 地址</label>
-          <input type="text" id="spotBookingInput" placeholder="預約號 #12345 / 089-123456" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="spotBookingInput" placeholder="預約號 #12345 / 08-8861234" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">備註 / 必吃必看推薦</label>
-          <textarea id="spotNotesInput" rows="2" placeholder="例如：推薦品嚐初鹿鮮乳霜淇淋、記得預先租單車..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
+          <textarea id="spotNotesInput" rows="2" placeholder="例如：推薦品嚐後壁湖綜合生魚片、欣賞日落美景..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
         </div>
 
         <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
@@ -555,7 +555,7 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-slate-900">AI 周邊順遊與美食推薦</h3>
-            <p class="text-xs text-slate-500" id="aiRecSubtitle">針對景點探索周邊</p>
+            <p class="text-xs text-slate-500" id="aiRecSubtitle">針對景點探索周邊真實地標</p>
           </div>
         </div>
         <button onclick="closeModal('aiRecModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -712,7 +712,7 @@
         <div class="bg-gradient-to-r from-amber-50 to-indigo-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-950 flex items-start gap-2">
           <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
           <p class="leading-relaxed">
-            <strong>官方模型動態探索：</strong> 系統直接向 Google 與 Groq 查詢您帳號當前開放的最新模型，徹底杜絕停用或 404 問題！
+            <strong>核心引擎建議：</strong> 推薦使用 <strong>Google Gemini</strong>（地名與 Google Maps 最精準真實，絕不胡言亂語）；亦支援 Groq (Llama 70B) 快速備援！
           </p>
         </div>
 
@@ -720,27 +720,43 @@
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">優先使用的主要 AI 引擎：</label>
           <div class="grid grid-cols-2 gap-2">
-            <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 transition" id="labelProviderGroq">
-              <input type="radio" name="aiProvider" value="groq" onchange="switchAiProvider('groq')">
+            <label class="flex items-center gap-2 p-2.5 border-2 border-sky-500 bg-sky-50/50 rounded-xl cursor-pointer transition" id="labelProviderGemini">
+              <input type="radio" name="aiProvider" value="gemini" checked onchange="switchAiProvider('gemini')">
               <div>
                 <div class="text-xs font-bold text-slate-800 flex items-center gap-1">
-                  <span>Groq</span>
-                  <span class="px-1.5 py-0.2 text-[9px] bg-rose-100 text-rose-700 font-bold rounded">極速推薦</span>
+                  <span>Google Gemini</span>
+                  <span class="px-1.5 py-0.2 text-[9px] bg-sky-100 text-sky-700 font-bold rounded">推薦首選</span>
                 </div>
-                <div class="text-[10px] text-slate-500">Llama 3.1/3.3 (免費秒回)</div>
+                <div class="text-[10px] text-slate-500">地名最準 ‧ 絕不捏造景點</div>
               </div>
             </label>
-            <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 transition" id="labelProviderGemini">
-              <input type="radio" name="aiProvider" value="gemini" onchange="switchAiProvider('gemini')">
+            <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition" id="labelProviderGroq">
+              <input type="radio" name="aiProvider" value="groq" onchange="switchAiProvider('groq')">
               <div>
-                <div class="text-xs font-bold text-slate-800">Google Gemini</div>
-                <div class="text-[10px] text-slate-500">動態探索最新 Flash 模型</div>
+                <div class="text-xs font-bold text-slate-800">Groq (Llama 70B)</div>
+                <div class="text-[10px] text-slate-500">極速秒回 ‧ 支援備援</div>
               </div>
             </label>
           </div>
         </div>
 
-        <!-- Groq Key 區塊 (置頂推薦) -->
+        <!-- Google Gemini Key 區塊 -->
+        <div id="geminiKeySection" class="space-y-2 p-3.5 rounded-2xl bg-sky-50/50 border border-sky-200">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-sky-950 flex items-center gap-1">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-600"></i> Google Gemini API Key
+            </label>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-sky-600 hover:text-sky-800 font-bold underline flex items-center gap-0.5">
+              <span>👉 點此免費獲取 Gemini Key (推薦)</span>
+            </a>
+          </div>
+          <input type="password" id="geminiApiKeyInput" oninput="autoSaveKeys()" placeholder="貼上 AIzaSy 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            💡 Gemini 申請：點上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入。
+          </p>
+        </div>
+
+        <!-- Groq Key 區塊 -->
         <div id="groqKeySection" class="space-y-2 p-3.5 rounded-2xl bg-indigo-50/50 border border-indigo-200">
           <div class="flex items-center justify-between">
             <label class="text-xs font-bold text-indigo-950 flex items-center gap-1">
@@ -753,22 +769,6 @@
           <input type="password" id="groqApiKeyInput" oninput="autoSaveKeys()" placeholder="貼上 gsk_ 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
           <p class="text-[11px] text-slate-500 leading-relaxed">
             💡 Groq 申請：點上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入此處。
-          </p>
-        </div>
-
-        <!-- Google Gemini Key 區塊 -->
-        <div id="geminiKeySection" class="space-y-2 p-3.5 rounded-2xl bg-sky-50/50 border border-sky-200">
-          <div class="flex items-center justify-between">
-            <label class="text-xs font-bold text-sky-950 flex items-center gap-1">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-600"></i> Google Gemini API Key
-            </label>
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-sky-600 hover:text-sky-800 font-bold underline flex items-center gap-0.5">
-              <span>👉 點此免費獲取 Gemini Key</span>
-            </a>
-          </div>
-          <input type="password" id="geminiApiKeyInput" oninput="autoSaveKeys()" placeholder="貼上 AIzaSy 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
-          <p class="text-[11px] text-slate-500 leading-relaxed">
-            💡 Gemini 申請：點上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入。
           </p>
         </div>
 
@@ -817,7 +817,7 @@
     let tripData = JSON.parse(JSON.stringify(DEFAULT_EMPTY_TRIP));
 
     let userSettings = {
-      aiProvider: 'groq',
+      aiProvider: 'gemini', // 預設推薦使用 Google Gemini (地名精確度第一)
       geminiApiKey: '',
       groqApiKey: '',
       currency: 'NT$'
@@ -878,7 +878,7 @@
       document.getElementById('geminiApiKeyInput').value = userSettings.geminiApiKey || '';
       document.getElementById('groqApiKeyInput').value = userSettings.groqApiKey || '';
       document.getElementById('currencySymbolInput').value = userSettings.currency || 'NT$';
-      switchAiProvider(userSettings.aiProvider || 'groq');
+      switchAiProvider(userSettings.aiProvider || 'gemini');
     }
 
     // ==================== 動態更新 API Key 狀態指示徽章 ====================
@@ -905,23 +905,14 @@
 
       } else if (hasGroq && hasGemini) {
         bannerBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-100 bg-emerald-900/60 hover:bg-emerald-800/80 border border-emerald-400/50 shadow-md cursor-pointer transition backdrop-blur-md';
-        bannerLabel.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block mr-1"></span>🛡️ 雙 AI 已就緒：Groq + Gemini (動態探索中)';
+        bannerLabel.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block mr-1"></span>🛡️ 雙 AI 已就緒：Gemini (首選) + Groq (備援)';
         bannerIcon.setAttribute('data-lucide', 'shield-check');
 
         navBtn.className = 'px-3 py-1.5 text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-xl flex items-center gap-1.5 transition shadow-sm';
         navLabel.innerText = '🛡️ 雙 AI 就緒';
         navIcon.setAttribute('data-lucide', 'shield-check');
 
-      } else if (hasGroq) {
-        bannerBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-200 bg-indigo-900/60 hover:bg-indigo-800/80 border border-indigo-400/50 shadow-md cursor-pointer transition backdrop-blur-md';
-        bannerLabel.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block mr-1"></span>🟢 AI 已就緒：Groq ‧ 點此管理';
-        bannerIcon.setAttribute('data-lucide', 'zap');
-
-        navBtn.className = 'px-3 py-1.5 text-xs sm:text-sm font-bold text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl flex items-center gap-1.5 transition shadow-sm';
-        navLabel.innerText = '🟢 Groq 就緒';
-        navIcon.setAttribute('data-lucide', 'zap');
-
-      } else {
+      } else if (hasGemini) {
         bannerBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-sky-200 bg-sky-900/60 hover:bg-sky-800/80 border border-sky-400/50 shadow-md cursor-pointer transition backdrop-blur-md';
         bannerLabel.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block mr-1"></span>🟢 AI 已就緒：Google Gemini ‧ 點此管理';
         bannerIcon.setAttribute('data-lucide', 'sparkles');
@@ -929,6 +920,15 @@
         navBtn.className = 'px-3 py-1.5 text-xs sm:text-sm font-bold text-sky-800 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl flex items-center gap-1.5 transition shadow-sm';
         navLabel.innerText = '🟢 Gemini 就緒';
         navIcon.setAttribute('data-lucide', 'sparkles');
+
+      } else {
+        bannerBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-200 bg-indigo-900/60 hover:bg-indigo-800/80 border border-indigo-400/50 shadow-md cursor-pointer transition backdrop-blur-md';
+        bannerLabel.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block mr-1"></span>🟢 AI 已就緒：Groq (70B) ‧ 點此管理';
+        bannerIcon.setAttribute('data-lucide', 'zap');
+
+        navBtn.className = 'px-3 py-1.5 text-xs sm:text-sm font-bold text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl flex items-center gap-1.5 transition shadow-sm';
+        navLabel.innerText = '🟢 Groq 就緒';
+        navIcon.setAttribute('data-lucide', 'zap');
       }
 
       lucide.createIcons();
@@ -1091,6 +1091,7 @@
             .map(m => m.id)
             .filter(id => !id.includes('whisper') && !id.includes('vision') && !id.includes('guard'));
           
+          // 強制 70B 大模型優先，避免 8B 小模型產生幻覺假地名
           valid.sort((a, b) => {
             if (a.includes('70b') && !b.includes('70b')) return -1;
             if (!a.includes('70b') && b.includes('70b')) return 1;
@@ -1101,8 +1102,16 @@
       } catch (e) {
         console.warn('查詢 Groq 官方模型清單失敗，使用備用清單', e);
       }
-      return ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'llama3-70b-8192', 'llama-3.1-8b-instant'];
+      return ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'llama3-70b-8192'];
     }
+
+    // ==================== 專業地圖導遊 System Prompt ====================
+    const GLOBAL_SYSTEM_PROMPT = `你是一位精通全球與台灣在地地理的頂級旅遊規劃專家。
+【最關鍵核心規則】：
+1. 安排的景點名稱必須是【真實存在、在 Google 地圖上有明確地標】的具體知名景點或餐廳（例如：鵝鑾鼻燈塔、墾丁大街夜市、南灣遊憩區、後壁湖阿興生魚片、龍磐公園、白沙灣）。
+2. 嚴格禁止捏造虛構地名，絕對禁止輸出籠統抽象名稱（如「大樹木」、「大建築物」、「大廈廳」等），違者視為嚴重錯誤！
+3. 每天安排 2~4 個順路景點，備註寫出一句具體的必吃美食或必看特色。
+4. 必須嚴格以有效 JSON 格式輸出。`;
 
     // ==================== 雙引擎呼叫核心 ====================
     async function callGroqDirect(prompt, systemPrompt) {
@@ -1125,11 +1134,11 @@
               messages: [
                 { 
                   role: 'system', 
-                  content: (systemPrompt || 'You are a professional travel planner.') + ' Output strictly valid JSON with no markdown wrapping.'
+                  content: (systemPrompt || GLOBAL_SYSTEM_PROMPT) + ' Output strictly valid JSON with no markdown wrapping.'
                 },
                 { role: 'user', content: prompt }
               ],
-              temperature: 0.4,
+              temperature: 0.3,
               response_format: { type: "json_object" }
             })
           });
@@ -1164,10 +1173,15 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
+              contents: [
+                {
+                  role: 'user',
+                  parts: [{ text: `${GLOBAL_SYSTEM_PROMPT}\n\n任務指示：\n${prompt}` }]
+                }
+              ],
               generationConfig: { 
                 responseMimeType: "application/json",
-                temperature: 0.4
+                temperature: 0.3
               }
             })
           });
@@ -1197,29 +1211,10 @@
         throw new Error('NO_KEYS');
       }
 
-      const primary = userSettings.aiProvider || 'groq';
+      const primary = userSettings.aiProvider || 'gemini';
       let lastError = null;
 
-      if (primary === 'groq') {
-        if (hasGroq) {
-          try {
-            return await callGroqDirect(prompt, systemPrompt);
-          } catch (groqErr) {
-            console.warn('Groq 失敗，嘗試切換 Gemini 備援：', groqErr);
-            lastError = groqErr;
-            if (hasGemini) {
-              showToast('⚡ Groq 異常，已自動切換至 Google Gemini 備援！', 'sparkles');
-              try {
-                return await callGeminiDirect(prompt);
-              } catch (geminiErr) {
-                lastError = new Error(`Groq: ${groqErr.message} | Gemini: ${geminiErr.message}`);
-              }
-            }
-          }
-        } else if (hasGemini) {
-          return await callGeminiDirect(prompt);
-        }
-      } else {
+      if (primary === 'gemini') {
         if (hasGemini) {
           try {
             return await callGeminiDirect(prompt);
@@ -1237,6 +1232,25 @@
           }
         } else if (hasGroq) {
           return await callGroqDirect(prompt, systemPrompt);
+        }
+      } else {
+        if (hasGroq) {
+          try {
+            return await callGroqDirect(prompt, systemPrompt);
+          } catch (groqErr) {
+            console.warn('Groq 失敗，嘗試切換 Gemini 備援：', groqErr);
+            lastError = groqErr;
+            if (hasGemini) {
+              showToast('⚡ Groq 異常，已自動切換至 Google Gemini 備援！', 'sparkles');
+              try {
+                return await callGeminiDirect(prompt);
+              } catch (geminiErr) {
+                lastError = new Error(`Groq: ${groqErr.message} | Gemini: ${geminiErr.message}`);
+              }
+            }
+          }
+        } else if (hasGemini) {
+          return await callGeminiDirect(prompt);
         }
       }
 
@@ -1261,7 +1275,7 @@
     function triggerQuickGenerate() {
       const dest = document.getElementById('quickDestInput').value.trim();
       if (!dest) {
-        alert('請先輸入想去的目的地城市（例如：台東、京都、東京、首爾、曼谷）！');
+        alert('請先輸入想去的目的地城市（例如：墾丁、台東、京都、東京）！');
         document.getElementById('quickDestInput').focus();
         return;
       }
@@ -1272,10 +1286,11 @@
     }
 
     function buildFullTripPrompt(dest, days, style, extra) {
-      return `你是一位頂級專業的旅遊規劃導遊。請為我規劃【${dest}】共【${days} 天】的旅遊行程。
+      return `請為我規劃【${dest}】共【${days} 天】的旅遊行程。
 旅行風格：【${style}】${extra ? `，特殊要求：【${extra}】` : ''}。
-請確保每天行程順路不繞路，並安排合理的時間與景點停留。
-請嚴格以 JSON 物件格式回傳（只回傳純 JSON，不要包含 markdown 標籤或任何解釋文字）：
+請確保每天行程順路不繞路，景點必須為【${dest} 當地真實存在且知名的地標/美食】（絕對不可出現大樹木、大建築物等捏造抽象名稱）。
+
+請嚴格以 JSON 物件格式回傳（只回傳純 JSON）：
 {
   "title": "${dest} ${days}天${days > 1 ? (days-1)+'夜' : ''}精彩之旅",
   "days": [
@@ -1284,22 +1299,22 @@
       "date": "",
       "spots": [
         {
-          "name": "景點或餐廳名稱",
+          "name": "具體真實景點名稱(如：鵝鑾鼻燈塔)",
           "time": "09:30",
           "duration": 90,
           "category": "sight",
-          "cost": 300,
-          "notes": "必看特色或必吃推薦"
+          "cost": 60,
+          "notes": "具體特色說明(如：台灣最南端純白燈塔與海景棧道)"
         }
       ]
     }
   ],
   "bucketList": [
     {
-      "name": "推薦的雨天備案或周邊小店",
+      "name": "在地真實雨天備案或小店(如：國立海洋生物博物館)",
       "category": "sight",
-      "duration": 60,
-      "notes": "備案說明"
+      "duration": 120,
+      "notes": "備案特色"
     }
   ]
 }`;
@@ -1334,7 +1349,7 @@
 
       try {
         const prompt = buildFullTripPrompt(dest, days, style, extra);
-        const resultJson = await executeAiWithFailover(prompt, 'You are a professional travel planner. Output strictly valid JSON object.');
+        const resultJson = await executeAiWithFailover(prompt, GLOBAL_SYSTEM_PROMPT);
 
         if (resultJson && resultJson.days && Array.isArray(resultJson.days)) {
           resultJson.days.forEach(d => {
@@ -1368,12 +1383,12 @@
 
       } catch (err) {
         if (err.message === 'NO_KEYS') {
-          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可直接點擊「📋 貼上 AI 行程」將 ChatGPT 回覆貼上來）')) {
+          if (confirm('尚未填寫 API Key！是否現在前往設定？（推薦免費申請 Google Gemini，地名最真實精確）')) {
             closeModal('wizardModal');
             openSettingsModal();
           }
         } else {
-          alert('生成異常：\n' + err.message + '\n\n💡 建議點擊「📋 貼上 AI 行程」，將 ChatGPT 回覆的文字或 JSON 直接貼上匯入！');
+          alert('生成異常：\n' + err.message + '\n\n💡 建議切換為 Google Gemini 或點擊「貼上 AI 行程」匯入。');
         }
       } finally {
         btn.disabled = false;
@@ -1458,22 +1473,11 @@
     }
 
     // ==================== 時間軸渲染 (支援連續全覽與單天模式) ====================
-    const CATEGORY_MAP = {
-      sight: { name: '觀光景點', icon: 'camera', badgeClass: 'bg-blue-50 text-blue-700 border-blue-200' },
-      food: { name: '在地美食', icon: 'utensils', badgeClass: 'bg-orange-50 text-orange-700 border-orange-200' },
-      cafe: { name: '咖啡甜點', icon: 'coffee', badgeClass: 'bg-amber-50 text-amber-700 border-amber-200' },
-      shop: { name: '逛街購物', icon: 'shopping-bag', badgeClass: 'bg-pink-50 text-pink-700 border-pink-200' },
-      hotel: { name: '住宿飯店', icon: 'bed', badgeClass: 'bg-purple-50 text-purple-700 border-purple-200' },
-      transit: { name: '交通運輸', icon: 'bus', badgeClass: 'bg-slate-100 text-slate-700 border-slate-300' },
-      other: { name: '其他活動', icon: 'map-pin', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
-    };
-
     function renderTimelines() {
       const container = document.getElementById('mainTimelineWrapper');
       container.innerHTML = '';
 
       if (viewMode === 'all') {
-        // 全行程連續展開模式
         tripData.days.forEach((day, dIdx) => {
           const dayBlock = document.createElement('div');
           dayBlock.id = `day-block-${day.dayNumber}`;
@@ -1515,7 +1519,6 @@
             spotContainer.appendChild(createSpotCardElement(spot, dIdx));
           });
 
-          // 初始化各天拖曳
           new Sortable(spotContainer, {
             handle: '.drag-handle',
             animation: 200,
@@ -1531,7 +1534,6 @@
         });
 
       } else {
-        // 單天專注模式
         const currentDay = tripData.days[currentDayIndex];
         const dayBlock = document.createElement('div');
         dayBlock.className = 'space-y-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm';
@@ -1836,7 +1838,7 @@
       currentSpotForAi = spot;
 
       document.getElementById('aiRecSubtitle').innerText = `針對「${spot.name}」探索周邊 (Day ${dayIndex + 1})`;
-      const providerLabel = userSettings.aiProvider === 'groq' ? 'Groq' : 'Google Gemini';
+      const providerLabel = userSettings.aiProvider === 'gemini' ? 'Google Gemini' : 'Groq';
       document.getElementById('aiFetchButtonLabel').innerText = `即時 AI 推薦 (${providerLabel})`;
       openModal('aiRecModal');
       renderAiRecPromptView();
@@ -1855,11 +1857,11 @@
 
     function buildAiPrompt(spotName, preference) {
       return `我正在規劃旅遊行程，目前已安排景點【${spotName}】。
-請針對該景點，依照【${preference}】偏好，推薦 3 個步行或車程 15 分鐘內的周邊景點/美食。
-請嚴格以 JSON 陣列格式回傳（陣列內包含 3 個物件，不要輸出其他多餘文字）：
+請針對該景點，依照【${preference}】偏好，推薦 3 個步行或車程 15 分鐘內的周邊真實知名景點/美食（絕對不可捏造抽象名稱）。
+請嚴格以 JSON 陣列格式回傳：
 [
   {
-    "name": "店名或景點名",
+    "name": "真實店名或景點名",
     "category": "food",
     "duration": 60,
     "cost": 300,
@@ -1904,7 +1906,7 @@
 
       try {
         const prompt = buildAiPrompt(currentSpotForAi.name, selectedAiPreference);
-        const recommendations = await executeAiWithFailover(prompt, 'You are a helpful travel planner assistant. Always respond with a valid JSON array.');
+        const recommendations = await executeAiWithFailover(prompt, GLOBAL_SYSTEM_PROMPT);
         if (Array.isArray(recommendations)) {
           renderAiDirectRecommendations(recommendations);
         } else {
@@ -1912,7 +1914,7 @@
         }
       } catch (err) {
         if (err.message === 'NO_KEYS') {
-          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可直接點擊「複製提示詞」手動去慣用 AI 生成）')) {
+          if (confirm('尚未填寫 API Key！是否現在前往設定？（推薦免費申請 Google Gemini，地名最真實精確）')) {
             closeModal('aiRecModal');
             openSettingsModal();
           }
@@ -1931,7 +1933,7 @@
       const container = document.getElementById('aiRecResultsContainer');
       container.innerHTML = `
         <div class="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
-          <span>✨ 找到 ${list.length} 個推薦點：</span>
+          <span>✨ 找到 ${list.length} 個真實推薦點：</span>
           <button onclick="renderAiRecPromptView()" class="text-indigo-600 hover:underline">返回提示詞</button>
         </div>
       `;
@@ -1994,14 +1996,14 @@
     function loadSamplePasteText() {
       document.getElementById('magicPasteTextarea').value = 
 `Day 1
-10:00 池上伯朗大道與天堂路 (漫遊稻浪)
-12:30 池上飯包文化故事館 (午餐)
-15:00 鹿野高台 (眺望縱谷景觀)
+10:00 鵝鑾鼻燈塔 (台灣最南端海景)
+12:30 後壁湖阿興生魚片 (超人氣海鮮午餐)
+15:00 白沙灣海灘 (戲水放空與看夕陽)
 
 Day 2
-10:00 加路蘭海岸 (聽海看漂流木)
-12:30 都蘭糖廠 (文青園區午餐)
-15:30 三仙臺 (八拱跨海步橋)`;
+10:00 國立海洋生物博物館 (海底隧道與企鵝館)
+14:00 鹿境梅花鹿生態園區 (近距離互動餵食)
+18:00 墾丁大街夜市 (在地熱鬧小吃美食)`;
     }
 
     function executeMagicPaste() {
@@ -2011,7 +2013,6 @@ Day 2
         return;
       }
 
-      // 模式 1：JSON 格式自動檢測與全案匯入
       if (rawText.includes('"days"') || rawText.startsWith('{')) {
         try {
           const parsed = cleanAndParseJson(rawText);
@@ -2046,7 +2047,6 @@ Day 2
         }
       }
 
-      // 模式 2：支援跨天多日文字清單 (如 Day 1 / Day 2 / 第一天)
       const lines = rawText.split('\n');
       let isMultiDay = lines.some(l => /^(Day\s*\d+|第\s*[一二三四五六七八九十\d]+\s*天)/i.test(l.trim()));
       
@@ -2088,7 +2088,6 @@ Day 2
         }
       }
 
-      // 模式 3：單日文字清單
       let count = 0;
       lines.forEach(line => {
         line = line.trim();
@@ -2328,11 +2327,11 @@ Day 2
     }
 
     async function testActiveApiKey() {
-      const isGroq = userSettings.aiProvider === 'groq';
-      const key = isGroq ? document.getElementById('groqApiKeyInput').value.trim() : document.getElementById('geminiApiKeyInput').value.trim();
+      const isGemini = (userSettings.aiProvider === 'gemini');
+      const key = isGemini ? document.getElementById('geminiApiKeyInput').value.trim() : document.getElementById('groqApiKeyInput').value.trim();
 
       if (!key) {
-        alert(`請先輸入 ${isGroq ? 'Groq' : 'Gemini'} API Key！`);
+        alert(`請先輸入 ${isGemini ? 'Google Gemini' : 'Groq'} API Key！`);
         return;
       }
 
@@ -2341,16 +2340,16 @@ Day 2
       btn.innerHTML = `<span class="animate-spin inline-block mr-1">⏳</span> 動態探測中...`;
 
       try {
-        if (isGroq) {
-          const models = await discoverGroqModels(key);
-          const testPrompt = `{"test": true}`;
-          const res = await callGroqDirect(testPrompt, 'Respond with JSON.');
-          alert(`🎉 Groq 連線完全成功！\n已動態探索到 ${models.length} 個可用模型（優先使用：${models[0]}）。`);
-        } else {
+        if (isGemini) {
           const models = await discoverGeminiModels(key);
           const testPrompt = `{"test": true}`;
           const res = await callGeminiDirect(testPrompt);
           alert(`🎉 Google Gemini 連線完全成功！\n已動態探索到 ${models.length} 個可用模型（優先使用：${models[0]}）。`);
+        } else {
+          const models = await discoverGroqModels(key);
+          const testPrompt = `{"test": true}`;
+          const res = await callGroqDirect(testPrompt, GLOBAL_SYSTEM_PROMPT);
+          alert(`🎉 Groq 連線完全成功！\n已動態探索到 ${models.length} 個可用模型（優先使用：${models[0]}）。`);
         }
       } catch (err) {
         alert('連線失敗：\n' + err.message + '\n請確認 Key 是否複製完整或是否有其他字元。');

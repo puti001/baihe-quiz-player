@@ -75,29 +75,29 @@
         </div>
         <div>
           <h1 class="text-lg font-bold text-slate-900 leading-tight">Puti-AI 智慧旅遊行程設計器</h1>
-          <p class="text-xs text-slate-500">動線規劃 ‧ Gemini / Groq 雙 AI 支援 ‧ 一鍵 LINE 小抄</p>
+          <p class="text-xs text-slate-500">輸入目的地與天數 ‧ AI 一鍵規劃全行程</p>
         </div>
       </div>
 
       <!-- 右側動作按鈕 -->
       <div class="flex items-center space-x-2 sm:space-x-3">
-        <button onclick="loadSampleTripPrompt()" class="px-3 py-1.5 text-xs sm:text-sm font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg flex items-center gap-1.5 transition" title="載入東京 3 天示範行程供參考">
-          <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
-          <span class="hidden md:inline">載入</span>範例行程
-        </button>
-        <button onclick="resetTripConfirm()" class="px-2.5 py-1.5 text-xs sm:text-sm font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg flex items-center gap-1 transition" title="清空開新行程">
-          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-          <span class="hidden md:inline">開新行程</span>
+        <button onclick="openWizardModal()" class="px-3.5 py-1.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 rounded-lg flex items-center gap-1.5 shadow-md shadow-indigo-500/20 transition animate-pulse">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          AI 一鍵排行程
         </button>
         <button onclick="openMagicPasteModal()" class="px-3 py-1.5 text-xs sm:text-sm font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg flex items-center gap-1.5 transition">
           <i data-lucide="wand-2" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">AI 文本貼上</span>解析
+          <span class="hidden sm:inline">文本</span>解析
         </button>
         <button onclick="openLineExportModal()" class="px-3 py-1.5 text-xs sm:text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg flex items-center gap-1.5 transition">
           <i data-lucide="share-2" class="w-4 h-4"></i>
           LINE 小抄
         </button>
-        <button onclick="openSettingsModal()" class="px-3 py-1.5 text-xs sm:text-sm font-medium text-sky-700 bg-sky-50 hover:bg-sky-100 rounded-lg flex items-center gap-1.5 transition border border-sky-200" title="API Key (Gemini/Groq) 與設定">
+        <button onclick="resetTripConfirm()" class="px-2.5 py-1.5 text-xs sm:text-sm font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg flex items-center gap-1 transition" title="清空開新行程">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span class="hidden md:inline">重設</span>
+        </button>
+        <button onclick="openSettingsModal()" class="px-3 py-1.5 text-xs sm:text-sm font-medium text-sky-700 bg-sky-50 hover:bg-sky-100 rounded-lg flex items-center gap-1.5 transition border border-sky-200" title="API Key (Gemini/Groq) 設定">
           <i data-lucide="settings" class="w-4 h-4"></i>
           <span class="hidden sm:inline">AI 設定</span>
         </button>
@@ -108,12 +108,74 @@
   <!-- 主工作區 -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
     
+    <!-- AI 迎賓快速規劃橫幅 (Hero Wizard Banner) -->
+    <div id="heroWizardBanner" class="bg-gradient-to-r from-indigo-900 via-slate-900 to-sky-900 rounded-3xl p-6 sm:p-8 text-white mb-6 shadow-xl relative overflow-hidden no-print">
+      <div class="absolute right-0 top-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="relative z-10 max-w-3xl">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-sky-300 text-xs font-semibold backdrop-blur-md mb-3">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          還沒有想法？告訴 AI 目的地與天數，一秒自動排好整趟行程！
+        </div>
+        <h2 class="text-xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+          想去哪裡玩？讓 AI 當您的專屬旅遊規劃師
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+          不用從零手動排，只要選擇想去的地點、天數與旅行偏好，AI 自動幫您串連順路動線、經典地標與必吃美食。
+        </p>
+
+        <!-- 快捷規劃表單列 -->
+        <div class="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-white/10 p-2.5 rounded-2xl backdrop-blur-md border border-white/15">
+          <div class="sm:col-span-4">
+            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：京都、東京、首爾、曼谷、花蓮" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
+          </div>
+          <div class="sm:col-span-3">
+            <select id="quickDaysInput" class="w-full h-11 px-3 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium">
+              <option value="1">1 天 (當日來回)</option>
+              <option value="2">2 天 1 夜 (週末快閃)</option>
+              <option value="3" selected>3 天 2 夜 (經典微旅行)</option>
+              <option value="4">4 天 3 夜 (深度漫遊)</option>
+              <option value="5">5 天 4 夜 (全覽精華)</option>
+              <option value="6">6 天 5 夜</option>
+              <option value="7">7 天 6 夜 (一週長假)</option>
+            </select>
+          </div>
+          <div class="sm:col-span-3">
+            <select id="quickStyleInput" class="w-full h-11 px-3 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium">
+              <option value="經典必去打卡">📸 經典打卡 (初訪必去)</option>
+              <option value="慢活放鬆/不趕行程" selected>☕ 慢活放鬆 (一天2~3點)</option>
+              <option value="在地美食吃貨之旅">🍜 美食吃貨 (排隊名店)</option>
+              <option value="親子友善/推車草地">👶 親子放電 (推車友善)</option>
+              <option value="長輩慢遊/少爬坡">👵 長輩悠閒 (少走少爬)</option>
+              <option value="瘋狂逛街購物">🛍️ 逛街購物 (商圈百貨)</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <button onclick="triggerQuickGenerate()" class="w-full h-11 bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg transition">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              開始生成
+            </button>
+          </div>
+        </div>
+
+        <!-- 熱門城市快速按鈕 -->
+        <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-slate-300">
+          <span class="text-slate-400 text-[11px]">熱門推薦：</span>
+          <button onclick="setQuickCity('京都', 4, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 京都 4天</button>
+          <button onclick="setQuickCity('東京', 5, '經典必去打卡')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 東京 5天</button>
+          <button onclick="setQuickCity('大阪京都', 5, '在地美食吃貨之旅')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 關西 5天</button>
+          <button onclick="setQuickCity('曼谷', 4, '在地美食吃貨之旅')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇭 曼谷 4天</button>
+          <button onclick="setQuickCity('花蓮', 3, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 花蓮 3天</button>
+        </div>
+      </div>
+    </div>
+
     <!-- 頂部行程總覽列 -->
     <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm mb-6 no-print">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex-1">
           <div class="flex items-center gap-2">
-            <input type="text" id="tripTitleInput" onchange="updateTripTitle(this.value)" class="text-xl sm:text-2xl font-bold text-slate-900 bg-transparent border-b border-dashed border-slate-300 hover:border-sky-500 focus:border-sky-600 focus:outline-none px-1 py-0.5 w-full max-w-md transition" placeholder="點此輸入行程標題 (例如：2026 京都慢活之旅)">
+            <input type="text" id="tripTitleInput" onchange="updateTripTitle(this.value)" class="text-xl sm:text-2xl font-bold text-slate-900 bg-transparent border-b border-dashed border-slate-300 hover:border-sky-500 focus:border-sky-600 focus:outline-none px-1 py-0.5 w-full max-w-md transition" placeholder="點此自訂行程名稱">
           </div>
           <p class="text-xs sm:text-sm text-slate-500 mt-1 flex items-center gap-3">
             <span><i data-lucide="calendar" class="w-3.5 h-3.5 inline mr-1 text-slate-400"></i><span id="tripDaysCount">共 1 天</span></span>
@@ -125,8 +187,8 @@
         <!-- 快捷功能 -->
         <div class="flex flex-wrap items-center gap-2">
           <button onclick="runHealthCheck()" class="px-3.5 py-2 text-xs sm:text-sm font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl flex items-center gap-2 transition shadow-sm">
-            <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i>
-            AI 旅程健檢
+            <i data-lucide="activity" class="w-4 h-4 text-amber-600"></i>
+            旅程健檢
           </button>
           <button onclick="openGoogleMapsDayRoute()" class="px-3.5 py-2 text-xs sm:text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl flex items-center gap-2 transition shadow-sm">
             <i data-lucide="navigation" class="w-4 h-4 text-blue-600"></i>
@@ -181,16 +243,17 @@
           <div class="w-12 h-12 bg-sky-50 text-sky-500 rounded-full flex items-center justify-center mx-auto mb-3">
             <i data-lucide="map-pin" class="w-6 h-6"></i>
           </div>
-          <h3 class="text-sm font-semibold text-slate-700">這一天還是空白的</h3>
+          <h3 class="text-sm font-semibold text-slate-700">這一天還沒有任何景點</h3>
           <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            點擊上方「新增景點」、使用「AI 文本解析」貼入行程，或點擊右上角「載入範例行程」參考示範！
+            您可以使用上方橫幅的「AI 一鍵排行程」、手動新增景點，或使用「AI 文本解析」貼入行程！
           </p>
           <div class="mt-4 flex items-center justify-center gap-2">
-            <button onclick="openAddSpotModal()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-semibold transition">
-              + 手動新增景點
+            <button onclick="openWizardModal()" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              AI 幫我想行程
             </button>
-            <button onclick="loadSampleTripPrompt()" class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg text-xs font-semibold transition">
-              載入示範範本
+            <button onclick="openAddSpotModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition">
+              + 手動新增景點
             </button>
           </div>
         </div>
@@ -220,23 +283,23 @@
           </div>
         </div>
 
-        <!-- AI 旅遊副駕駛小錦囊 -->
+        <!-- 旅遊小精靈提示 -->
         <div class="bg-gradient-to-br from-indigo-50 to-sky-50 rounded-2xl p-5 border border-indigo-100 text-indigo-950">
           <div class="flex items-center gap-2 mb-2">
             <i data-lucide="sparkle" class="w-5 h-5 text-indigo-600"></i>
-            <h3 class="text-sm font-bold">雙軌 AI 智慧助手</h3>
+            <h3 class="text-sm font-bold">雙軌 AI 智慧引擎</h3>
           </div>
           <p class="text-xs text-indigo-800 leading-relaxed mb-3">
-            支援 <strong>Google Gemini</strong> 與極速 <strong>Groq (Llama 3.3)</strong> 雙引擎：
+            支援 <strong>Google Gemini</strong> 與 <strong>Groq (Llama 3.3)</strong> 極速雙引擎：
           </p>
           <ul class="text-xs space-y-1.5 text-indigo-900/80">
             <li class="flex items-start gap-1.5">
               <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0"></i>
-              <span>輸入免費 API Key (Gemini 或 Groq)，網頁內一秒獲得周邊順路美食。</span>
+              <span>輸入免費 API Key (Gemini 或 Groq)，整趟 3~7 天行程一鍵秒成！</span>
             </li>
             <li class="flex items-start gap-1.5">
               <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0"></i>
-              <span>不填 Key 亦可一鍵複製 Prompt 到 ChatGPT / Claude！</span>
+              <span>未填 Key 亦可一鍵複製專屬 Prompt 到 ChatGPT / Claude 生成。</span>
             </li>
           </ul>
         </div>
@@ -258,6 +321,89 @@
   </footer>
 
   <!-- ==================== 模態視窗 (Modals) ==================== -->
+
+  <!-- 0. AI 一鍵全行程生成 Wizard Modal -->
+  <div id="wizardModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-100 max-h-[92vh] flex flex-col">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">AI 一鍵規劃整趟旅遊行程</h3>
+            <p class="text-xs text-slate-500">輸入目的地與天數，AI 自動為您量身打造最佳動線</p>
+          </div>
+        </div>
+        <button onclick="closeModal('wizardModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto scrollbar-thin py-4 space-y-4" id="wizardBody">
+        
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">1. 目的地城市 / 地區 <span class="text-rose-500">*</span></label>
+          <input type="text" id="wizardDestInput" placeholder="例如：京都、東京、首爾、曼谷、清邁、花蓮台東、沖繩" class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">2. 旅遊天數</label>
+            <select id="wizardDaysSelect" class="w-full px-3 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+              <option value="1">1 天 (一日遊)</option>
+              <option value="2">2 天 1 夜 (週末快閃)</option>
+              <option value="3" selected>3 天 2 夜 (經典精華)</option>
+              <option value="4">4 天 3 夜 (深度漫遊)</option>
+              <option value="5">5 天 4 夜 (全覽首選)</option>
+              <option value="6">6 天 5 夜</option>
+              <option value="7">7 天 6 夜 (一週長假)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">3. 每日節奏與風格</label>
+            <select id="wizardStyleSelect" class="w-full px-3 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+              <option value="慢活放鬆 (一天2-3個點，深度體驗)" selected>☕ 慢活放鬆 (每天2~3點)</option>
+              <option value="經典地標打卡 (初訪必去熱門景點)">📸 經典打卡 (必訪地標)</option>
+              <option value="在地美食吃貨之旅 (特色小吃與名店)">🍜 在地美食 (吃貨首選)</option>
+              <option value="親子友善放電 (推車方便、公園、體驗)">👶 親子放電 (推車草地)</option>
+              <option value="長輩孝親慢遊 (少爬坡、少走、步調慢)">👵 長輩慢遊 (輕鬆少走)</option>
+              <option value="購物逛街狂熱 (商圈、OUTLET、市集)">🛍️ 購物逛街 (百貨市集)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">4. 額外特殊要求 (可選)</label>
+          <input type="text" id="wizardExtraInput" placeholder="例如：想去伏見稻荷大社、一定要吃燒肉、要有雨天室內備案..." class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+        </div>
+
+        <!-- 提示詞預覽折疊區 -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-bold text-slate-700 flex items-center gap-1">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-600"></i> AI 提示詞 (Prompt) 預覽
+            </span>
+            <button onclick="copyWizardPromptText()" class="text-indigo-600 hover:underline font-semibold flex items-center gap-1">
+              <i data-lucide="copy" class="w-3 h-3"></i> 複製到 ChatGPT
+            </button>
+          </div>
+          <p class="text-slate-500 text-[11px] leading-relaxed">
+            若未填寫 API Key，可直接複製提示詞至 ChatGPT 網頁版生成，再用「文本解析」匯入！
+          </p>
+        </div>
+
+      </div>
+
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+        <button onclick="closeModal('wizardModal')" class="px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">取消</button>
+        <button onclick="executeFullTripGenerate()" id="btnExecuteWizard" class="px-5 py-2 text-xs font-bold text-white bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          AI 開始全自動生成
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- 1. 新增 / 編輯景點 Modal -->
   <div id="spotModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -332,7 +478,7 @@
     </div>
   </div>
 
-  <!-- 2. AI 推薦 / 提示詞 Modal -->
+  <!-- 2. AI 景點周邊推薦 / 提示詞 Modal -->
   <div id="aiRecModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -350,7 +496,6 @@
         </button>
       </div>
 
-      <!-- 偏好篩選 -->
       <div class="py-3 flex flex-wrap gap-1.5 items-center">
         <span class="text-xs font-semibold text-slate-600 mr-1">偏好情境：</span>
         <button onclick="setAiFilter(this, '在地小吃/排隊美食')" class="ai-filter-btn px-2.5 py-1 text-xs rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition active-filter">🍜 在地小吃</button>
@@ -360,12 +505,8 @@
         <button onclick="setAiFilter(this, '帶長輩/少爬坡/親子友善')" class="ai-filter-btn px-2.5 py-1 text-xs rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition">👶 親子/長輩</button>
       </div>
 
-      <!-- 推薦內容結果區 (滾動) -->
-      <div class="flex-1 overflow-y-auto scrollbar-thin py-3 space-y-3" id="aiRecResultsContainer">
-        <!-- 狀態 1: 生成中 / 推薦卡片列表 / 提示詞複製區 -->
-      </div>
+      <div class="flex-1 overflow-y-auto scrollbar-thin py-3 space-y-3" id="aiRecResultsContainer"></div>
 
-      <!-- 底部控制列 -->
       <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
         <button onclick="copyAiPromptText()" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center gap-1.5 transition">
           <i data-lucide="copy" class="w-3.5 h-3.5"></i>
@@ -474,9 +615,7 @@
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto scrollbar-thin py-4 space-y-3" id="healthCheckContent">
-        <!-- 健檢報告動態生成 -->
-      </div>
+      <div class="flex-1 overflow-y-auto scrollbar-thin py-4 space-y-3" id="healthCheckContent"></div>
 
       <div class="pt-3 border-t border-slate-100 flex justify-end">
         <button onclick="closeModal('healthCheckModal')" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition">關閉報告</button>
@@ -518,7 +657,7 @@
               <input type="radio" name="aiProvider" value="groq" onchange="switchAiProvider('groq')">
               <div>
                 <div class="text-xs font-bold text-slate-800">Groq (極速推薦)</div>
-                <div class="text-[10px] text-slate-500">Llama 3.3 70B (免費秒回)</div>
+                <div class="text-[10px] text-slate-500">Llama 3.3 70B (秒回)</div>
               </div>
             </label>
           </div>
@@ -567,69 +706,26 @@
   <!-- JavaScript 核心邏輯 -->
   <script>
     // ==================== 預設資料與狀態 ====================
-    const STORAGE_KEY = 'puti_travel_planner_data_v2';
-    const SETTINGS_KEY = 'puti_travel_planner_settings_v2';
+    const STORAGE_KEY = 'puti_travel_planner_data_v3';
+    const SETTINGS_KEY = 'puti_travel_planner_settings_v3';
 
     let currentDayIndex = 0;
     let selectedAiPreference = '在地小吃/排隊美食';
     let currentSpotForAi = null;
 
-    // 預設乾淨空白行程
     const DEFAULT_EMPTY_TRIP = {
-      title: '我的旅遊行程',
+      title: '',
       currency: 'NT$',
       days: [
-        {
-          dayNumber: 1,
-          date: '',
-          spots: []
-        }
+        { dayNumber: 1, date: '', spots: [] }
       ],
       bucketList: []
-    };
-
-    // 示範範例行程 (東京 3 天)
-    const SAMPLE_TOKYO_TRIP = {
-      title: '2026 日本關東 3 天 2 夜精華遊 (範例)',
-      currency: 'NT$',
-      days: [
-        {
-          dayNumber: 1,
-          date: '2026-08-28',
-          spots: [
-            { id: 's_1', name: '淺草寺雷門', time: '09:30', duration: 90, category: 'sight', cost: 0, booking: '', notes: '參拜觀音、拍雷門大燈籠、逛仲見世通' },
-            { id: 's_2', name: '大黑家天婦羅 本店', time: '11:30', duration: 60, category: 'food', cost: 500, booking: '排隊約20分', notes: '百年海老天丼，醬汁濃郁' },
-            { id: 's_3', name: '東京晴空塔 (Tokyo Skytree)', time: '14:00', duration: 120, category: 'sight', cost: 750, booking: '預約號 #TK8892', notes: '展望台看夕陽，樓下 Solamachi 逛街' }
-          ]
-        },
-        {
-          dayNumber: 2,
-          date: '2026-08-29',
-          spots: [
-            { id: 's_4', name: '明治神宮', time: '09:00', duration: 90, category: 'sight', cost: 0, booking: '', notes: '林蔭大道散步，感受寧靜' },
-            { id: 's_5', name: '原宿竹下通 & 表參道', time: '11:00', duration: 120, category: 'shop', cost: 1200, booking: '', notes: '吃可麗餅、喝藍瓶咖啡' },
-            { id: 's_6', name: 'Shibuya Sky 展望台', time: '16:30', duration: 90, category: 'sight', cost: 650, booking: '16:40 入場券', notes: '露天無邊際停機坪看澀谷十字路口夜景' }
-          ]
-        },
-        {
-          dayNumber: 3,
-          date: '2026-08-30',
-          spots: [
-            { id: 's_7', name: '築地場外市場', time: '08:30', duration: 90, category: 'food', cost: 800, booking: '', notes: '生魚片丼飯、玉子燒、烤海鮮' },
-            { id: 's_8', name: '銀座步行者天國', time: '11:00', duration: 150, category: 'shop', cost: 2000, booking: '', notes: 'GINZA SIX、伊東屋文具' }
-          ]
-        }
-      ],
-      bucketList: [
-        { id: 'b_1', name: '阿美橫町商店街', category: 'shop', duration: 90, notes: '平價藥妝、零食' },
-        { id: 'b_2', name: '墨田水族館 (雨天備案)', category: 'sight', duration: 90, notes: '晴空塔下方室內水族館' }
-      ]
     };
 
     let tripData = JSON.parse(JSON.stringify(DEFAULT_EMPTY_TRIP));
 
     let userSettings = {
-      aiProvider: 'gemini', // 'gemini' 或 'groq'
+      aiProvider: 'gemini',
       geminiApiKey: '',
       groqApiKey: '',
       currency: 'NT$'
@@ -659,9 +755,7 @@
       }
       const savedSettings = localStorage.getItem(SETTINGS_KEY);
       if (savedSettings) {
-        try { 
-          userSettings = Object.assign(userSettings, JSON.parse(savedSettings));
-        } catch (e) { console.error(e); }
+        try { userSettings = Object.assign(userSettings, JSON.parse(savedSettings)); } catch (e) { console.error(e); }
       }
       syncSettingsUI();
     }
@@ -708,18 +802,6 @@
       saveToStorage();
     }
 
-    // 載入示範行程
-    function loadSampleTripPrompt() {
-      if (confirm('確定要載入「東京 3 天 2 夜示範行程」嗎？這會覆蓋目前的行程草稿。')) {
-        tripData = JSON.parse(JSON.stringify(SAMPLE_TOKYO_TRIP));
-        currentDayIndex = 0;
-        saveToStorage();
-        renderAll();
-        showToast('已載入示範行程！');
-      }
-    }
-
-    // 清空開新行程
     function resetTripConfirm() {
       if (confirm('確定要開新行程嗎？現有的景點將被全部清空。')) {
         tripData = JSON.parse(JSON.stringify(DEFAULT_EMPTY_TRIP));
@@ -727,6 +809,189 @@
         saveToStorage();
         renderAll();
         showToast('已重設為全新空白行程！');
+      }
+    }
+
+    // ==================== AI 一鍵全行程生成 Wizard ====================
+    function openWizardModal() {
+      document.getElementById('wizardDestInput').value = document.getElementById('quickDestInput').value || '';
+      document.getElementById('wizardDaysSelect').value = document.getElementById('quickDaysInput').value || '3';
+      document.getElementById('wizardStyleSelect').value = document.getElementById('quickStyleInput').value || '慢活放鬆/不趕行程';
+      openModal('wizardModal');
+    }
+
+    function setQuickCity(city, days, style) {
+      document.getElementById('quickDestInput').value = city;
+      document.getElementById('quickDaysInput').value = days;
+      document.getElementById('quickStyleInput').value = style;
+      triggerQuickGenerate();
+    }
+
+    function triggerQuickGenerate() {
+      const dest = document.getElementById('quickDestInput').value.trim();
+      if (!dest) {
+        alert('請先輸入想去的目的地城市（例如：京都、東京、首爾、曼谷）！');
+        document.getElementById('quickDestInput').focus();
+        return;
+      }
+      document.getElementById('wizardDestInput').value = dest;
+      document.getElementById('wizardDaysSelect').value = document.getElementById('quickDaysInput').value;
+      document.getElementById('wizardStyleSelect').value = document.getElementById('quickStyleInput').value;
+      openModal('wizardModal');
+    }
+
+    function buildFullTripPrompt(dest, days, style, extra) {
+      return `你是一位頂級專業的旅遊規劃導遊。請為我規劃【${dest}】共【${days} 天】的旅遊行程。
+旅行風格：【${style}】${extra ? `，特殊要求：【${extra}】` : ''}。
+請確保每天行程順路不繞路，並安排合理的時間與景點停留。
+請嚴格以 JSON 格式回傳（只回傳純 JSON，不要包含 markdown 標籤或任何解釋文字）：
+{
+  "title": "${dest} ${days}天${days > 1 ? (days-1)+'夜' : ''}精彩之旅",
+  "days": [
+    {
+      "dayNumber": 1,
+      "date": "",
+      "spots": [
+        {
+          "name": "景點或餐廳名稱",
+          "time": "09:30",
+          "duration": 90,
+          "category": "sight或food或cafe或shop或hotel",
+          "cost": 300,
+          "notes": "必看特色或必吃推薦"
+        }
+      ]
+    }
+  ],
+  "bucketList": [
+    {
+      "name": "推薦的雨天備案或周邊小店",
+      "category": "sight或food",
+      "duration": 60,
+      "notes": "備案說明"
+    }
+  ]
+}`;
+    }
+
+    function copyWizardPromptText() {
+      const dest = document.getElementById('wizardDestInput').value.trim() || '指定城市';
+      const days = document.getElementById('wizardDaysSelect').value;
+      const style = document.getElementById('wizardStyleSelect').value;
+      const extra = document.getElementById('wizardExtraInput').value.trim();
+      const prompt = buildFullTripPrompt(dest, days, style, extra);
+
+      navigator.clipboard.writeText(prompt).then(() => {
+        showToast('已複製全行程 Prompt！可直接貼到 ChatGPT');
+      });
+    }
+
+    async function executeFullTripGenerate() {
+      const dest = document.getElementById('wizardDestInput').value.trim();
+      if (!dest) {
+        alert('請填寫目的地！');
+        return;
+      }
+      const days = parseInt(document.getElementById('wizardDaysSelect').value) || 3;
+      const style = document.getElementById('wizardStyleSelect').value;
+      const extra = document.getElementById('wizardExtraInput').value.trim();
+
+      const isGroq = userSettings.aiProvider === 'groq';
+      const activeKey = isGroq ? userSettings.groqApiKey : userSettings.geminiApiKey;
+
+      if (!activeKey) {
+        if (confirm(`尚未設定 ${isGroq ? 'Groq' : 'Gemini'} API Key！是否現在前往設定？（亦可點擊「複製到 ChatGPT」去網頁版生成）`)) {
+          closeModal('wizardModal');
+          openSettingsModal();
+        }
+        return;
+      }
+
+      const btn = document.getElementById('btnExecuteWizard');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> AI 生成中 (${days} 天)...`;
+
+      try {
+        const prompt = buildFullTripPrompt(dest, days, style, extra);
+        let resultJson = null;
+
+        if (isGroq) {
+          const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${userSettings.groqApiKey}`
+            },
+            body: JSON.stringify({
+              model: 'llama-3.3-70b-versatile',
+              messages: [
+                { role: 'system', content: 'You are a professional travel planner. Always output valid JSON object matching the requested schema.' },
+                { role: 'user', content: prompt }
+              ],
+              temperature: 0.6
+            })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error.message);
+
+          let text = data.choices[0].message.content.trim();
+          const jsonMatch = text.match(/\{[\s\S]*\}/);
+          if (jsonMatch) text = jsonMatch[0];
+          resultJson = JSON.parse(text);
+
+        } else {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userSettings.geminiApiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { responseMimeType: "application/json" }
+            })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error.message);
+
+          const rawText = data.candidates[0].content.parts[0].text;
+          resultJson = JSON.parse(rawText);
+        }
+
+        if (resultJson && resultJson.days) {
+          // 為每個景點加上唯一 ID
+          resultJson.days.forEach(d => {
+            if (d.spots) {
+              d.spots.forEach(s => {
+                s.id = 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+              });
+            }
+          });
+          if (resultJson.bucketList) {
+            resultJson.bucketList.forEach(b => {
+              b.id = 'b_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+            });
+          }
+
+          tripData = {
+            title: resultJson.title || `${dest} ${days}天精華遊`,
+            currency: userSettings.currency || 'NT$',
+            days: resultJson.days,
+            bucketList: resultJson.bucketList || []
+          };
+
+          currentDayIndex = 0;
+          saveToStorage();
+          closeModal('wizardModal');
+          renderAll();
+          showToast(`🎉 成功為您排好 ${dest} ${days} 天完整行程！`);
+        } else {
+          throw new Error('AI 回傳格式不符合預期。');
+        }
+
+      } catch (err) {
+        alert('生成失敗：' + err.message + '\n請檢查 API Key 或網路連線。');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
       }
     }
 
@@ -751,7 +1016,6 @@
         container.appendChild(btn);
       });
 
-      // 新增天數按鈕
       const addDayBtn = document.createElement('button');
       addDayBtn.className = 'flex-shrink-0 px-3 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 border border-dashed border-slate-300 transition flex items-center gap-1';
       addDayBtn.innerHTML = `<i data-lucide="plus" class="w-3.5 h-3.5"></i> 加一天`;
@@ -870,7 +1134,7 @@
             <div class="flex items-center gap-1.5 no-print flex-shrink-0">
               <button onclick="openAiRecModal('${spot.id}')" class="px-2.5 py-1 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg flex items-center gap-1 transition" title="探索周邊順路美食/景點">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i>
-                <span class="hidden sm:inline">AI 推薦</span>
+                <span class="hidden sm:inline">AI 周邊</span>
               </button>
               <button onclick="moveToBucketList('${spot.id}')" class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition" title="移至候選池備案">
                 <i data-lucide="bookmark" class="w-4 h-4"></i>
@@ -922,7 +1186,7 @@
       });
     }
 
-    // ==================== 拖曳排序初始化 (SortableJS) ====================
+    // ==================== 拖曳排序初始化 ====================
     function initSortable() {
       const timelineEl = document.getElementById('spotsTimeline');
       new Sortable(timelineEl, {
@@ -1069,7 +1333,7 @@
       lucide.createIcons();
     }
 
-    // ==================== 雙軌 AI 推薦 (Gemini + Groq) ====================
+    // ==================== 景點 AI 周邊推薦 ====================
     function openAiRecModal(spotId) {
       const spot = tripData.days[currentDayIndex].spots.find(s => s.id === spotId);
       if (!spot) return;
@@ -1122,10 +1386,6 @@
           </div>
           <pre id="currentPromptText" class="text-xs text-slate-700 font-mono bg-white p-3 rounded-lg border border-slate-200 whitespace-pre-wrap select-all leading-relaxed">${promptText}</pre>
         </div>
-        <div class="text-xs text-slate-500 flex items-center gap-1 px-1">
-          <i data-lucide="info" class="w-3.5 h-3.5 text-sky-500"></i>
-          已設定免費 Gemini 或 Groq Key 時，可點擊右下角按鈕直接在網頁內秒出結果！
-        </div>
       `;
       lucide.createIcons();
     }
@@ -1153,7 +1413,7 @@
       container.innerHTML = `
         <div class="text-center py-12 space-y-3">
           <div class="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p class="text-xs text-indigo-900 font-medium">${isGroq ? 'Groq (Llama 3.3)' : 'Gemini'} 正在極速探索 ${currentSpotForAi.name} 周邊順路寶藏...</p>
+          <p class="text-xs text-indigo-900 font-medium">${isGroq ? 'Groq' : 'Gemini'} 正在極速探索 ${currentSpotForAi.name} 周邊順路寶藏...</p>
         </div>
       `;
 
@@ -1162,7 +1422,6 @@
         let recommendations = [];
 
         if (isGroq) {
-          // 呼叫 Groq API (OpenAI 兼容端點)
           const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -1172,7 +1431,7 @@
             body: JSON.stringify({
               model: 'llama-3.3-70b-versatile',
               messages: [
-                { role: 'system', content: 'You are a helpful travel planner assistant. Always respond with a valid JSON array containing recommended spots.' },
+                { role: 'system', content: 'You are a helpful travel planner assistant. Always respond with a valid JSON array.' },
                 { role: 'user', content: prompt }
               ],
               temperature: 0.5
@@ -1187,7 +1446,6 @@
           recommendations = JSON.parse(contentStr);
 
         } else {
-          // 呼叫 Google Gemini API
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userSettings.geminiApiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1208,7 +1466,6 @@
         container.innerHTML = `
           <div class="bg-rose-50 text-rose-700 p-4 rounded-xl text-xs border border-rose-200 space-y-2">
             <p class="font-bold">連線或解析失敗：${err.message}</p>
-            <p>請檢查 API Key 是否正確，或點擊下方按鈕直接複製提示詞至 ChatGPT 網頁版。</p>
           </div>
         `;
       }
@@ -1357,7 +1614,7 @@
       document.getElementById('btnLineSimple').className = isSimple ? 'px-3 py-1 text-xs rounded-lg font-medium bg-emerald-100 text-emerald-800 transition' : 'px-3 py-1 text-xs rounded-lg font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
       document.getElementById('btnLineDetail').className = !isSimple ? 'px-3 py-1 text-xs rounded-lg font-medium bg-emerald-100 text-emerald-800 transition' : 'px-3 py-1 text-xs rounded-lg font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
 
-      let out = `✈️【${tripData.title}】\n`;
+      let out = `✈️【${tripData.title || '我的旅遊行程'}】\n`;
       out += `📅 行程共 ${tripData.days.length} 天 ‧ 隨行小抄\n`;
       out += `──────────────────\n\n`;
 

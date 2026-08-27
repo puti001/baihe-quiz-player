@@ -107,13 +107,13 @@
         </div>
       </div>
 
-      <!-- 右側動作按鈕 (含發光導引按鈕) -->
+      <!-- 右側動作按鈕 (含動態狀態按鈕) -->
       <div class="flex items-center space-x-2 sm:space-x-2.5">
         
-        <!-- 發光按鈕 1: 先申請 API Key -->
-        <button onclick="openSettingsModal()" class="glow-btn-gold px-3 py-1.5 text-xs sm:text-sm font-bold text-amber-950 bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-400 hover:from-amber-200 hover:to-yellow-300 rounded-xl flex items-center gap-1.5 transition border border-amber-300 shadow-lg">
-          <i data-lucide="key" class="w-4 h-4 text-amber-900"></i>
-          <span>1. 先申請 API Key</span>
+        <!-- 動態 API Key 狀態按鈕 (Navbar) -->
+        <button onclick="openSettingsModal()" id="navApiKeyBtn" class="glow-btn-gold px-3 py-1.5 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition border shadow-sm">
+          <i data-lucide="key" class="w-4 h-4" id="navApiKeyIcon"></i>
+          <span id="navApiKeyLabel">1. 先申請 API Key</span>
         </button>
 
         <!-- 發光按鈕 2: 再看使用指南 -->
@@ -146,13 +146,13 @@
       
       <div class="relative z-10 max-w-3xl">
         
-        <!-- 頂部引導膠囊 -->
+        <!-- 頂部動態狀態膠囊 (圖片箭頭所指之處) -->
         <div class="flex flex-wrap items-center gap-2 mb-3">
-          <button onclick="openSettingsModal()" class="glow-btn-gold inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 text-xs font-bold shadow-md cursor-pointer transition">
-            <i data-lucide="key" class="w-3.5 h-3.5"></i>
-            第一步：免費申請 API Key (支援 Groq & Gemini 雙向自動備援)
+          <button onclick="openSettingsModal()" id="bannerApiKeyStatusBtn" class="glow-btn-gold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-md cursor-pointer transition">
+            <i data-lucide="key" class="w-3.5 h-3.5" id="bannerApiKeyIcon"></i>
+            <span id="bannerApiKeyStatusLabel">第一步：點此免費申請 API Key (Groq秒回 / Gemini)</span>
           </button>
-          <button onclick="openGuideModal()" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-sky-300 text-xs font-medium backdrop-blur-md transition">
+          <button onclick="openGuideModal()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-300 text-xs font-medium backdrop-blur-md transition">
             <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
             新手操作指南
           </button>
@@ -389,7 +389,7 @@
             先填免費 API Key（極速解鎖全自動生成）
           </h4>
           <p class="text-amber-800">
-            點擊上方金黃色按鈕 <strong>「1. 先申請 API Key」</strong>，申請 Groq（秒回推薦）或 Google Gemini 免費 Key 填入。系統支援<strong>雙向自動切換備援</strong>，永久免費！
+            點擊上方按鈕 <strong>「API Key 狀態」</strong>，申請 Groq（秒回推薦）或 Google Gemini 免費 Key 填入。系統支援<strong>雙向自動切換備援</strong>，永久免費！
           </p>
         </div>
 
@@ -891,6 +891,7 @@
         try { userSettings = Object.assign(userSettings, JSON.parse(savedSettings)); } catch (e) { console.error(e); }
       }
       syncSettingsUI();
+      updateApiKeyStatusUI();
     }
 
     function syncSettingsUI() {
@@ -898,6 +899,63 @@
       document.getElementById('groqApiKeyInput').value = userSettings.groqApiKey || '';
       document.getElementById('currencySymbolInput').value = userSettings.currency || 'NT$';
       switchAiProvider(userSettings.aiProvider || 'groq');
+    }
+
+    // ==================== 動態更新 API Key 狀態指示徽章 ====================
+    function updateApiKeyStatusUI() {
+      const hasGroq = !!(userSettings.groqApiKey && userSettings.groqApiKey.trim());
+      const hasGemini = !!(userSettings.geminiApiKey && userSettings.geminiApiKey.trim());
+
+      const bannerBtn = document.getElementById('bannerApiKeyStatusBtn');
+      const bannerLabel = document.getElementById('bannerApiKeyStatusLabel');
+      const bannerIcon = document.getElementById('bannerApiKeyIcon');
+
+      const navBtn = document.getElementById('navApiKeyBtn');
+      const navLabel = document.getElementById('navApiKeyLabel');
+      const navIcon = document.getElementById('navApiKeyIcon');
+
+      if (!hasGroq && !hasGemini) {
+        // 未設定 Key (金黃發光狀態)
+        bannerBtn.className = 'glow-btn-gold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-amber-950 bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-400 hover:from-amber-200 hover:to-yellow-300 shadow-md cursor-pointer transition border border-amber-300';
+        bannerLabel.innerText = '🔑 未設定 API Key（點此免費申請）';
+        bannerIcon.setAttribute('data-lucide', 'key');
+
+        navBtn.className = 'glow-btn-gold px-3 py-1.5 text-xs sm:text-sm font-bold text-amber-950 bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-400 hover:from-amber-200 hover:to-yellow-300 rounded-xl flex items-center gap-1.5 transition border border-amber-300 shadow-sm';
+        navLabel.innerText = '1. 先申請 API Key';
+        navIcon.setAttribute('data-lucide', 'key');
+
+      } else if (hasGroq && hasGemini) {
+        // 雙引擎皆就緒 (自動備援)
+        bannerBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-100 bg-emerald-900/60 hover:bg-emerald-800/80 border border-emerald-400/50 shadow-md cursor-pointer transition backdrop-blur-md';
+        bannerLabel.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block mr-1"></span>🛡️ 雙 AI 已就緒：Groq + Gemini (自動備援中) ‧ 點此設定';
+        bannerIcon.setAttribute('data-lucide', 'shield-check');
+
+        navBtn.className = 'px-3 py-1.5 text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-xl flex items-center gap-1.5 transition shadow-sm';
+        navLabel.innerText = '🛡️ 雙 AI 備援就緒';
+        navIcon.setAttribute('data-lucide', 'shield-check');
+
+      } else if (hasGroq) {
+        // 僅 Groq
+        bannerBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-200 bg-indigo-900/60 hover:bg-indigo-800/80 border border-indigo-400/50 shadow-md cursor-pointer transition backdrop-blur-md';
+        bannerLabel.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block mr-1"></span>🟢 AI 已就緒：Groq (Llama 3.3) ‧ 點此管理';
+        bannerIcon.setAttribute('data-lucide', 'zap');
+
+        navBtn.className = 'px-3 py-1.5 text-xs sm:text-sm font-bold text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl flex items-center gap-1.5 transition shadow-sm';
+        navLabel.innerText = '🟢 已就緒：Groq';
+        navIcon.setAttribute('data-lucide', 'zap');
+
+      } else {
+        // 僅 Gemini
+        bannerBtn.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-sky-200 bg-sky-900/60 hover:bg-sky-800/80 border border-sky-400/50 shadow-md cursor-pointer transition backdrop-blur-md';
+        bannerLabel.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block mr-1"></span>🟢 AI 已就緒：Google Gemini ‧ 點此管理';
+        bannerIcon.setAttribute('data-lucide', 'sparkles');
+
+        navBtn.className = 'px-3 py-1.5 text-xs sm:text-sm font-bold text-sky-800 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl flex items-center gap-1.5 transition shadow-sm';
+        navLabel.innerText = '🟢 已就緒：Gemini';
+        navIcon.setAttribute('data-lucide', 'sparkles');
+      }
+
+      lucide.createIcons();
     }
 
     function saveToStorage() {
@@ -910,6 +968,7 @@
       renderDayTabs();
       renderCurrentDayTimeline();
       renderBucketList();
+      updateApiKeyStatusUI();
       lucide.createIcons();
     }
 
@@ -993,8 +1052,8 @@
 
     // 核心雙引擎自動切換機制
     async function executeAiWithFailover(prompt, systemPrompt) {
-      const hasGroq = !!userSettings.groqApiKey;
-      const hasGemini = !!userSettings.geminiApiKey;
+      const hasGroq = !!(userSettings.groqApiKey && userSettings.groqApiKey.trim());
+      const hasGemini = !!(userSettings.geminiApiKey && userSettings.geminiApiKey.trim());
 
       if (!hasGroq && !hasGemini) {
         throw new Error('NO_KEYS');

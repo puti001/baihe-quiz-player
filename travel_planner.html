@@ -103,13 +103,19 @@
         </div>
         <div>
           <h1 class="text-lg font-bold text-slate-900 leading-tight">Puti-AI 智慧旅遊行程設計器</h1>
-          <p class="text-xs text-slate-500">官方模型動態探索 ‧ 雙 AI 自動備援秒生成</p>
+          <p class="text-xs text-slate-500">輸入目的地與天數 ‧ 支援 API 直連或貼上文字秒解析</p>
         </div>
       </div>
 
       <!-- 右側動作按鈕 (含動態狀態按鈕) -->
       <div class="flex items-center space-x-2 sm:space-x-2.5">
         
+        <!-- 貼上行程按鈕 (免 API Key 神器) -->
+        <button onclick="openMagicPasteModal()" class="px-3 py-1.5 text-xs sm:text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-xl flex items-center gap-1.5 transition border border-indigo-200 shadow-sm" title="把 ChatGPT/Claude 回覆貼上來">
+          <i data-lucide="wand-2" class="w-4 h-4 text-indigo-600"></i>
+          <span>📋 貼上 AI 行程</span>
+        </button>
+
         <!-- 動態 API Key 狀態按鈕 (Navbar) -->
         <button onclick="openSettingsModal()" id="navApiKeyBtn" class="glow-btn-gold px-3 py-1.5 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition border shadow-sm">
           <i data-lucide="key" class="w-4 h-4" id="navApiKeyIcon"></i>
@@ -119,7 +125,7 @@
         <!-- 發光按鈕 2: 再看使用指南 -->
         <button onclick="openGuideModal()" class="glow-btn-blue px-3 py-1.5 text-xs sm:text-sm font-bold text-sky-950 bg-gradient-to-r from-sky-200 via-sky-300 to-indigo-200 hover:from-sky-100 hover:to-indigo-100 rounded-xl flex items-center gap-1.5 transition border border-sky-300 shadow-md">
           <i data-lucide="book-open" class="w-4 h-4 text-sky-800"></i>
-          <span>2. 再看使用指南</span>
+          <span>2. 使用指南</span>
         </button>
 
         <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
@@ -152,9 +158,13 @@
             <i data-lucide="key" class="w-3.5 h-3.5" id="bannerApiKeyIcon"></i>
             <span id="bannerApiKeyStatusLabel">第一步：點此免費申請 API Key (Groq秒回 / Gemini)</span>
           </button>
+          <button onclick="openMagicPasteModal()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-indigo-500/30 hover:bg-indigo-500/50 text-indigo-200 text-xs font-bold backdrop-blur-md border border-indigo-400/40 transition">
+            <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+            貼上 AI 回覆文字匯入
+          </button>
           <button onclick="openGuideModal()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-300 text-xs font-medium backdrop-blur-md transition">
             <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
-            新手操作指南
+            操作指南
           </button>
         </div>
 
@@ -168,7 +178,7 @@
         <!-- 快捷規劃表單列 -->
         <div class="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-white/10 p-2.5 rounded-2xl backdrop-blur-md border border-white/15">
           <div class="sm:col-span-4">
-            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：京都、東京、首爾、曼谷、花蓮" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
+            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：京都、東京、首爾、曼谷、台東" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
           </div>
           <div class="sm:col-span-3">
             <select id="quickDaysInput" class="w-full h-11 px-3 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium">
@@ -202,10 +212,10 @@
         <!-- 熱門城市快速按鈕 -->
         <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-slate-300">
           <span class="text-slate-400 text-[11px]">熱門推薦：</span>
+          <button onclick="setQuickCity('台東', 3, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 台東 3天</button>
           <button onclick="setQuickCity('京都', 4, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 京都 4天</button>
           <button onclick="setQuickCity('東京', 5, '經典必去打卡')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 東京 5天</button>
           <button onclick="setQuickCity('大阪京都', 5, '在地美食吃貨之旅')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 關西 5天</button>
-          <button onclick="setQuickCity('曼谷', 4, '在地美食吃貨之旅')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇭 曼谷 4天</button>
           <button onclick="setQuickCity('花蓮', 3, '慢活放鬆/不趕行程')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 花蓮 3天</button>
         </div>
       </div>
@@ -227,6 +237,10 @@
 
         <!-- 快捷功能 -->
         <div class="flex flex-wrap items-center gap-2">
+          <button onclick="openMagicPasteModal()" class="px-3.5 py-2 text-xs sm:text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl flex items-center gap-2 transition shadow-sm">
+            <i data-lucide="wand-2" class="w-4 h-4 text-indigo-600"></i>
+            貼上行程文字
+          </button>
           <button onclick="runHealthCheck()" class="px-3.5 py-2 text-xs sm:text-sm font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl flex items-center gap-2 transition shadow-sm">
             <i data-lucide="activity" class="w-4 h-4 text-amber-600"></i>
             旅程健檢
@@ -286,12 +300,16 @@
           </div>
           <h3 class="text-sm font-semibold text-slate-700">這一天還沒有任何景點</h3>
           <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            您可以使用上方橫幅的「AI 一鍵排行程」、手動新增景點，或使用「AI 文本解析」貼入行程！
+            您可以使用上方橫幅的「AI 一鍵排行程」、點擊「貼上 AI 行程」，或手動新增景點！
           </p>
           <div class="mt-4 flex items-center justify-center gap-2">
             <button onclick="openWizardModal()" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
               <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
               AI 幫我想行程
+            </button>
+            <button onclick="openMagicPasteModal()" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold transition flex items-center gap-1">
+              <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+              貼上 AI 回覆
             </button>
             <button onclick="openAddSpotModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition">
               + 手動新增景點
@@ -399,7 +417,7 @@
             告訴 AI 想去哪裡與天數（一鍵排好整趟）
           </h4>
           <p class="text-sky-800">
-            在頂部橫幅輸入「京都」、「東京」或「花蓮」，選擇天數與風格，點擊 <strong>「開始生成」</strong>，AI 自動排滿每一天的順路景點與必吃小吃！
+            在頂部橫幅輸入「京都」、「東京」或「台東」，選擇天數與風格，點擊 <strong>「開始生成」</strong>，AI 自動排滿每一天的順路景點與必吃小吃！
           </p>
         </div>
 
@@ -453,7 +471,7 @@
         
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">1. 目的地城市 / 地區 <span class="text-rose-500">*</span></label>
-          <input type="text" id="wizardDestInput" placeholder="例如：京都、東京、首爾、曼谷、清邁、花蓮台東、沖繩" class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="wizardDestInput" placeholder="例如：台東、京都、東京、首爾、曼谷、清邁、花蓮、沖繩" class="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -484,7 +502,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">4. 額外特殊要求 (可選)</label>
-          <input type="text" id="wizardExtraInput" placeholder="例如：想去伏見稻荷大社、一定要吃燒肉、要有雨天室內備案..." class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="wizardExtraInput" placeholder="例如：想去伯朗大道、一定要吃米苔目、要有雨天室內備案..." class="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs">
@@ -497,7 +515,7 @@
             </button>
           </div>
           <p class="text-slate-500 text-[11px] leading-relaxed">
-            若未填寫 API Key，可直接複製提示詞至您慣用的 AI（如 ChatGPT、Claude、Gemini、DeepSeek 等）生成，再用「文本解析」匯入！
+            若未填寫 API Key，可直接複製提示詞至您慣用的 AI（如 ChatGPT、Claude、Gemini、DeepSeek 等）生成，再用「貼上 AI 行程」一鍵匯入！
           </p>
         </div>
 
@@ -528,7 +546,7 @@
         
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">景點 / 店家名稱 <span class="text-rose-500">*</span></label>
-          <input type="text" id="spotNameInput" required placeholder="例如：清水寺、金閣寺、一蘭拉麵" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="spotNameInput" required placeholder="例如：伯朗大道、初鹿牧場、榕樹下米苔目" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -570,12 +588,12 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">預約號碼 / 電話 / 地址</label>
-          <input type="text" id="spotBookingInput" placeholder="預約號 #12345 / 03-1234-5678" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="spotBookingInput" placeholder="預約號 #12345 / 089-123456" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">備註 / 必吃必看推薦</label>
-          <textarea id="spotNotesInput" rows="2" placeholder="例如：推薦品嚐抹茶霜淇淋、記得預先抽號碼牌..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
+          <textarea id="spotNotesInput" rows="2" placeholder="例如：推薦品嚐初鹿鮮乳霜淇淋、記得預先租單車..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
         </div>
 
         <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
@@ -628,17 +646,17 @@
     </div>
   </div>
 
-  <!-- 4. AI 文本貼上智能解析 Modal (Magic Paste) -->
+  <!-- 4. AI 文本/JSON 智能解析匯入 Modal (Magic Paste) -->
   <div id="magicPasteModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-100">
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center gap-2">
-          <div class="p-2 bg-indigo-100 text-indigo-700 rounded-lg">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-100 flex flex-col max-h-[90vh]">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2.5 bg-indigo-100 text-indigo-700 rounded-2xl">
             <i data-lucide="wand-2" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-slate-900">AI 文本一鍵解析匯入</h3>
-            <p class="text-xs text-slate-500">貼上任何 AI 回覆的行程文字，秒轉卡片！</p>
+            <h3 class="text-base font-bold text-slate-900">AI 行程文字 / JSON 一鍵解析匯入</h3>
+            <p class="text-xs text-slate-500">無論是 ChatGPT 回覆的 JSON 代碼或文字清單，貼上即可自動解析！</p>
           </div>
         </div>
         <button onclick="closeModal('magicPasteModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -646,21 +664,21 @@
         </button>
       </div>
 
-      <div class="space-y-3">
-        <textarea id="magicPasteTextarea" rows="8" placeholder="請直接貼上文字，例如：&#10;09:00 清水寺 (參拜與拍照)&#10;11:30 三年坂與二年坂 (漫步老街)&#10;13:00 順正湯豆腐 (午餐)&#10;15:00 八坂神社 (祈福)" class="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+      <div class="flex-1 overflow-y-auto scrollbar-thin py-3 space-y-3">
+        <textarea id="magicPasteTextarea" rows="10" placeholder="請直接將 ChatGPT / Claude / Gemini 回覆的整段內容貼在此處...&#10;&#10;支援兩種格式：&#10;1. JSON 完整代碼 (含 days、title) ➜ 自動排滿多天與備案&#10;2. 純文字 (如 Day 1、09:30 景點名 (備註)) ➜ 自動分天排入" class="w-full p-3.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:outline-none leading-relaxed"></textarea>
         
         <div class="flex items-center justify-between text-xs text-slate-500">
-          <span>支援格式：時間 + 景點名稱 + 備註</span>
-          <button onclick="loadSamplePasteText()" class="text-indigo-600 hover:underline">帶入範例文本</button>
+          <span>💡 智慧自動識別：JSON 代碼、多天標籤 (Day 1 / Day 2) 皆通用！</span>
+          <button onclick="loadSamplePasteText()" class="text-indigo-600 hover:underline font-semibold">帶入範例文本</button>
         </div>
+      </div>
 
-        <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
-          <button onclick="closeModal('magicPasteModal')" class="px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition">取消</button>
-          <button onclick="executeMagicPaste()" class="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition flex items-center gap-1">
-            <i data-lucide="check" class="w-3.5 h-3.5"></i>
-            解析並加入當前天數
-          </button>
-        </div>
+      <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
+        <button onclick="closeModal('magicPasteModal')" class="px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">取消</button>
+        <button onclick="executeMagicPaste()" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-1.5">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          立即解析並匯入行程
+        </button>
       </div>
     </div>
   </div>
@@ -1061,7 +1079,6 @@
             .map(m => m.name.replace(/^models\//, ''));
           
           valid.sort((a, b) => {
-            // flash 優先，最新版優先
             if (a.includes('flash') && !b.includes('flash')) return -1;
             if (!a.includes('flash') && b.includes('flash')) return 1;
             return 0;
@@ -1256,7 +1273,7 @@
     function triggerQuickGenerate() {
       const dest = document.getElementById('quickDestInput').value.trim();
       if (!dest) {
-        alert('請先輸入想去的目的地城市（例如：京都、東京、首爾、曼谷）！');
+        alert('請先輸入想去的目的地城市（例如：台東、京都、東京、首爾、曼谷）！');
         document.getElementById('quickDestInput').focus();
         return;
       }
@@ -1363,12 +1380,12 @@
 
       } catch (err) {
         if (err.message === 'NO_KEYS') {
-          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可點擊「複製提示詞」去慣用 AI 生成）')) {
+          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可直接點擊「📋 貼上 AI 行程」將 ChatGPT 回覆貼上來）')) {
             closeModal('wizardModal');
             openSettingsModal();
           }
         } else {
-          alert('生成異常：\n' + err.message + '\n\n💡 建議點擊設定測試連線，或複製提示詞至慣用 AI 生成。');
+          alert('生成異常：\n' + err.message + '\n\n💡 建議點擊「📋 貼上 AI 行程」，將 ChatGPT 回覆的文字或 JSON 直接貼上匯入！');
         }
       } finally {
         btn.disabled = false;
@@ -1870,7 +1887,7 @@
       showToast(`已將 ${item.name} 加入行程！`);
     }
 
-    // ==================== Magic Paste 智能文本解析 ====================
+    // ==================== Magic Paste 智能文本/JSON 全能解析 ====================
     function openMagicPasteModal() {
       document.getElementById('magicPasteTextarea').value = '';
       openModal('magicPasteModal');
@@ -1878,58 +1895,109 @@
 
     function loadSamplePasteText() {
       document.getElementById('magicPasteTextarea').value = 
-`09:00 清水寺 (參拜觀音與音羽之瀑)
-11:00 三年坂與二年坂 (漫步老街買伴手禮)
-12:30 順正湯豆腐 (百年湯豆腐午餐)
-14:30 八坂神社 (祈求良緣與美貌)
-16:00 祇園花見小路 (體驗京都古都風情)`;
+`Day 1
+10:00 池上伯朗大道與天堂路 (漫遊稻浪)
+12:30 池上飯包文化故事館 (午餐)
+15:00 鹿野高台 (眺望縱谷景觀)
+
+Day 2
+10:00 加路蘭海岸 (聽海看漂流木)
+12:30 都蘭糖廠 (文青園區午餐)
+15:30 三仙臺 (八拱跨海步橋)`;
     }
 
     function executeMagicPaste() {
-      const rawText = document.getElementById('magicPasteTextarea').value;
-      if (!rawText.trim()) {
-        alert('請先貼上行程文字！');
+      const rawText = document.getElementById('magicPasteTextarea').value.trim();
+      if (!rawText) {
+        alert('請先貼上行程文字或 JSON 代碼！');
         return;
       }
 
-      const lines = rawText.split('\n');
-      let count = 0;
+      // 模式 1：JSON 格式自動檢測與全案匯入
+      if (rawText.includes('"days"') || rawText.startsWith('{')) {
+        try {
+          const parsed = cleanAndParseJson(rawText);
+          if (parsed && parsed.days && Array.isArray(parsed.days)) {
+            parsed.days.forEach(d => {
+              if (d.spots && Array.isArray(d.spots)) {
+                d.spots.forEach(s => {
+                  s.id = 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+                });
+              }
+            });
+            if (parsed.bucketList && Array.isArray(parsed.bucketList)) {
+              parsed.bucketList.forEach(b => {
+                b.id = 'b_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+              });
+            }
+            tripData = {
+              title: parsed.title || '我的旅遊行程',
+              currency: userSettings.currency || 'NT$',
+              days: parsed.days,
+              bucketList: parsed.bucketList || []
+            };
+            currentDayIndex = 0;
+            saveToStorage();
+            closeModal('magicPasteModal');
+            renderAll();
+            showToast(`🎉 成功解析並匯入 ${parsed.days.length} 天完整行程！`);
+            return;
+          }
+        } catch (e) {
+          console.warn('嘗試 JSON 解析失敗，轉為逐行純文本解析模式', e);
+        }
+      }
 
+      // 模式 2：支援跨天多日文字清單 (如 Day 1 / Day 2 / 第一天)
+      const lines = rawText.split('\n');
+      let isMultiDay = lines.some(l => /^(Day\s*\d+|第\s*[一二三四五六七八九十\d]+\s*天)/i.test(l.trim()));
+      
+      if (isMultiDay) {
+        let newDays = [];
+        let curDaySpots = [];
+        let curDayNum = 1;
+
+        lines.forEach(line => {
+          line = line.trim();
+          if (!line) return;
+
+          const dayMatch = line.match(/^(Day\s*(\d+)|第\s*([一二三四五六七八九十\d]+)\s*天)/i);
+          if (dayMatch) {
+            if (curDaySpots.length > 0 || newDays.length > 0) {
+              newDays.push({ dayNumber: curDayNum, date: '', spots: curDaySpots });
+              curDaySpots = [];
+            }
+            curDayNum = dayMatch[2] ? parseInt(dayMatch[2]) : (newDays.length + 1);
+            return;
+          }
+
+          const spotObj = parseSingleSpotLine(line);
+          if (spotObj) curDaySpots.push(spotObj);
+        });
+
+        if (curDaySpots.length > 0) {
+          newDays.push({ dayNumber: curDayNum, date: '', spots: curDaySpots });
+        }
+
+        if (newDays.length > 0) {
+          tripData.days = newDays;
+          currentDayIndex = 0;
+          saveToStorage();
+          closeModal('magicPasteModal');
+          renderAll();
+          showToast(`🎉 成功分天匯入 ${newDays.length} 天行程！`);
+          return;
+        }
+      }
+
+      // 模式 3：單日文字清單（加進當前天數）
+      let count = 0;
       lines.forEach(line => {
         line = line.trim();
         if (!line) return;
-
-        const timeMatch = line.match(/^(\d{1,2}:\d{2})\s*(.*)$/);
-        let time = '10:00';
-        let remaining = line;
-
-        if (timeMatch) {
-          time = timeMatch[1];
-          remaining = timeMatch[2];
-        }
-
-        const notesMatch = remaining.match(/^(.*?)[(（](.*?)[)）]$/);
-        let name = remaining;
-        let notes = '';
-
-        if (notesMatch) {
-          name = notesMatch[1].trim();
-          notes = notesMatch[2].trim();
-        }
-
-        name = name.replace(/^[-*#\d.]+\s*/, '').trim();
-
-        if (name) {
-          tripData.days[currentDayIndex].spots.push({
-            id: 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-            name: name,
-            time: time,
-            duration: 60,
-            category: 'sight',
-            cost: 0,
-            booking: '',
-            notes: notes
-          });
+        const spotObj = parseSingleSpotLine(line);
+        if (spotObj) {
+          tripData.days[currentDayIndex].spots.push(spotObj);
           count++;
         }
       });
@@ -1940,8 +2008,44 @@
         renderAll();
         showToast(`成功解析並加入 ${count} 個景點！`);
       } else {
-        alert('未能識別出有效行程，請檢查文字格式。');
+        alert('未能識別出有效行程，請檢查文字或代碼格式。');
       }
+    }
+
+    function parseSingleSpotLine(line) {
+      const timeMatch = line.match(/^(\d{1,2}:\d{2})\s*(.*)$/);
+      let time = '10:00';
+      let remaining = line;
+
+      if (timeMatch) {
+        time = timeMatch[1];
+        remaining = timeMatch[2];
+      }
+
+      const notesMatch = remaining.match(/^(.*?)[(（](.*?)[)）]$/);
+      let name = remaining;
+      let notes = '';
+
+      if (notesMatch) {
+        name = notesMatch[1].trim();
+        notes = notesMatch[2].trim();
+      }
+
+      name = name.replace(/^[-*#\d.]+\s*/, '').trim();
+
+      if (name) {
+        return {
+          id: 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+          name: name,
+          time: time,
+          duration: 60,
+          category: 'sight',
+          cost: 0,
+          booking: '',
+          notes: notes
+        };
+      }
+      return null;
     }
 
     // ==================== LINE 小抄產生器 ====================

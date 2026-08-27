@@ -146,7 +146,7 @@
       
       <div class="relative z-10 max-w-3xl">
         
-        <!-- 頂部動態狀態膠囊 (圖片箭頭所指之處) -->
+        <!-- 頂部動態狀態膠囊 (箭頭所指之處) -->
         <div class="flex flex-wrap items-center gap-2 mb-3">
           <button onclick="openSettingsModal()" id="bannerApiKeyStatusBtn" class="glow-btn-gold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-md cursor-pointer transition">
             <i data-lucide="key" class="w-3.5 h-3.5" id="bannerApiKeyIcon"></i>
@@ -340,7 +340,7 @@
             </li>
             <li class="flex items-start gap-1.5">
               <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0"></i>
-              <span>未填 Key 亦可一鍵複製專屬 Prompt 到 ChatGPT / Claude 生成。</span>
+              <span>未填 Key 亦可一鍵複製專屬 Prompt 到慣用 AI 生成。</span>
             </li>
           </ul>
         </div>
@@ -389,7 +389,7 @@
             先填免費 API Key（極速解鎖全自動生成）
           </h4>
           <p class="text-amber-800">
-            點擊上方按鈕 <strong>「API Key 狀態」</strong>，申請 Groq（秒回推薦）或 Google Gemini 免費 Key 填入。系統支援<strong>雙向自動切換備援</strong>，永久免費！
+            點擊上方按鈕 <strong>「API Key 狀態」</strong>，申請 Groq（秒回推薦）或 Google Gemini 免費 Key 填入。支援本機永久記憶與<strong>雙向自動切換備援</strong>！
           </p>
         </div>
 
@@ -493,11 +493,11 @@
               <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-600"></i> AI 提示詞 (Prompt) 預覽
             </span>
             <button onclick="copyWizardPromptText()" class="text-indigo-600 hover:underline font-semibold flex items-center gap-1">
-              <i data-lucide="copy" class="w-3 h-3"></i> 複製到 ChatGPT
+              <i data-lucide="copy" class="w-3 h-3"></i> 📋 複製提示詞（貼至慣用 AI）
             </button>
           </div>
           <p class="text-slate-500 text-[11px] leading-relaxed">
-            若未填寫 API Key，可直接複製提示詞至 ChatGPT 網頁版生成，再用「文本解析」匯入！
+            若未填寫 API Key，可直接複製提示詞至您慣用的 AI（如 ChatGPT、Claude、Gemini、DeepSeek 等）生成，再用「文本解析」匯入！
           </p>
         </div>
 
@@ -618,7 +618,7 @@
       <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
         <button onclick="copyAiPromptText()" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center gap-1.5 transition">
           <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-          複製 Prompt 到 ChatGPT
+          📋 複製提示詞（貼至慣用 AI）
         </button>
         <button onclick="triggerDirectAiFetch()" id="btnDirectAiFetch" class="px-4 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg flex items-center gap-1.5 shadow-sm transition">
           <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
@@ -638,7 +638,7 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-slate-900">AI 文本一鍵解析匯入</h3>
-            <p class="text-xs text-slate-500">貼上 ChatGPT/Claude 回覆的行程文字，秒轉卡片！</p>
+            <p class="text-xs text-slate-500">貼上任何 AI 回覆的行程文字，秒轉卡片！</p>
           </div>
         </div>
         <button onclick="closeModal('magicPasteModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -741,7 +741,7 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-slate-900">1. 免費申請 AI API Key</h3>
-            <p class="text-xs text-slate-500">支援雙引擎自動切換備援 (純本機儲存)</p>
+            <p class="text-xs text-slate-500">本機永久安全儲存 ‧ 雙引擎自動切換備援</p>
           </div>
         </div>
         <button onclick="closeModal('settingsModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -754,7 +754,7 @@
         <div class="bg-gradient-to-r from-amber-50 to-indigo-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-950 flex items-start gap-2">
           <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0"></i>
           <p class="leading-relaxed">
-            <strong>雙引擎自動備援啟動：</strong> 若您同時填入 Groq 與 Gemini，系統會以預設引擎為主；若遇故障或額度滿，<strong>會自動無縫切換至另一把 Key</strong>！
+            <strong>雙引擎自動備援：</strong> 若同時填入 Groq 與 Gemini，當主要引擎額度用盡或連線異常時，<strong>系統會自動無縫切換至另一把 Key 備援</strong>！
           </p>
         </div>
 
@@ -792,9 +792,9 @@
               <span>👉 點此免費獲取 Groq Key</span>
             </a>
           </div>
-          <input type="password" id="groqApiKeyInput" placeholder="貼上 gsk_ 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          <input type="password" id="groqApiKeyInput" oninput="autoSaveKeys()" placeholder="貼上 gsk_ 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
           <p class="text-[11px] text-slate-500 leading-relaxed">
-            💡 Groq 申請：點上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入。
+            💡 Groq 申請：點上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入此處。
           </p>
         </div>
 
@@ -808,7 +808,7 @@
               <span>👉 點此免費獲取 Gemini Key</span>
             </a>
           </div>
-          <input type="password" id="geminiApiKeyInput" placeholder="貼上 AIzaSy 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="password" id="geminiApiKeyInput" oninput="autoSaveKeys()" placeholder="貼上 AIzaSy 開頭的金鑰" class="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
           <p class="text-[11px] text-slate-500 leading-relaxed">
             💡 Gemini 申請：點上方連結 ➜ 用 Google 登入 ➜ 點「Create API Key」➜ 複製貼入。
           </p>
@@ -838,9 +838,9 @@
 
   <!-- JavaScript 核心邏輯 -->
   <script>
-    // ==================== 預設資料與狀態 ====================
-    const STORAGE_KEY = 'puti_travel_planner_data_v5';
-    const SETTINGS_KEY = 'puti_travel_planner_settings_v5';
+    // ==================== 永久穩定之本機儲存 KEY ====================
+    const STORAGE_KEY = 'puti_travel_data_permanent';
+    const SETTINGS_KEY = 'puti_travel_settings_permanent';
 
     let currentDayIndex = 0;
     let selectedAiPreference = '在地小吃/排隊美食';
@@ -881,16 +881,44 @@
       }, 3500);
     }
 
+    // 支援向後兼容與無縫繼承舊版 Key
     function loadFromStorage() {
-      const savedData = localStorage.getItem(STORAGE_KEY);
+      // 1. 載入行程資料
+      let savedData = localStorage.getItem(STORAGE_KEY);
+      if (!savedData) {
+        // 嘗試從舊版本鍵值遷移
+        savedData = localStorage.getItem('puti_travel_planner_data_v5') || 
+                    localStorage.getItem('puti_travel_planner_data_v4') || 
+                    localStorage.getItem('puti_travel_planner_data_v3');
+      }
       if (savedData) {
         try { tripData = JSON.parse(savedData); } catch (e) { console.error(e); }
       }
-      const savedSettings = localStorage.getItem(SETTINGS_KEY);
-      if (savedSettings) {
-        try { userSettings = Object.assign(userSettings, JSON.parse(savedSettings)); } catch (e) { console.error(e); }
+
+      // 2. 載入 Settings (API Key)
+      let savedSettings = localStorage.getItem(SETTINGS_KEY);
+      if (!savedSettings) {
+        // 嘗試從舊版本鍵值遷移
+        savedSettings = localStorage.getItem('puti_travel_planner_settings_v5') || 
+                        localStorage.getItem('puti_travel_planner_settings_v4') || 
+                        localStorage.getItem('puti_travel_planner_settings_v3');
       }
+      if (savedSettings) {
+        try { 
+          userSettings = Object.assign(userSettings, JSON.parse(savedSettings)); 
+          // 寫入永久 Key 確保後續版本不丟失
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
+        } catch (e) { console.error(e); }
+      }
+      
       syncSettingsUI();
+      updateApiKeyStatusUI();
+    }
+
+    function autoSaveKeys() {
+      userSettings.geminiApiKey = document.getElementById('geminiApiKeyInput').value.trim();
+      userSettings.groqApiKey = document.getElementById('groqApiKeyInput').value.trim();
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
       updateApiKeyStatusUI();
     }
 
@@ -1008,46 +1036,99 @@
       openModal('guideModal');
     }
 
-    // ==================== 雙引擎自動備援 (Auto Failover) 呼叫核心 ====================
+    // ==================== 超強健 JSON 容錯解析器 (Robust JSON Cleaner) ====================
+    function cleanAndParseJson(text) {
+      if (typeof text !== 'string') return text;
+      // 1. 去除 Markdown 代碼塊
+      let clean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+      
+      // 2. 尋找最外層的 JSON 起始與結尾
+      const firstBrace = clean.indexOf('{');
+      const lastBrace = clean.lastIndexOf('}');
+      const firstBracket = clean.indexOf('[');
+      const lastBracket = clean.lastIndexOf(']');
+
+      if (firstBrace !== -1 && lastBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+        clean = clean.substring(firstBrace, lastBrace + 1);
+      } else if (firstBracket !== -1 && lastBracket !== -1) {
+        clean = clean.substring(firstBracket, lastBracket + 1);
+      }
+
+      // 3. 嘗試直接解析
+      try {
+        return JSON.parse(clean);
+      } catch (err) {
+        // 4. 清理常見尾隨逗號問題例如 `,\n}`
+        clean = clean.replace(/,\s*([\}\]])/g, '$1');
+        return JSON.parse(clean);
+      }
+    }
+
+    // ==================== 雙引擎呼叫核心 ====================
     async function callGroqDirect(prompt, systemPrompt) {
+      const apiKey = userSettings.groqApiKey.trim();
+      if (!apiKey) throw new Error('未填寫 Groq API Key');
+
+      const isJsonObjectExpected = prompt.includes('"days":') || prompt.includes('"title":');
+      const requestPayload = {
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { 
+            role: 'system', 
+            content: (systemPrompt || 'You are a professional travel planner.') + ' Return strictly valid JSON with no markdown wrapping or preamble text.'
+          },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.4
+      };
+
+      if (isJsonObjectExpected) {
+        requestPayload.response_format = { type: "json_object" };
+      }
+
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userSettings.groqApiKey}`
+          'Authorization': `Bearer ${apiKey}`
         },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: systemPrompt || 'You are a professional travel planner. Always output valid JSON matching the requested schema.' },
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.5
-        })
+        body: JSON.stringify(requestPayload)
       });
+
       const data = await res.json();
-      if (data.error) throw new Error(data.error.message || 'Groq API 連線失敗');
-      
-      let text = data.choices[0].message.content.trim();
-      const jsonMatch = text.match(/[\{\[][\s\S]*[\}\]]/);
-      if (jsonMatch) text = jsonMatch[0];
-      return JSON.parse(text);
+      if (!res.ok || data.error) {
+        throw new Error(data.error?.message || `Groq HTTP ${res.status}`);
+      }
+
+      const content = data.choices[0]?.message?.content;
+      if (!content) throw new Error('Groq 回傳為空');
+      return cleanAndParseJson(content);
     }
 
     async function callGeminiDirect(prompt) {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userSettings.geminiApiKey}`, {
+      const apiKey = userSettings.geminiApiKey.trim();
+      if (!apiKey) throw new Error('未填寫 Gemini API Key');
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: "application/json" }
+          generationConfig: { 
+            responseMimeType: "application/json",
+            temperature: 0.4
+          }
         })
       });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message || 'Gemini API 連線失敗');
 
-      const rawText = data.candidates[0].content.parts[0].text;
-      return JSON.parse(rawText);
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error?.message || `Gemini HTTP ${res.status}`);
+      }
+
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) throw new Error('Gemini 回傳為空');
+      return cleanAndParseJson(rawText);
     }
 
     // 核心雙引擎自動切換機制
@@ -1060,6 +1141,7 @@
       }
 
       const primary = userSettings.aiProvider || 'groq';
+      let lastError = null;
 
       if (primary === 'groq') {
         if (hasGroq) {
@@ -1067,11 +1149,15 @@
             return await callGroqDirect(prompt, systemPrompt);
           } catch (groqErr) {
             console.warn('Groq 失敗，嘗試切換 Gemini 備援：', groqErr);
+            lastError = groqErr;
             if (hasGemini) {
               showToast('⚡ Groq 異常，已自動切換至 Google Gemini 備援！', 'sparkles');
-              return await callGeminiDirect(prompt);
+              try {
+                return await callGeminiDirect(prompt);
+              } catch (geminiErr) {
+                lastError = new Error(`Groq 錯誤: ${groqErr.message} | Gemini 錯誤: ${geminiErr.message}`);
+              }
             }
-            throw groqErr;
           }
         } else if (hasGemini) {
           return await callGeminiDirect(prompt);
@@ -1082,17 +1168,22 @@
             return await callGeminiDirect(prompt);
           } catch (geminiErr) {
             console.warn('Gemini 失敗，嘗試切換 Groq 備援：', geminiErr);
+            lastError = geminiErr;
             if (hasGroq) {
               showToast('⚡ Gemini 異常，已自動切換至 Groq 備援！', 'sparkles');
-              return await callGroqDirect(prompt, systemPrompt);
+              try {
+                return await callGroqDirect(prompt, systemPrompt);
+              } catch (groqErr) {
+                lastError = new Error(`Gemini 錯誤: ${geminiErr.message} | Groq 錯誤: ${groqErr.message}`);
+              }
             }
-            throw geminiErr;
           }
         } else if (hasGroq) {
           return await callGroqDirect(prompt, systemPrompt);
         }
       }
-      throw new Error('無法取得有效的 AI 回應');
+
+      throw (lastError || new Error('無法取得有效的 AI 回應'));
     }
 
     // ==================== AI 一鍵全行程生成 Wizard ====================
@@ -1139,7 +1230,7 @@
           "name": "景點或餐廳名稱",
           "time": "09:30",
           "duration": 90,
-          "category": "sight或food或cafe或shop或hotel",
+          "category": "sight",
           "cost": 300,
           "notes": "必看特色或必吃推薦"
         }
@@ -1149,7 +1240,7 @@
   "bucketList": [
     {
       "name": "推薦的雨天備案或周邊小店",
-      "category": "sight或food",
+      "category": "sight",
       "duration": 60,
       "notes": "備案說明"
     }
@@ -1165,7 +1256,7 @@
       const prompt = buildFullTripPrompt(dest, days, style, extra);
 
       navigator.clipboard.writeText(prompt).then(() => {
-        showToast('已複製全行程 Prompt！可直接貼到 ChatGPT');
+        showToast('已複製提示詞！可貼至任何慣用 AI');
       });
     }
 
@@ -1186,17 +1277,17 @@
 
       try {
         const prompt = buildFullTripPrompt(dest, days, style, extra);
-        const resultJson = await executeAiWithFailover(prompt, 'You are a professional travel planner. Always output valid JSON matching the requested schema.');
+        const resultJson = await executeAiWithFailover(prompt, 'You are a professional travel planner. Output strictly valid JSON object.');
 
-        if (resultJson && resultJson.days) {
+        if (resultJson && resultJson.days && Array.isArray(resultJson.days)) {
           resultJson.days.forEach(d => {
-            if (d.spots) {
+            if (d.spots && Array.isArray(d.spots)) {
               d.spots.forEach(s => {
                 s.id = 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
               });
             }
           });
-          if (resultJson.bucketList) {
+          if (resultJson.bucketList && Array.isArray(resultJson.bucketList)) {
             resultJson.bucketList.forEach(b => {
               b.id = 'b_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
             });
@@ -1215,17 +1306,17 @@
           renderAll();
           showToast(`🎉 成功為您排好 ${dest} ${days} 天完整行程！`);
         } else {
-          throw new Error('AI 回傳格式不符合預期。');
+          throw new Error('AI 回傳結構異常，缺少 days 陣列。');
         }
 
       } catch (err) {
         if (err.message === 'NO_KEYS') {
-          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可點擊「複製到 ChatGPT」去網頁版生成）')) {
+          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可點擊「複製提示詞」去慣用 AI 生成）')) {
             closeModal('wizardModal');
             openSettingsModal();
           }
         } else {
-          alert('生成失敗：' + err.message + '\n若兩組 Key 皆故障，請檢查網路或重新申請。');
+          alert('生成異常：' + err.message + '\n建議檢查 API Key 是否正確或網路狀態。');
         }
       } finally {
         btn.disabled = false;
@@ -1602,7 +1693,7 @@
 [
   {
     "name": "店名或景點名",
-    "category": "food或sight或cafe",
+    "category": "food",
     "duration": 60,
     "cost": 300,
     "notes": "一句話推薦理由與必吃特色"
@@ -1620,7 +1711,7 @@
             <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
               <i data-lucide="code" class="w-3.5 h-3.5 text-indigo-600"></i> AI 提示詞 (Prompt) 預覽
             </span>
-            <span class="text-[11px] text-slate-400">可複製至 ChatGPT / Claude 網頁版</span>
+            <span class="text-[11px] text-slate-400">可複製至慣用 AI 網頁版</span>
           </div>
           <pre id="currentPromptText" class="text-xs text-slate-700 font-mono bg-white p-3 rounded-lg border border-slate-200 whitespace-pre-wrap select-all leading-relaxed">${promptText}</pre>
         </div>
@@ -1631,7 +1722,7 @@
     function copyAiPromptText() {
       const text = document.getElementById('currentPromptText').innerText;
       navigator.clipboard.writeText(text).then(() => {
-        showToast('已複製 AI 提示詞！可貼到 ChatGPT/Claude');
+        showToast('已複製提示詞！可貼至任何慣用 AI');
       });
     }
 
@@ -1647,10 +1738,14 @@
       try {
         const prompt = buildAiPrompt(currentSpotForAi.name, selectedAiPreference);
         const recommendations = await executeAiWithFailover(prompt, 'You are a helpful travel planner assistant. Always respond with a valid JSON array.');
-        renderAiDirectRecommendations(recommendations);
+        if (Array.isArray(recommendations)) {
+          renderAiDirectRecommendations(recommendations);
+        } else {
+          throw new Error('AI 回傳格式非陣列');
+        }
       } catch (err) {
         if (err.message === 'NO_KEYS') {
-          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可直接點擊「複製 Prompt」手動去 ChatGPT 生成）')) {
+          if (confirm('尚未填寫 API Key！是否現在前往設定？（亦可直接點擊「複製提示詞」手動去慣用 AI 生成）')) {
             closeModal('aiRecModal');
             openSettingsModal();
           }
@@ -1658,7 +1753,7 @@
           container.innerHTML = `
             <div class="bg-rose-50 text-rose-700 p-4 rounded-xl text-xs border border-rose-200 space-y-2">
               <p class="font-bold">連線失敗：${err.message}</p>
-              <p>請檢查 API Key 是否正確，或點擊下方按鈕直接複製提示詞至 ChatGPT 網頁版。</p>
+              <p>請檢查 API Key 是否正確，或點擊下方按鈕直接複製提示詞至慣用 AI 網頁版。</p>
             </div>
           `;
         }
@@ -1965,6 +2060,7 @@
         labelGemini.className = 'flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition';
         labelGroq.className = 'flex items-center gap-2 p-2.5 border-2 border-indigo-500 bg-indigo-50/50 rounded-xl cursor-pointer transition';
       }
+      autoSaveKeys();
     }
 
     function saveSettings() {
@@ -1974,7 +2070,7 @@
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
       closeModal('settingsModal');
       renderAll();
-      showToast('設定已儲存！');
+      showToast('設定已成功保存至本機！');
     }
 
     async function testActiveApiKey() {
@@ -2000,10 +2096,10 @@
             })
           });
           const data = await res.json();
-          if (data.choices) {
-            alert('🎉 連線成功！Groq API Key 運作正常 (Llama 3.3)。');
+          if (res.ok && data.choices) {
+            alert('🎉 連線成功！Groq API Key (Llama 3.3) 運作完全正常。');
           } else {
-            alert('❌ Groq 連線失敗：' + JSON.stringify(data.error || data));
+            alert('❌ Groq 連線失敗：' + (data.error?.message || JSON.stringify(data)));
           }
         } else {
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
@@ -2012,10 +2108,10 @@
             body: JSON.stringify({ contents: [{ parts: [{ text: "hi" }] }] })
           });
           const data = await res.json();
-          if (data.candidates) {
-            alert('🎉 連線成功！Google Gemini API Key 運作正常。');
+          if (res.ok && data.candidates) {
+            alert('🎉 連線成功！Google Gemini API Key 運作完全正常。');
           } else {
-            alert('❌ Gemini 連線失敗：' + JSON.stringify(data.error || data));
+            alert('❌ Gemini 連線失敗：' + (data.error?.message || JSON.stringify(data)));
           }
         }
       } catch (err) {

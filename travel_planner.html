@@ -1473,6 +1473,16 @@
     }
 
     // ==================== 時間軸渲染 (支援連續全覽與單天模式) ====================
+    const CATEGORY_MAP = {
+      sight: { name: '觀光景點', icon: 'camera', badgeClass: 'bg-blue-50 text-blue-700 border-blue-200' },
+      food: { name: '在地美食', icon: 'utensils', badgeClass: 'bg-orange-50 text-orange-700 border-orange-200' },
+      cafe: { name: '咖啡甜點', icon: 'coffee', badgeClass: 'bg-amber-50 text-amber-700 border-amber-200' },
+      shop: { name: '逛街購物', icon: 'shopping-bag', badgeClass: 'bg-pink-50 text-pink-700 border-pink-200' },
+      hotel: { name: '住宿飯店', icon: 'bed', badgeClass: 'bg-purple-50 text-purple-700 border-purple-200' },
+      transit: { name: '交通運輸', icon: 'bus', badgeClass: 'bg-slate-100 text-slate-700 border-slate-300' },
+      other: { name: '其他活動', icon: 'map-pin', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
+    };
+
     function renderTimelines() {
       const container = document.getElementById('mainTimelineWrapper');
       container.innerHTML = '';

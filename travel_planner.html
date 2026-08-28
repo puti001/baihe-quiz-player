@@ -1045,10 +1045,28 @@
       const dest = document.getElementById('quickDestInput').value.trim() || '指定城市';
       const days = document.getElementById('quickDaysInput').value;
       const style = document.getElementById('quickStyleInput').value;
-      const prompt = buildFullTripPrompt(dest, days, style, '');
 
-      navigator.clipboard.writeText(prompt).then(() => {
-        showToast('已複製提示詞！可貼至任何慣用 AI');
+      const humanPrompt = `你是一位熟悉各地旅遊的頂級專業地圖導遊。請為我規劃【${dest}】共【${days} 天】的旅遊行程。
+旅行風格：【${style}】。
+
+請確保每天行程順路不繞路，景點必須為【${dest} 當地真實存在且知名熱門的地標、排隊美食或特色景點】。
+請直接以清楚美觀的「每日行程清單」格式回覆（方便閱讀與複製）：
+
+Day 1
+10:00 景點名稱 (特色重點與必看亮點)
+12:30 餐廳名稱 (必吃在地特色美食)
+15:00 景點名稱 (遊玩亮點或下午茶推薦)
+
+Day 2
+09:30 景點名稱 (特色重點)
+...依此類推排完 ${days} 天
+
+【雨天備案與推薦候選】
+1. 室內景點或商場 (雨天備案說明)
+2. 特色小店或咖啡廳 (備案說明)`;
+
+      navigator.clipboard.writeText(humanPrompt).then(() => {
+        showToast('已複製人類友善提示詞！快貼至 ChatGPT / Claude');
       });
     }
 
@@ -1781,10 +1799,36 @@ Day 2
         let newDays = [];
         let curDaySpots = [];
         let curDayNum = 1;
+        let newBucketList = [];
+        let inBucketSection = false;
 
         lines.forEach(line => {
           line = line.trim();
           if (!line) return;
+
+          // 偵測雨天備案 / 候選區塊
+          if (/^【?\s*(雨天備案|候選景點|備案|推薦候選)/i.test(line)) {
+            inBucketSection = true;
+            if (curDaySpots.length > 0) {
+              newDays.push({ dayNumber: curDayNum, date: '', spots: curDaySpots });
+              curDaySpots = [];
+            }
+            return;
+          }
+
+          if (inBucketSection) {
+            const spotObj = parseSingleSpotLine(line);
+            if (spotObj) {
+              newBucketList.push({
+                id: 'b_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                name: spotObj.name,
+                category: spotObj.category || 'sight',
+                duration: 60,
+                notes: spotObj.notes || ''
+              });
+            }
+            return;
+          }
 
           const dayMatch = line.match(/^(Day\s*(\d+)|第\s*([一二三四五六七八九十\d]+)\s*天)/i);
           if (dayMatch) {
@@ -1800,17 +1844,20 @@ Day 2
           if (spotObj) curDaySpots.push(spotObj);
         });
 
-        if (curDaySpots.length > 0) {
+        if (curDaySpots.length > 0 && !inBucketSection) {
           newDays.push({ dayNumber: curDayNum, date: '', spots: curDaySpots });
         }
 
         if (newDays.length > 0) {
           tripData.days = newDays;
+          if (newBucketList.length > 0) {
+            tripData.bucketList = newBucketList;
+          }
           currentDayIndex = 0;
           saveToStorage();
           closeModal('magicPasteModal');
           renderAll();
-          showToast(`🎉 成功分天匯入 ${newDays.length} 天行程！`);
+          showToast(`🎉 成功解析並分天排好 ${newDays.length} 天行程！`);
           return;
         }
       }

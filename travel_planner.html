@@ -104,7 +104,7 @@
         </div>
         <div>
           <h1 class="text-lg font-bold text-slate-900 leading-tight">Puti-AI 智慧旅遊行程設計器</h1>
-          <p class="text-xs text-slate-500">真實地圖景點 ‧ Google Gemini 核心驅動 ‧ 全天連續一覽</p>
+          <p class="text-xs text-slate-500">精準地圖導航 ‧ Google Gemini 核心驅動 ‧ 全天連續一覽</p>
         </div>
       </div>
 
@@ -185,7 +185,7 @@
         <!-- 快捷規劃表單列 (直球對決，點擊立即生成) -->
         <div class="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-white/10 p-2.5 rounded-2xl backdrop-blur-md border border-white/15">
           <div class="sm:col-span-4">
-            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：墾丁、台東、京都、東京、花蓮" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
+            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：巴黎、墾丁、台東、京都、東京" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
           </div>
           <div class="sm:col-span-3">
             <select id="quickDaysInput" class="w-full h-11 px-3 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium">
@@ -220,11 +220,11 @@
         <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-slate-400 text-[11px]">熱門推薦：</span>
+            <button onclick="setQuickCity('巴黎', 5, '經典地標打卡 (初訪必去熱門景點)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇫🇷 巴黎 5天</button>
             <button onclick="setQuickCity('墾丁', 3, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 墾丁 3天</button>
             <button onclick="setQuickCity('台東', 3, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 台東 3天</button>
             <button onclick="setQuickCity('京都', 4, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 京都 4天</button>
             <button onclick="setQuickCity('東京', 5, '經典地標打卡 (初訪必去熱門景點)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 東京 5天</button>
-            <button onclick="setQuickCity('花蓮', 3, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 花蓮 3天</button>
           </div>
           <button onclick="copyQuickPromptText()" class="text-sky-300 hover:text-white font-medium text-[11px] flex items-center gap-1 bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full transition">
             <i data-lucide="copy" class="w-3 h-3"></i> 複製目前選項提示詞
@@ -233,7 +233,7 @@
       </div>
     </div>
 
-    <!-- 頂部行程總覽列 -->
+    <!-- 頂部行程總覽列 (無費用計算) -->
     <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm mb-6 no-print">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex-1">
@@ -243,7 +243,6 @@
           <p class="text-xs sm:text-sm text-slate-500 mt-1 flex items-center gap-3">
             <span><i data-lucide="calendar" class="w-3.5 h-3.5 inline mr-1 text-slate-400"></i><span id="tripDaysCount">共 1 天</span></span>
             <span><i data-lucide="map-pin" class="w-3.5 h-3.5 inline mr-1 text-slate-400"></i><span id="tripSpotsCount">0 個景點</span></span>
-            <span><i data-lucide="wallet" class="w-3.5 h-3.5 inline mr-1 text-slate-400"></i>預算總計：<span id="tripBudgetTotal" class="font-semibold text-slate-800">NT$ 0</span></span>
           </p>
         </div>
 
@@ -267,7 +266,7 @@
             <i data-lucide="activity" class="w-4 h-4 text-amber-600"></i>
             旅程健檢
           </button>
-          <button onclick="openGoogleMapsDayRoute()" class="px-3 py-2 text-xs sm:text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl flex items-center gap-1.5 transition shadow-sm">
+          <button onclick="openGoogleMapsDayRoute()" class="px-3 py-2 text-xs sm:text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl flex items-center gap-1.5 transition shadow-sm" title="自動帶入城市前綴精準導航">
             <i data-lucide="navigation" class="w-4 h-4 text-blue-600"></i>
             地圖導航
           </button>
@@ -307,7 +306,8 @@
               </div>
               <h3 class="text-sm font-bold text-slate-800">景點候選池 / 雨天備案</h3>
             </div>
-            <button onclick="addBucketItemPrompt()" class="text-xs text-sky-600 hover:text-sky-700 font-medium flex items-center gap-1">
+            <!-- 使用專屬彈窗新增備案，廢除原生 prompt -->
+            <button onclick="openAddBucketModal()" class="text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-lg font-semibold flex items-center gap-1 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> 新增備案
             </button>
           </div>
@@ -382,7 +382,7 @@
             貼上 AI 行程（免 API Key 神器）
           </h4>
           <p class="text-indigo-800">
-            沒有 API Key 也能玩！直接將 ChatGPT / Claude 回覆的 JSON 代碼或行程文字貼進 <strong>「貼上 AI 行程」</strong>，系統自動一秒排好整趟旅程！
+            沒有 API Key 也能玩！直接將 ChatGPT / Claude 回覆的清單文字貼進 <strong>「貼上 AI 行程」</strong>，系統自動一秒排好整趟旅程！
           </p>
         </div>
 
@@ -394,7 +394,7 @@
     </div>
   </div>
 
-  <!-- 2. 新增 / 編輯景點 Modal -->
+  <!-- 2. 新增 / 編輯景點 Modal (無費用欄位) -->
   <div id="spotModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between mb-4">
@@ -410,7 +410,7 @@
         
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">景點 / 店家名稱 <span class="text-rose-500">*</span></label>
-          <input type="text" id="spotNameInput" required placeholder="例如：鵝鑾鼻燈塔、後壁湖阿興生魚片、伯朗大道" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="spotNameInput" required placeholder="例如：羅浮宮、巴黎鐵塔、鵝鑾鼻燈塔" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -431,33 +431,27 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">分類標籤</label>
-            <select id="spotCategoryInput" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
-              <option value="sight">📸 觀光景點</option>
-              <option value="food">🍜 在地美食</option>
-              <option value="cafe">☕ 咖啡甜點</option>
-              <option value="shop">🛍️ 逛街購物</option>
-              <option value="hotel">🏨 住宿飯店</option>
-              <option value="transit">🚆 交通/機場</option>
-              <option value="other">📌 其他活動</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">預估花費</label>
-            <input type="number" id="spotCostInput" placeholder="0" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
-          </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">分類標籤</label>
+          <select id="spotCategoryInput" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            <option value="sight">📸 觀光景點</option>
+            <option value="food">🍜 在地美食</option>
+            <option value="cafe">☕ 咖啡甜點</option>
+            <option value="shop">🛍️ 逛街購物</option>
+            <option value="hotel">🏨 住宿飯店</option>
+            <option value="transit">🚆 交通/機場</option>
+            <option value="other">📌 其他活動</option>
+          </select>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">預約號碼 / 電話 / 地址</label>
-          <input type="text" id="spotBookingInput" placeholder="預約號 #12345 / 08-8861234" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+          <input type="text" id="spotBookingInput" placeholder="預約號 #12345 / 營業電話" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">備註 / 必吃必看推薦</label>
-          <textarea id="spotNotesInput" rows="2" placeholder="例如：推薦品嚐後壁湖綜合生魚片、欣賞日落美景..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
+          <textarea id="spotNotesInput" rows="2" placeholder="例如：推薦欣賞夜間點燈、記得提早線上預約門票..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
         </div>
 
         <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
@@ -520,7 +514,7 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-slate-900">AI 行程文字 / JSON 一鍵解析匯入</h3>
-            <p class="text-xs text-slate-500">無論是 ChatGPT 回覆的 JSON 代碼或文字清單，貼上即可自動解析！</p>
+            <p class="text-xs text-slate-500">無論是 ChatGPT 回覆的文字清單或 JSON，貼上即可自動解析！</p>
           </div>
         </div>
         <button onclick="closeModal('magicPasteModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -529,10 +523,10 @@
       </div>
 
       <div class="flex-1 overflow-y-auto scrollbar-thin py-3 space-y-3">
-        <textarea id="magicPasteTextarea" rows="10" placeholder="請直接將 ChatGPT / Claude / Gemini 回覆的整段內容貼在此處...&#10;&#10;支援格式：&#10;1. JSON 完整代碼 (含 days、title) ➜ 自動排滿多天與備案&#10;2. 純文字 (如 Day 1、09:30 景點名 (備註)) ➜ 自動分天排入" class="w-full p-3.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:outline-none leading-relaxed"></textarea>
+        <textarea id="magicPasteTextarea" rows="10" placeholder="請直接將 ChatGPT / Claude / Gemini 回覆的整段內容貼在此處...&#10;&#10;支援格式：&#10;1. 純文字清單 (如 Day 1、10:00 羅浮宮 (必看蒙娜麗莎)) ➜ 自動分天排入&#10;2. 【雨天備案】區塊 ➜ 自動載入候選池&#10;3. JSON 代碼 ➜ 全案載入" class="w-full p-3.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:outline-none leading-relaxed"></textarea>
         
         <div class="flex items-center justify-between text-xs text-slate-500">
-          <span>💡 智慧自動識別：JSON 代碼、多天標籤 (Day 1 / Day 2) 皆通用！</span>
+          <span>💡 智慧自動識別：多天標籤 (Day 1 / Day 2) 與雨天備案皆通用！</span>
           <button onclick="loadSamplePasteText()" class="text-indigo-600 hover:underline font-semibold">帶入範例文本</button>
         </div>
       </div>
@@ -547,7 +541,7 @@
     </div>
   </div>
 
-  <!-- 5. LINE 小抄匯出 Modal -->
+  <!-- 5. LINE 小抄匯出 Modal (無費用) -->
   <div id="lineExportModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-100 flex flex-col max-h-[90vh]">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -557,7 +551,7 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-slate-900">一鍵產生 LINE 旅遊小抄</h3>
-            <p class="text-xs text-slate-500">帶有 Emoji 與排版，直接貼進群組一目了然！</p>
+            <p class="text-xs text-slate-500">帶有 Emoji 與精準導航連結，直接貼進群組一目了然！</p>
           </div>
         </div>
         <button onclick="closeModal('lineExportModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
@@ -655,12 +649,6 @@
           </p>
         </div>
 
-        <!-- 貨幣設定 -->
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">預設貨幣符號</label>
-          <input type="text" id="currencySymbolInput" value="NT$" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
-        </div>
-
         <div class="pt-3 flex justify-between items-center border-t border-slate-100">
           <button onclick="testActiveApiKey()" id="btnTestConn" class="text-xs font-medium text-sky-600 hover:text-sky-700 flex items-center gap-1">
             <i data-lucide="activity" class="w-3.5 h-3.5"></i> 測試當前連線
@@ -668,6 +656,62 @@
           <button onclick="saveSettings()" class="px-4 py-2 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-lg shadow-sm transition">儲存設定</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- 8. 新增候選/備案景點 Modal (徹底廢除原生 prompt) -->
+  <div id="bucketModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="p-2 bg-amber-100 text-amber-700 rounded-lg">
+            <i data-lucide="bookmark" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900">新增景點候選 / 雨天備案</h3>
+        </div>
+        <button onclick="closeModal('bucketModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="bucketForm" onsubmit="saveBucketItem(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">備案 / 景點名稱 <span class="text-rose-500">*</span></label>
+          <input type="text" id="bucketNameInput" required placeholder="例如：羅浮宮、奧賽美術館、老佛爺百貨" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">分類標籤</label>
+            <select id="bucketCategoryInput" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none">
+              <option value="sight">📸 觀光景點</option>
+              <option value="food">🍜 在地美食</option>
+              <option value="cafe">☕ 咖啡甜點</option>
+              <option value="shop">🛍️ 逛街購物</option>
+              <option value="other">📌 雨天室內/其他</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">預計停留時間</label>
+            <select id="bucketDurationInput" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none">
+              <option value="60" selected>1 小時</option>
+              <option value="90">1.5 小時</option>
+              <option value="120">2 小時</option>
+              <option value="180">半天 (3小時)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">備案說明 / 亮點推薦</label>
+          <textarea id="bucketNotesInput" rows="2" placeholder="例如：雨天室內展館推薦、必看蒙娜麗莎..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="closeModal('bucketModal')" class="px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition">取消</button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-lg shadow-sm transition">加入候選池</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -690,7 +734,6 @@
 
     const DEFAULT_EMPTY_TRIP = {
       title: '',
-      currency: 'NT$',
       days: [
         { dayNumber: 1, date: '', spots: [] }
       ],
@@ -700,8 +743,7 @@
     let tripData = JSON.parse(JSON.stringify(DEFAULT_EMPTY_TRIP));
 
     let userSettings = {
-      geminiApiKey: '',
-      currency: 'NT$'
+      geminiApiKey: ''
     };
 
     // ==================== 初始化 ====================
@@ -756,7 +798,29 @@
 
     function syncSettingsUI() {
       document.getElementById('geminiApiKeyInput').value = userSettings.geminiApiKey || '';
-      document.getElementById('currencySymbolInput').value = userSettings.currency || 'NT$';
+    }
+
+    // ==================== 城市/目的地上下文解析 (避免跨國同名地標跳跑) ====================
+    function getTripCityContext() {
+      const quickDest = (document.getElementById('quickDestInput')?.value || '').trim();
+      if (quickDest) return quickDest;
+
+      const title = (tripData.title || '').trim();
+      if (title && title !== '我的旅遊行程') {
+        const match = title.match(/^([^\d\s\-_【】]+)/);
+        if (match && match[1]) {
+          return match[1].replace(/(旅遊|行程|之旅|微旅行|假期|精華遊)$/, '').trim();
+        }
+      }
+      return '';
+    }
+
+    function buildPreciseMapQuery(spotName) {
+      const city = getTripCityContext();
+      if (city && !spotName.includes(city)) {
+        return `${city} ${spotName}`;
+      }
+      return spotName;
     }
 
     // ==================== 動態更新 API Key 狀態指示徽章 ====================
@@ -815,13 +879,10 @@
     function updateStats() {
       document.getElementById('tripDaysCount').innerText = `共 ${tripData.days.length} 天`;
       let totalSpots = 0;
-      let totalCost = 0;
       tripData.days.forEach(d => {
         totalSpots += d.spots.length;
-        d.spots.forEach(s => { totalCost += (Number(s.cost) || 0); });
       });
       document.getElementById('tripSpotsCount').innerText = `${totalSpots} 個景點`;
-      document.getElementById('tripBudgetTotal').innerText = `${userSettings.currency || 'NT$'} ${totalCost.toLocaleString()}`;
     }
 
     function updateTripTitle(val) {
@@ -852,7 +913,7 @@
       lucide.createIcons();
     }
 
-    // ==================== 一鍵完整複製整趟旅程 ====================
+    // ==================== 一鍵完整複製整趟旅程 (無費用) ====================
     function quickCopyEntireTrip() {
       let out = `✈️【${tripData.title || '我的旅遊行程'}】\n`;
       out += `📅 行程共 ${tripData.days.length} 天完整行程小抄\n`;
@@ -867,8 +928,7 @@
             const catEmoji = s.category === 'food' ? '🍜' : s.category === 'cafe' ? '☕' : s.category === 'shop' ? '🛍️' : s.category === 'hotel' ? '🏨' : '📸';
             out += `${idx + 1}. 【${s.time}】${catEmoji} ${s.name}\n`;
             if (s.notes) out += `   💡 ${s.notes}\n`;
-            if (s.cost) out += `   💰 預算：${userSettings.currency || 'NT$'}${s.cost}\n`;
-            out += `   🗺️ 導航：https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name)}\n`;
+            out += `   🗺️ 導航：https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(buildPreciseMapQuery(s.name))}\n`;
           });
         }
         out += `\n`;
@@ -942,8 +1002,8 @@
     // ==================== 專業地圖導遊 System Prompt ====================
     const GLOBAL_SYSTEM_PROMPT = `你是一位精通全球與台灣在地地理的頂級旅遊規劃專家。
 【最關鍵核心規則】：
-1. 安排的景點名稱必須是【真實存在、在 Google 地圖上有明確地標】的具體知名景點或餐廳（例如：鵝鑾鼻燈塔、墾丁大街夜市、南灣遊憩區、後壁湖阿興生魚片、龍磐公園、白沙灣）。
-2. 嚴格禁止捏造虛構地名，絕對禁止輸出籠統抽象名稱（如「大樹木」、「大建築物」、「大廈廳」等），違者視為嚴重錯誤！
+1. 安排的景點名稱必須是【真實存在、在 Google 地圖上有明確地標】的具體知名景點或餐廳（例如：鵝鑾鼻燈塔、墾丁大街夜市、羅浮宮、巴黎凱旋門、清水寺）。
+2. 嚴格禁止捏造虛構地名，絕對禁止輸出籠統抽象名稱（如「大樹木」、「大建築物」等）。
 3. 每天安排 2~4 個順路景點，備註寫出一句具體的必吃美食或必看特色。
 4. 必須嚴格以有效 JSON 格式輸出。`;
 
@@ -1009,7 +1069,7 @@
     function buildFullTripPrompt(dest, days, style, extra) {
       return `請為我規劃【${dest}】共【${days} 天】的旅遊行程。
 旅行風格：【${style}】${extra ? `，特殊要求：【${extra}】` : ''}。
-請確保每天行程順路不繞路，景點必須為【${dest} 當地真實存在且知名的地標/美食】（絕對不可出現大樹木、大建築物等捏造抽象名稱）。
+請確保每天行程順路不繞路，景點必須為【${dest} 當地真實存在且知名的地標/美食】。
 
 請嚴格以 JSON 物件格式回傳（只回傳純 JSON）：
 {
@@ -1020,19 +1080,18 @@
       "date": "",
       "spots": [
         {
-          "name": "具體真實景點名稱(如：鵝鑾鼻燈塔)",
+          "name": "具體真實景點名稱",
           "time": "09:30",
           "duration": 90,
           "category": "sight",
-          "cost": 60,
-          "notes": "具體特色說明(如：台灣最南端純白燈塔與海景棧道)"
+          "notes": "具體特色亮點說明"
         }
       ]
     }
   ],
   "bucketList": [
     {
-      "name": "在地真實雨天備案或小店(如：國立海洋生物博物館)",
+      "name": "在地真實雨天備案或小店",
       "category": "sight",
       "duration": 120,
       "notes": "備案特色"
@@ -1073,7 +1132,7 @@ Day 2
     async function startDirectTripGenerate() {
       const dest = document.getElementById('quickDestInput').value.trim();
       if (!dest) {
-        alert('請先輸入想去的目的地城市（例如：墾丁、台東、京都、東京、花蓮）！');
+        alert('請先輸入想去的目的地城市（例如：巴黎、墾丁、台東、京都、東京）！');
         document.getElementById('quickDestInput').focus();
         return;
       }
@@ -1105,7 +1164,6 @@ Day 2
 
           tripData = {
             title: resultJson.title || `${dest} ${days}天精華遊`,
-            currency: userSettings.currency || 'NT$',
             days: resultJson.days,
             bucketList: resultJson.bucketList || []
           };
@@ -1208,7 +1266,7 @@ Day 2
       deleteDay(currentDayIndex);
     }
 
-    // ==================== 時間軸渲染 (支援連續全覽與單天模式) ====================
+    // ==================== 時間軸渲染 (支援連續全覽與單天模式，無費用) ====================
     const CATEGORY_MAP = {
       sight: { name: '觀光景點', icon: 'camera', badgeClass: 'bg-blue-50 text-blue-700 border-blue-200' },
       food: { name: '在地美食', icon: 'utensils', badgeClass: 'bg-orange-50 text-orange-700 border-orange-200' },
@@ -1343,6 +1401,8 @@ Day 2
       card.className = 'group bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 relative card-print';
       card.setAttribute('data-id', spot.id);
 
+      const mapQuery = buildPreciseMapQuery(spot.name);
+
       card.innerHTML = `
         <div class="flex items-start justify-between gap-3">
           <div class="flex items-start gap-3 flex-1">
@@ -1361,12 +1421,11 @@ Day 2
                 <span class="text-xs text-slate-400 font-medium">
                   停留約 ${spot.duration || 60} 分鐘
                 </span>
-                ${spot.cost ? `<span class="text-xs text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-medium border border-emerald-100">${userSettings.currency || 'NT$'}${Number(spot.cost).toLocaleString()}</span>` : ''}
               </div>
 
               <h3 class="text-base sm:text-lg font-bold text-slate-900 truncate flex items-center gap-2">
                 <span>${spot.name}</span>
-                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" class="text-slate-400 hover:text-sky-600 transition" title="在 Google Maps 開啟">
+                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}" target="_blank" class="text-slate-400 hover:text-sky-600 transition" title="在 Google Maps 開啟精準地標 (${mapQuery})">
                   <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                 </a>
               </h3>
@@ -1462,7 +1521,6 @@ Day 2
       document.getElementById('spotTimeInput').value = spot.time || '10:00';
       document.getElementById('spotDurationInput').value = spot.duration || '60';
       document.getElementById('spotCategoryInput').value = spot.category || 'sight';
-      document.getElementById('spotCostInput').value = spot.cost || '';
       document.getElementById('spotBookingInput').value = spot.booking || '';
       document.getElementById('spotNotesInput').value = spot.notes || '';
 
@@ -1480,7 +1538,6 @@ Day 2
         time: document.getElementById('spotTimeInput').value,
         duration: parseInt(document.getElementById('spotDurationInput').value) || 60,
         category: document.getElementById('spotCategoryInput').value,
-        cost: parseFloat(document.getElementById('spotCostInput').value) || 0,
         booking: document.getElementById('spotBookingInput').value.trim(),
         notes: document.getElementById('spotNotesInput').value.trim()
       };
@@ -1530,20 +1587,32 @@ Day 2
       }
     }
 
-    function addBucketItemPrompt() {
-      const name = prompt('請輸入候選/備案景點名稱：');
-      if (name && name.trim()) {
+    // ==================== 候選池 / 備案 Modal 管理 ====================
+    function openAddBucketModal() {
+      document.getElementById('bucketForm').reset();
+      openModal('bucketModal');
+    }
+
+    function saveBucketItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('bucketNameInput').value.trim();
+      const category = document.getElementById('bucketCategoryInput').value;
+      const duration = parseInt(document.getElementById('bucketDurationInput').value) || 60;
+      const notes = document.getElementById('bucketNotesInput').value.trim();
+
+      if (name) {
         tripData.bucketList.push({
           id: 'b_' + Date.now(),
-          name: name.trim(),
-          category: 'sight',
-          duration: 60,
-          notes: ''
+          name: name,
+          category: category,
+          duration: duration,
+          notes: notes
         });
         saveToStorage();
+        closeModal('bucketModal');
         renderBucketList();
         lucide.createIcons();
-        showToast('已加入候選池');
+        showToast(`已將「${name}」加入候選池！`);
       }
     }
 
@@ -1558,7 +1627,6 @@ Day 2
           time: '14:00',
           duration: b.duration || 60,
           category: b.category || 'sight',
-          cost: 0,
           booking: '',
           notes: b.notes || ''
         });
@@ -1601,7 +1669,8 @@ Day 2
     }
 
     function buildAiPrompt(spotName, preference) {
-      return `我正在規劃旅遊行程，目前已安排景點【${spotName}】。
+      const city = getTripCityContext();
+      return `我正在規劃${city ? `【${city}】` : ''}旅遊行程，目前已安排景點【${spotName}】。
 請針對該景點，依照【${preference}】偏好，推薦 3 個步行或車程 15 分鐘內的周邊真實知名景點/美食（絕對不可捏造抽象名稱）。
 請嚴格以 JSON 陣列格式回傳：
 [
@@ -1609,7 +1678,6 @@ Day 2
     "name": "真實店名或景點名",
     "category": "food",
     "duration": 60,
-    "cost": 300,
     "notes": "一句話推薦理由與必吃特色"
   }
 ]`;
@@ -1715,7 +1783,6 @@ Day 2
         time: '12:00',
         duration: item.duration || 60,
         category: item.category || 'food',
-        cost: item.cost || 0,
         booking: '',
         notes: item.notes || ''
       };
@@ -1741,14 +1808,18 @@ Day 2
     function loadSamplePasteText() {
       document.getElementById('magicPasteTextarea').value = 
 `Day 1
-10:00 鵝鑾鼻燈塔 (台灣最南端海景)
-12:30 後壁湖阿興生魚片 (超人氣海鮮午餐)
-15:00 白沙灣海灘 (戲水放空與看夕陽)
+10:00 羅浮宮 (必看蒙娜麗莎與玻璃金字塔)
+13:00 杜樂麗花園 (法式庭園悠閒漫步)
+15:30 巴黎凱旋門 (登頂眺望香榭麗舍十二放射大道)
 
 Day 2
-10:00 國立海洋生物博物館 (海底隧道與企鵝館)
-14:00 鹿境梅花鹿生態園區 (近距離互動餵食)
-18:00 墾丁大街夜市 (在地熱鬧小吃美食)`;
+10:00 艾菲爾鐵塔 (戰神廣場野餐與登塔賞景)
+14:00 塞納河遊船 (水上巡禮巴黎古蹟)
+18:00 蒙馬特聖心堂 (畫家村與巴黎全景夕陽)
+
+【雨天備案與推薦候選】
+1. 奧賽美術館 (印象派畫作殿堂)
+2. 老佛爺百貨奧斯曼旗艦店 (彩繪玻璃穹頂與逛街)`;
     }
 
     function executeMagicPaste() {
@@ -1776,7 +1847,6 @@ Day 2
             }
             tripData = {
               title: parsed.title || '我的旅遊行程',
-              currency: userSettings.currency || 'NT$',
               days: parsed.days,
               bucketList: parsed.bucketList || []
             };
@@ -1806,7 +1876,6 @@ Day 2
           line = line.trim();
           if (!line) return;
 
-          // 偵測雨天備案 / 候選區塊
           if (/^【?\s*(雨天備案|候選景點|備案|推薦候選)/i.test(line)) {
             inBucketSection = true;
             if (curDaySpots.length > 0) {
@@ -1911,7 +1980,6 @@ Day 2
           time: time,
           duration: 60,
           category: 'sight',
-          cost: 0,
           booking: '',
           notes: notes
         };
@@ -1919,7 +1987,7 @@ Day 2
       return null;
     }
 
-    // ==================== LINE 小抄產生器 ====================
+    // ==================== LINE 小抄產生器 (無費用) ====================
     function openLineExportModal() {
       openModal('lineExportModal');
       renderLineExport('simple');
@@ -1945,11 +2013,10 @@ Day 2
             if (!isSimple) {
               if (s.booking) out += `   🎫 預約：${s.booking}\n`;
               if (s.notes) out += `   📝 備註：${s.notes}\n`;
-              if (s.cost) out += `   💰 預算：${userSettings.currency || 'NT$'}${s.cost}\n`;
             } else {
               if (s.notes) out += `   💡 ${s.notes}\n`;
             }
-            out += `   🗺️ 導航：https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name)}\n`;
+            out += `   🗺️ 導航：https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(buildPreciseMapQuery(s.name))}\n`;
           });
         }
         out += `\n`;
@@ -1967,7 +2034,7 @@ Day 2
       });
     }
 
-    // ==================== Google Maps 當日連續導航 ====================
+    // ==================== Google Maps 當日連續導航 (加入城市上下文) ====================
     function openGoogleMapsDayRoute() {
       const currentDay = tripData.days[currentDayIndex];
       if (!currentDay.spots || currentDay.spots.length === 0) {
@@ -1975,13 +2042,14 @@ Day 2
         return;
       }
       if (currentDay.spots.length === 1) {
-        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(currentDay.spots[0].name)}`, '_blank');
+        const query = buildPreciseMapQuery(currentDay.spots[0].name);
+        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank');
         return;
       }
 
-      const origin = encodeURIComponent(currentDay.spots[0].name);
-      const destination = encodeURIComponent(currentDay.spots[currentDay.spots.length - 1].name);
-      const waypoints = currentDay.spots.slice(1, -1).map(s => encodeURIComponent(s.name)).join('|');
+      const origin = encodeURIComponent(buildPreciseMapQuery(currentDay.spots[0].name));
+      const destination = encodeURIComponent(buildPreciseMapQuery(currentDay.spots[currentDay.spots.length - 1].name));
+      const waypoints = currentDay.spots.slice(1, -1).map(s => encodeURIComponent(buildPreciseMapQuery(s.name))).join('|');
 
       let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
       if (waypoints) {
@@ -2073,7 +2141,6 @@ Day 2
 
     function saveSettings() {
       userSettings.geminiApiKey = document.getElementById('geminiApiKeyInput').value.trim();
-      userSettings.currency = document.getElementById('currencySymbolInput').value.trim() || 'NT$';
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
       closeModal('settingsModal');
       renderAll();

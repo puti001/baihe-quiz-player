@@ -117,12 +117,6 @@
           <span>一鍵複製整趟</span>
         </button>
 
-        <!-- 貼上行程按鈕 (免 API Key 神器) -->
-        <button onclick="openMagicPasteModal()" class="px-3 py-1.5 text-xs sm:text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-xl flex items-center gap-1.5 transition border border-indigo-200 shadow-sm" title="把 ChatGPT/Claude 回覆貼上來">
-          <i data-lucide="wand-2" class="w-4 h-4 text-indigo-600"></i>
-          <span>貼上 AI 行程</span>
-        </button>
-
         <!-- 動態 API Key 狀態按鈕 (Navbar) -->
         <button onclick="openSettingsModal()" id="navApiKeyBtn" class="glow-btn-gold px-3 py-1.5 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition border shadow-sm">
           <i data-lucide="key" class="w-4 h-4" id="navApiKeyIcon"></i>
@@ -164,10 +158,6 @@
           <button onclick="openSettingsModal()" id="bannerApiKeyStatusBtn" class="glow-btn-gold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold shadow-md cursor-pointer transition">
             <i data-lucide="key" class="w-3.5 h-3.5" id="bannerApiKeyIcon"></i>
             <span id="bannerApiKeyStatusLabel">第一步：點此免費申請 Google Gemini API Key</span>
-          </button>
-          <button onclick="openMagicPasteModal()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-indigo-500/30 hover:bg-indigo-500/50 text-indigo-200 text-xs font-bold backdrop-blur-md border border-indigo-400/40 transition">
-            <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
-            貼上 AI 回覆文字匯入
           </button>
           <button onclick="openGuideModal()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-sky-300 text-xs font-medium backdrop-blur-md transition">
             <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
@@ -378,11 +368,11 @@
 
         <div class="bg-indigo-50 p-3.5 rounded-2xl border border-indigo-200">
           <h4 class="font-bold text-indigo-900 text-sm flex items-center gap-1.5 mb-1">
-            <span class="w-5 h-5 rounded-full bg-indigo-200 text-indigo-900 flex items-center justify-center text-xs">📋</span>
-            貼上 AI 行程（免 API Key 神器）
+            <span class="w-5 h-5 rounded-full bg-indigo-200 text-indigo-900 flex items-center justify-center text-xs">🗺️</span>
+            精準地圖導航 & LINE 隨行小抄
           </h4>
           <p class="text-indigo-800">
-            沒有 API Key 也能玩！直接將 ChatGPT / Claude 回覆的清單文字貼進 <strong>「貼上 AI 行程」</strong>，系統自動一秒排好整趟旅程！
+            自動帶入城市前綴精準定位，一鍵開啟 Google Maps 路線規劃，還能一秒產出精美 LINE 旅遊小抄直接轉發群組！
           </p>
         </div>
 
@@ -499,43 +489,6 @@
         <button onclick="triggerDirectAiFetch()" id="btnDirectAiFetch" class="px-4 py-1.5 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-lg flex items-center gap-1.5 shadow-sm transition">
           <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
           <span id="aiFetchButtonLabel">即時 AI 推薦 (Gemini)</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. AI 文本/JSON 智能解析匯入 Modal (Magic Paste) -->
-  <div id="magicPasteModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-100 flex flex-col max-h-[90vh]">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2.5">
-          <div class="p-2.5 bg-indigo-100 text-indigo-700 rounded-2xl">
-            <i data-lucide="wand-2" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-bold text-slate-900">AI 行程文字 / JSON 一鍵解析匯入</h3>
-            <p class="text-xs text-slate-500">無論是 ChatGPT 回覆的文字清單或 JSON，貼上即可自動解析！</p>
-          </div>
-        </div>
-        <button onclick="closeModal('magicPasteModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto scrollbar-thin py-3 space-y-3">
-        <textarea id="magicPasteTextarea" rows="10" placeholder="請直接將 ChatGPT / Claude / Gemini 回覆的整段內容貼在此處...&#10;&#10;支援格式：&#10;1. 純文字清單 (如 Day 1、10:00 羅浮宮 (必看蒙娜麗莎)) ➜ 自動分天排入&#10;2. 【雨天備案】區塊 ➜ 自動載入候選池&#10;3. JSON 代碼 ➜ 全案載入" class="w-full p-3.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:outline-none leading-relaxed"></textarea>
-        
-        <div class="flex items-center justify-between text-xs text-slate-500">
-          <span>💡 智慧自動識別：多天標籤 (Day 1 / Day 2) 與雨天備案皆通用！</span>
-          <button onclick="loadSamplePasteText()" class="text-indigo-600 hover:underline font-semibold">帶入範例文本</button>
-        </div>
-      </div>
-
-      <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
-        <button onclick="closeModal('magicPasteModal')" class="px-4 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">取消</button>
-        <button onclick="executeMagicPaste()" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-1.5">
-          <i data-lucide="check" class="w-4 h-4"></i>
-          立即解析並匯入行程
         </button>
       </div>
     </div>
@@ -1822,193 +1775,7 @@ Day 2
       showToast(`已將 ${item.name} 加入行程！`);
     }
 
-    // ==================== Magic Paste 智能文本/JSON 全能解析 ====================
-    function openMagicPasteModal() {
-      document.getElementById('magicPasteTextarea').value = '';
-      openModal('magicPasteModal');
-    }
 
-    function loadSamplePasteText() {
-      document.getElementById('magicPasteTextarea').value = 
-`Day 1
-10:00 羅浮宮 (必看蒙娜麗莎與玻璃金字塔)
-13:00 杜樂麗花園 (法式庭園悠閒漫步)
-15:30 巴黎凱旋門 (登頂眺望香榭麗舍十二放射大道)
-
-Day 2
-10:00 艾菲爾鐵塔 (戰神廣場野餐與登塔賞景)
-14:00 塞納河遊船 (水上巡禮巴黎古蹟)
-18:00 蒙馬特聖心堂 (畫家村與巴黎全景夕陽)
-
-【雨天備案與推薦候選】
-1. 奧賽美術館 (印象派畫作殿堂)
-2. 老佛爺百貨奧斯曼旗艦店 (彩繪玻璃穹頂與逛街)`;
-    }
-
-    function executeMagicPaste() {
-      const rawText = document.getElementById('magicPasteTextarea').value.trim();
-      if (!rawText) {
-        alert('請先貼上行程文字或 JSON 代碼！');
-        return;
-      }
-
-      if (rawText.includes('"days"') || rawText.startsWith('{')) {
-        try {
-          const parsed = cleanAndParseJson(rawText);
-          if (parsed && parsed.days && Array.isArray(parsed.days)) {
-            parsed.days.forEach(d => {
-              if (d.spots && Array.isArray(d.spots)) {
-                d.spots.forEach(s => {
-                  s.id = 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
-                });
-              }
-            });
-            if (parsed.bucketList && Array.isArray(parsed.bucketList)) {
-              parsed.bucketList.forEach(b => {
-                b.id = 'b_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
-              });
-            }
-            tripData = {
-              title: parsed.title || '我的旅遊行程',
-              days: parsed.days,
-              bucketList: parsed.bucketList || []
-            };
-            currentDayIndex = 0;
-            saveToStorage();
-            closeModal('magicPasteModal');
-            renderAll();
-            showToast(`🎉 成功解析並匯入 ${parsed.days.length} 天完整行程！`);
-            return;
-          }
-        } catch (e) {
-          console.warn('嘗試 JSON 解析失敗，轉為逐行純文本解析模式', e);
-        }
-      }
-
-      const lines = rawText.split('\n');
-      let isMultiDay = lines.some(l => /^(Day\s*\d+|第\s*[一二三四五六七八九十\d]+\s*天)/i.test(l.trim()));
-      
-      if (isMultiDay) {
-        let newDays = [];
-        let curDaySpots = [];
-        let curDayNum = 1;
-        let newBucketList = [];
-        let inBucketSection = false;
-
-        lines.forEach(line => {
-          line = line.trim();
-          if (!line) return;
-
-          if (/^【?\s*(雨天備案|候選景點|備案|推薦候選)/i.test(line)) {
-            inBucketSection = true;
-            if (curDaySpots.length > 0) {
-              newDays.push({ dayNumber: curDayNum, date: '', spots: curDaySpots });
-              curDaySpots = [];
-            }
-            return;
-          }
-
-          if (inBucketSection) {
-            const spotObj = parseSingleSpotLine(line);
-            if (spotObj) {
-              newBucketList.push({
-                id: 'b_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-                name: spotObj.name,
-                category: spotObj.category || 'sight',
-                duration: 60,
-                notes: spotObj.notes || ''
-              });
-            }
-            return;
-          }
-
-          const dayMatch = line.match(/^(Day\s*(\d+)|第\s*([一二三四五六七八九十\d]+)\s*天)/i);
-          if (dayMatch) {
-            if (curDaySpots.length > 0 || newDays.length > 0) {
-              newDays.push({ dayNumber: curDayNum, date: '', spots: curDaySpots });
-              curDaySpots = [];
-            }
-            curDayNum = dayMatch[2] ? parseInt(dayMatch[2]) : (newDays.length + 1);
-            return;
-          }
-
-          const spotObj = parseSingleSpotLine(line);
-          if (spotObj) curDaySpots.push(spotObj);
-        });
-
-        if (curDaySpots.length > 0 && !inBucketSection) {
-          newDays.push({ dayNumber: curDayNum, date: '', spots: curDaySpots });
-        }
-
-        if (newDays.length > 0) {
-          tripData.days = newDays;
-          if (newBucketList.length > 0) {
-            tripData.bucketList = newBucketList;
-          }
-          currentDayIndex = 0;
-          saveToStorage();
-          closeModal('magicPasteModal');
-          renderAll();
-          showToast(`🎉 成功解析並分天排好 ${newDays.length} 天行程！`);
-          return;
-        }
-      }
-
-      let count = 0;
-      lines.forEach(line => {
-        line = line.trim();
-        if (!line) return;
-        const spotObj = parseSingleSpotLine(line);
-        if (spotObj) {
-          tripData.days[currentDayIndex].spots.push(spotObj);
-          count++;
-        }
-      });
-
-      if (count > 0) {
-        saveToStorage();
-        closeModal('magicPasteModal');
-        renderAll();
-        showToast(`成功解析並加入 ${count} 個景點！`);
-      } else {
-        alert('未能識別出有效行程，請檢查文字或代碼格式。');
-      }
-    }
-
-    function parseSingleSpotLine(line) {
-      const timeMatch = line.match(/^(\d{1,2}:\d{2})\s*(.*)$/);
-      let time = '10:00';
-      let remaining = line;
-
-      if (timeMatch) {
-        time = timeMatch[1];
-        remaining = timeMatch[2];
-      }
-
-      const notesMatch = remaining.match(/^(.*?)[(（](.*?)[)）]$/);
-      let name = remaining;
-      let notes = '';
-
-      if (notesMatch) {
-        name = notesMatch[1].trim();
-        notes = notesMatch[2].trim();
-      }
-
-      name = name.replace(/^[-*#\d.]+\s*/, '').trim();
-
-      if (name) {
-        return {
-          id: 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-          name: name,
-          time: time,
-          duration: 60,
-          category: 'sight',
-          booking: '',
-          notes: notes
-        };
-      }
-      return null;
-    }
 
     // ==================== LINE 小抄產生器 (無費用) ====================
     function openLineExportModal() {

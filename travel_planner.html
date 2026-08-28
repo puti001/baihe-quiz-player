@@ -185,7 +185,7 @@
         <!-- 快捷規劃表單列 (直球對決，點擊立即生成) -->
         <div class="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-2.5 bg-white/10 p-2.5 rounded-2xl backdrop-blur-md border border-white/15">
           <div class="sm:col-span-4">
-            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：墾丁、台東、京都、東京、花蓮" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
+            <input type="text" id="quickDestInput" placeholder="想去哪裡？例如：屏東、台南、台東、京都、東京、花蓮" class="w-full h-11 px-3.5 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium placeholder:text-slate-400">
           </div>
           <div class="sm:col-span-3">
             <select id="quickDaysInput" class="w-full h-11 px-3 text-xs sm:text-sm bg-white text-slate-900 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none font-medium">
@@ -220,11 +220,11 @@
         <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-slate-400 text-[11px]">熱門推薦：</span>
-            <button onclick="setQuickCity('墾丁', 3, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 墾丁 3天</button>
+            <button onclick="setQuickCity('屏東', 3, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 屏東 3天</button>
+            <button onclick="setQuickCity('台南', 2, '在地美食吃貨之旅 (特色小吃與名店)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 台南 2天</button>
             <button onclick="setQuickCity('台東', 3, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 台東 3天</button>
             <button onclick="setQuickCity('京都', 4, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 京都 4天</button>
             <button onclick="setQuickCity('東京', 5, '經典地標打卡 (初訪必去熱門景點)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇯🇵 東京 5天</button>
-            <button onclick="setQuickCity('花蓮', 3, '慢活放鬆 (一天2-3個點，深度體驗)')" class="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 transition text-[11px]">🇹🇼 花蓮 3天</button>
           </div>
           <button onclick="copyQuickPromptText()" class="text-sky-300 hover:text-white font-medium text-[11px] flex items-center gap-1 bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full transition">
             <i data-lucide="copy" class="w-3 h-3"></i> 複製目前選項提示詞
@@ -1002,12 +1002,11 @@
     // ==================== 專業地圖導遊 System Prompt ====================
     const GLOBAL_SYSTEM_PROMPT = `你是一位精通全球與台灣在地地理的頂級旅遊規劃專家。
 【最關鍵核心規則】：
-1. 安排的景點名稱必須是【真實存在、在 Google 地圖上有明確地標】的具體知名景點或餐廳（例如：鵝鑾鼻燈塔、墾丁大街夜市、羅浮宮、巴黎凱旋門、清水寺）。
+1. 安排的景點名稱必須是【真實存在、在 Google 地圖上有明確地標】的具體知名景點或餐廳（例如：勝利星村、屏東縣民公園、東港華僑市場、鵝鑾鼻燈塔、羅浮宮、巴黎凱旋門、清水寺）。
 2. 嚴格禁止捏造虛構地名，絕對禁止輸出籠統抽象名稱（如「大樹木」、「大建築物」等）。
-3. 【長途航班與真實交通動線】：
-   - 若目的地為長途跨洲旅遊（如歐洲：巴黎、倫敦、瑞士；美洲：紐約、加州等）：
-     * Day 1 必須符合真實長途飛行節奏：安排上午/下午抵達當地國際機場（如巴黎戴高樂機場 CDG）、入境通關、前往市區飯店 Check-in 卸行李，傍晚安排輕鬆散步或遊船調整時差。
-     * 最後一天安排市區輕度採買/散步，午後前往機場辦理退稅與搭機返程。
+3. 【目的地深度與多樣性】：
+   - 若規劃【屏東】：屏東幅員廣闊，請依天數與風格靈活涵蓋【屏東市區 (勝利星村、縣民公園、屏東夜市)】、【潮州/東港 (冷熱冰、華僑市場)】、【原鄉/萬巒 (霧台神山愛玉、萬巒豬腳)】與【恆春半島/墾丁】，切勿狹隘只排墾丁！
+   - 若為長途跨洲旅遊（如歐洲：巴黎、倫敦；美洲：紐約等）：Day 1 安排抵達機場、通關進飯店放行李與傍晚散步調整時差；最後一天安排市區採買後前往機場搭機返程。
    - 若為亞洲短程或國內旅遊：Day 1 上午安排抵達當地交通樞紐後展開行程。
 4. 每天安排 2~4 個順路景點，備註寫出一句具體的必吃美食或必看特色。
 5. 必須嚴格以有效 JSON 格式輸出。`;

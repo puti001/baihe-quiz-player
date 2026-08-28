@@ -1678,7 +1678,20 @@ Day 2
       renderAiRecPromptView();
     }
 
-    function buildAiPrompt(spotName, preference) {
+    // 人類複製專用（自然語言排版清單）
+    function buildHumanFriendlyAiRecPrompt(spotName, preference) {
+      const city = getTripCityContext();
+      return `我正在規劃${city ? `【${city}】` : ''}旅遊行程，目前已安排景點【${spotName}】。
+請針對該景點，依照【${preference}】偏好，推薦 3 個步行或車程 15 分鐘內的周邊真實知名景點或在地美食。
+
+請直接以清楚易讀的「推薦清單」格式回覆（方便閱讀與參考）：
+1. 景點或店家名稱 (必吃招牌/必看亮點、步行或車程時間)
+2. 景點或店家名稱 (必吃招牌/必看亮點、步行或車程時間)
+3. 景點或店家名稱 (必吃招牌/必看亮點、步行或車程時間)`;
+    }
+
+    // 內部 API 呼叫專用（JSON 結構化）
+    function buildApiAiRecPrompt(spotName, preference) {
       const city = getTripCityContext();
       return `我正在規劃${city ? `【${city}】` : ''}旅遊行程，目前已安排景點【${spotName}】。
 請針對該景點，依照【${preference}】偏好，推薦 3 個步行或車程 15 分鐘內的周邊真實知名景點/美食（絕對不可捏造抽象名稱）。
@@ -1695,15 +1708,16 @@ Day 2
 
     function renderAiRecPromptView() {
       const container = document.getElementById('aiRecResultsContainer');
-      const promptText = buildAiPrompt(currentSpotForAi ? currentSpotForAi.name : '指定景點', selectedAiPreference);
+      const spotName = currentSpotForAi ? currentSpotForAi.name : '指定景點';
+      const promptText = buildHumanFriendlyAiRecPrompt(spotName, selectedAiPreference);
 
       container.innerHTML = `
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
-              <i data-lucide="code" class="w-3.5 h-3.5 text-sky-600"></i> AI 提示詞 (Prompt) 預覽
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-600"></i> 人類友善提示詞 (Prompt) 預覽
             </span>
-            <span class="text-[11px] text-slate-400">可複製至慣用 AI 網頁版</span>
+            <span class="text-[11px] text-slate-400">貼至 ChatGPT / Claude 即可獲得清晰推薦</span>
           </div>
           <pre id="currentPromptText" class="text-xs text-slate-700 font-mono bg-white p-3 rounded-lg border border-slate-200 whitespace-pre-wrap select-all leading-relaxed">${promptText}</pre>
         </div>
@@ -1714,7 +1728,7 @@ Day 2
     function copyAiPromptText() {
       const text = document.getElementById('currentPromptText').innerText;
       navigator.clipboard.writeText(text).then(() => {
-        showToast('已複製提示詞！可貼至任何慣用 AI');
+        showToast('已複製人類友善提示詞！快貼至 ChatGPT / Claude');
       });
     }
 
@@ -1728,7 +1742,7 @@ Day 2
       `;
 
       try {
-        const prompt = buildAiPrompt(currentSpotForAi.name, selectedAiPreference);
+        const prompt = buildApiAiRecPrompt(currentSpotForAi.name, selectedAiPreference);
         const recommendations = await callGeminiDirect(prompt);
         if (Array.isArray(recommendations)) {
           renderAiDirectRecommendations(recommendations);

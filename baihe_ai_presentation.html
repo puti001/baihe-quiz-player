@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO & 品牌識別 -->
+  <title>Puti-AI | 臺南市白河商工 AI 教學實戰錦囊：高職備課、實作與評量革新 (Canva 簡報級 3D 互動卡牌庫)</title>
+  <meta name="description" content="Puti-AI 屏東縣後庄國小黃朝榮老師專為臺南市立白河商工全校教師打造的 AI 實戰教學痛點解決工具庫。整合 7 大職類 9,360 題檢定真題、實習工場 SOP、專題防作弊評量、分層備課與教育部 2026 AI 安全指引。">
+  <meta name="keywords" content="Puti-AI, 黃朝榮, 白河商工, 高職AI教學, 技能檢定題庫, 實習SOP, 專題製作, 防作弊評量, 教學痛點, 提示詞庫">
+  <meta name="author" content="屏東縣後庄國小 黃朝榮老師 (Puti-AI)">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans TC"', 'sans-serif'],
+          },
+          colors: {
+            puti: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+              gold: '#f59e0b',
+              emerald: '#10b981',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* 3D 翻牌核心特效 */
+    .perspective-1500 {
+      perspective: 1500px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    .slide-card-inner {
+      transition: transform 0.65s cubic-bezier(0.34, 1.25, 0.64, 1);
+    }
+    .slide-card-flipped {
+      transform: rotateY(180deg);
+    }
+
+    /* 自定義縮圖橫向滾動條 */
+    .thumbnail-scroll::-webkit-scrollbar {
+      height: 8px;
+    }
+    .thumbnail-scroll::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 9999px;
+    }
+    .thumbnail-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .thumbnail-scroll::-webkit-scrollbar-thumb:hover {
+      background: #6366f1;
+    }
+
+    /* 聚光燈舞台光暈 */
+    .stage-glow-light {
+      background: radial-gradient(circle at 50% 35%, rgba(99, 102, 241, 0.09) 0%, rgba(245, 158, 11, 0.05) 50%, transparent 75%);
+    }
+
+    /* Toast 動畫 */
+    @keyframes toastUp {
+      0% { transform: translate(-50%, 40px); opacity: 0; }
+      100% { transform: translate(-50%, 0); opacity: 1; }
+    }
+    .toast-slide {
+      animation: toastUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col transition-colors duration-300">
+
+  <!-- 頂部導航列 -->
+  <header class="bg-white/95 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-50 transition-colors shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-3">
+      
+      <!-- 醒目品牌與標題 -->
+      <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank" class="flex items-center gap-3.5 group" onmouseenter="playSfx('hover')">
+        <div class="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-400 p-0.5 shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-300 shrink-0">
+          <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
+            <span class="font-black text-2xl bg-gradient-to-r from-indigo-600 to-amber-500 bg-clip-text text-transparent">P</span>
+          </div>
+          <span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-500"></span>
+          </span>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="font-black tracking-tight text-xl sm:text-2xl text-slate-900 group-hover:text-indigo-600 transition flex items-center gap-1.5">
+              <span>Puti-AI</span>
+              <span class="text-indigo-600">白河商工 AI 教學實戰錦囊</span>
+            </h1>
+            <span class="px-2.5 py-0.5 text-xs font-black tracking-wide uppercase rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700">高職備課・實作・評量革新</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-500 font-bold mt-0.5">
+            20 大高職教學痛點 3D 簡報級互動卡牌庫 ｜ 屏東縣後庄國小 黃朝榮老師作品
+          </p>
+        </div>
+      </a>
+
+      <!-- 右側控制按鈕（真題播放器直達、視圖切換、音效、Padlet 工具庫） -->
+      <div class="flex items-center gap-1.5 sm:gap-2 self-end md:self-center">
+        <!-- 前往白河真題播放器 -->
+        <a href="quiz_player.html" target="_blank" onmouseenter="playSfx('hover')" class="px-2.5 sm:px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-black transition flex items-center gap-1 border border-emerald-200 shadow-sm">
+          <i data-lucide="play-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>🎮 9,360題真題播放器</span>
+        </a>
+
+        <!-- 前往 Padlet 100 大工具庫 -->
+        <a href="https://padlet.com/clongwh/puti-ai-teaching-tool-library-tifvrvjcpg51cw7r" target="_blank" onmouseenter="playSfx('hover')" class="px-2.5 sm:px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-black transition flex items-center gap-1 border border-amber-200 shadow-sm">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-amber-600"></i>
+          <span>📦 Padlet 工具庫</span>
+        </a>
+
+        <!-- 視圖切換按鈕 -->
+        <button id="btnViewMode" onclick="toggleViewMode()" onmouseenter="playSfx('hover')" class="px-2.5 sm:px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1 border border-slate-200">
+          <i data-lucide="grid" class="w-3.5 h-3.5 text-indigo-600" id="viewModeIcon"></i>
+          <span id="viewModeText" class="hidden sm:inline">全覽網格</span>
+        </button>
+
+        <!-- 音效開關 -->
+        <button id="btnSoundToggle" onclick="toggleSound()" onmouseenter="playSfx('hover')" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 border border-slate-200">
+          <i data-lucide="volume-2" class="w-4 h-4 text-emerald-600" id="soundIcon"></i>
+          <span id="soundText" class="hidden sm:inline">音效開</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Canva 簡報模式視圖 (預設焦點舞台) -->
+  <div id="presentationView" class="flex-1 flex flex-col justify-between w-full max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 stage-glow-light">
+    
+    <!-- 上方輔助列：分類篩選標籤、鍵盤導航提示 -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-3 sm:mb-4">
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar w-full sm:w-auto pb-1 sm:pb-0" id="filterContainer">
+        <button onclick="filterCategory('all')" onmouseenter="playSfx('hover')" class="filter-btn active px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap bg-indigo-600 text-white shadow-sm" data-category="all">
+          全部 (20)
+        </button>
+        <button onclick="filterCategory('prep')" onmouseenter="playSfx('hover')" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition whitespace-nowrap bg-slate-200/80 text-slate-700 hover:bg-slate-300" data-category="prep">
+          🎯 備課與分層
+        </button>
+        <button onclick="filterCategory('dept')" onmouseenter="playSfx('hover')" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition whitespace-nowrap bg-slate-200/80 text-slate-700 hover:bg-slate-300" data-category="dept">
+          🏫 白河各科案例
+        </button>
+        <button onclick="filterCategory('eval')" onmouseenter="playSfx('hover')" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition whitespace-nowrap bg-slate-200/80 text-slate-700 hover:bg-slate-300" data-category="eval">
+          📝 實作與防作弊
+        </button>
+        <button onclick="filterCategory('tools')" onmouseenter="playSfx('hover')" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition whitespace-nowrap bg-slate-200/80 text-slate-700 hover:bg-slate-300" data-category="tools">
+          ⚡ 實戰工具箱
+        </button>
+        <button onclick="filterCategory('templates')" onmouseenter="playSfx('hover')" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition whitespace-nowrap bg-slate-200/80 text-slate-700 hover:bg-slate-300" data-category="templates">
+          🎁 帶得走模板
+        </button>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-2 text-xs font-bold text-slate-400">
+        <span class="px-2 py-1 rounded bg-slate-100 border border-slate-200 font-mono">← / →</span>
+        <span>切換頁面</span>
+        <span class="px-2 py-1 rounded bg-slate-100 border border-slate-200 font-mono">Space</span>
+        <span>翻轉卡牌</span>
+      </div>
+    </div>
+
+    <!-- 中央巨大 3D 翻轉卡片主舞台 -->
+    <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] min-h-[460px] sm:min-h-[520px] perspective-1500 group my-auto">
+      <div id="slideCardInner" class="slide-card-inner relative w-full h-full transform-style-3d cursor-pointer" onclick="flipCard()">
+        
+        <!-- 【正面】：痛點剖析 / 教學情境 / 扎心問題 -->
+        <div id="cardFront" class="absolute inset-0 w-full h-full backface-hidden bg-white border-2 border-indigo-100 rounded-3xl p-6 sm:p-10 shadow-xl shadow-slate-200/60 flex flex-col justify-between overflow-hidden">
+          <!-- 裝飾背景漸層圖案 -->
+          <div class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-50 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-amber-50 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- 卡片頂部資訊 -->
+          <div class="relative z-10 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span id="frontBadge" class="px-3 py-1 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1.5">
+                <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                <span id="frontCategoryText">備課與分層</span>
+              </span>
+              <span id="frontIndexBadge" class="text-xs font-black text-slate-400 font-mono">#01 / 20</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 flex items-center gap-1 animate-pulse">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 點擊卡片翻轉看解法與 Prompt
+              </span>
+            </div>
+          </div>
+
+          <!-- 卡片主標題與核心痛點內容 -->
+          <div class="relative z-10 my-auto space-y-4">
+            <div class="inline-flex p-3.5 rounded-2xl bg-indigo-50 text-indigo-600 shadow-inner" id="frontIconBox">
+              <i data-lucide="flame" class="w-8 h-8 sm:w-10 sm:h-10" id="frontIcon"></i>
+            </div>
+            
+            <h2 id="frontTitle" class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-snug">
+              高職老師最需要的，不是再認識 20 個工具，而是減少備課負擔
+            </h2>
+
+            <p id="frontDescription" class="text-sm sm:text-lg text-slate-600 leading-relaxed font-medium">
+              技高學生程度落差極大、檢定刷題枯燥、實習安全顧慮多、專題製作寫不出字。我們如何用 AI 幫老師做繁瑣苦工，把時間留給陪伴學生動手做？
+            </p>
+
+            <div id="frontContextBox" class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 font-bold flex items-start gap-2.5">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500 shrink-0 mt-0.5"></i>
+              <span id="frontContextText">教學痛點：很多老師不是排斥 AI，而是找不到真正能套進汽修、機械、室配等實作科目的教學工作流。</span>
+            </div>
+          </div>
+
+          <!-- 卡片底部提示 -->
+          <div class="relative z-10 flex items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-400 font-medium">
+            <span class="flex items-center gap-1 text-indigo-600 font-black">
+              <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i> 點擊卡牌任意處立即翻轉
+            </span>
+            <span>屏東縣後庄國小 黃朝榮老師 (Puti-AI)</span>
+          </div>
+        </div>
+
+        <!-- 【背面】：具體解法 / 可複製 Prompt / 操作步驟 -->
+        <div id="cardBack" class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 text-white border-2 border-indigo-500/50 rounded-3xl p-6 sm:p-9 shadow-2xl flex flex-col justify-between overflow-hidden">
+          
+          <!-- 頂部列 -->
+          <div class="flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 實戰解法與可用 Prompt
+              </span>
+              <span id="backTitleSmall" class="text-xs font-bold text-slate-400 hidden sm:inline">破題核心思維</span>
+            </div>
+
+            <!-- 一鍵複製 Prompt 按鈕 -->
+            <button id="btnCopyPrompt" onclick="copyCurrentPrompt(event)" onmouseenter="playSfx('hover')" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-black transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20 active:scale-95 z-20">
+              <i data-lucide="copy" class="w-3.5 h-3.5" id="copyIcon"></i>
+              <span id="copyBtnText">一鍵複製此 Prompt</span>
+            </button>
+          </div>
+
+          <!-- 解法主體內容 (支援滾動) -->
+          <div class="my-auto py-2 overflow-y-auto max-h-[300px] sm:max-h-[340px] pr-1 space-y-3">
+            <div>
+              <h3 id="backSolutionTitle" class="text-lg sm:text-xl font-black text-amber-300 flex items-center gap-2">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                <span>破題話術與心法建議</span>
+              </h3>
+              <p id="backSolutionDesc" class="text-xs sm:text-sm text-slate-300 font-medium mt-1 leading-relaxed">
+                開場第一句話請直接告訴老師：「我今天不是來教大家變成 AI 專家，而是想一起找出：哪些工作可以交給 AI，哪些專業判斷一定要留在老師手上。」
+              </p>
+            </div>
+
+            <!-- 程式碼/Prompt 框 -->
+            <div class="relative bg-slate-950/90 border border-slate-800 rounded-2xl p-4 font-mono text-xs text-indigo-200 leading-relaxed overflow-x-auto shadow-inner">
+              <div class="text-[10px] text-slate-500 uppercase tracking-wider mb-1 font-bold flex justify-between">
+                <span>Prompt 指令模板 / 教案設計</span>
+                <span class="text-amber-400">可直接複製套用</span>
+              </div>
+              <pre id="backPromptCode" class="whitespace-pre-wrap font-sans text-xs sm:text-sm text-slate-200">【角色】台灣高職專業科目教師
+【主題】[輸入單元名稱，如：三相感應電動機啟動控制]
+請幫我生成：
+1. 3 項具體學習目標（符合 Bloom 認知層次）
+2. 5 分鐘生活情境引起動機案例
+3. 實作課「操作前安全檢核清單」
+4. 4 題檢定風格單選題（附解析）
+5. 針對補救學生的白話口訣說明卡</pre>
+            </div>
+          </div>
+
+          <!-- 卡片底部狀態 -->
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400 shrink-0">
+            <span class="flex items-center gap-1 text-slate-400">
+              <i data-lucide="undo-2" class="w-3.5 h-3.5 text-indigo-400"></i> 點擊卡片背面可翻回正面
+            </span>
+            <span class="text-indigo-400 font-bold">Puti-AI 實戰落地手冊</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 底部控制列：上一頁、頁碼、下一頁、縮圖導航 -->
+    <div class="space-y-3 mt-3 sm:mt-4">
+      <div class="flex items-center justify-between gap-4">
+        <!-- 上一頁 -->
+        <button id="btnPrev" onclick="prevSlide()" onmouseenter="playSfx('hover')" class="px-4 sm:px-6 py-2.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 font-black text-xs sm:text-sm border border-slate-200 shadow-sm transition flex items-center gap-2 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
+          <i data-lucide="chevron-left" class="w-4 h-4 text-indigo-600"></i>
+          <span>上一頁</span>
+        </button>
+
+        <!-- 頁碼指示器 -->
+        <div class="flex items-center gap-1.5 font-mono text-xs sm:text-sm font-black text-slate-600 bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm">
+          <span id="currentSlideNum" class="text-indigo-600 text-base">1</span>
+          <span class="text-slate-400">/</span>
+          <span id="totalSlideNum">20</span>
+        </div>
+
+        <!-- 下一頁 -->
+        <button id="btnNext" onclick="nextSlide()" onmouseenter="playSfx('hover')" class="px-4 sm:px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md shadow-indigo-600/30 transition flex items-center gap-2 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
+          <span>下一頁</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-white"></i>
+        </button>
+      </div>
+
+      <!-- 底部縮圖列 (Horizontal Scroll Thumbnails) -->
+      <div class="thumbnail-scroll flex gap-2 overflow-x-auto py-2 px-1" id="thumbnailContainer">
+        <!-- 動態渲染 20 個縮圖 -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 全覽網格模式視圖 (Grid View - 點擊「全覽網格」時切換) -->
+  <div id="gridView" class="hidden flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900">白河商工 AI 教學實戰錦囊：20 大主題全覽</h2>
+        <p class="text-xs sm:text-sm text-slate-500 font-bold">點擊任意卡片可直接進入簡報焦點模式</p>
+      </div>
+      <button onclick="toggleViewMode()" onmouseenter="playSfx('hover')" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm">
+        <i data-lucide="presentation" class="w-4 h-4"></i> 回到 Canva 簡報模式
+      </button>
+    </div>
+
+    <!-- 網格清單 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="gridContainer">
+      <!-- 動態由 JS 渲染 -->
+    </div>
+  </div>
+
+  <!-- Toast 提示組件 -->
+  <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 hidden px-5 py-3 rounded-2xl bg-slate-900 text-white text-xs sm:text-sm font-black shadow-2xl border border-indigo-500/40 flex items-center gap-2 toast-slide">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastText">已成功複製 Prompt 提示詞！</span>
+  </div>
+
+  <!-- 頁尾版權宣告 -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-8 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+      <p class="text-xs sm:text-sm text-slate-600 font-bold leading-relaxed">
+        屏東縣後庄國小黃朝榮老師作品，免費分享，歡迎擴散推廣，嚴禁商用與任何侵權、不尊重著作權的行為，更多 Puti-AI 教學工具 <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank" class="text-indigo-600 font-black hover:underline">點此前往 (Padlet 工具庫)</a>
+      </p>
+      <div class="flex items-center justify-center gap-4 text-[11px] text-slate-400 font-mono">
+        <span>Puti-AI 2026 Edition</span>
+        <span>•</span>
+        <span>臺南市立白河商工專題研習精華</span>
+        <span>•</span>
+        <span>7 大職類 9,360 題真題收錄</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 20 張卡牌的核心資料庫 -->
+  <script>
+    const SLIDES_DATA = [
+      {
+        id: 1,
+        category: "prep",
+        categoryName: "破題與心法",
+        icon: "sparkles",
+        title: "高職老師最需要的，不是 20 個工具，而是減負與專業教會",
+        desc: "技高學生程度落差大、檢定刷題枯燥、實習安全顧慮多、專題製作寫不出字。我們如何用 AI 幫老師做繁瑣苦工，把時間留給陪伴學生動手做？",
+        context: "破題痛點：很多老師不是排斥 AI，而是找不到真正能套進汽修、機械、室配等實作科目的具體工作流。",
+        solutionTitle: "破題金句與心法建議",
+        solutionDesc: "開場第一句話請直接告訴老師：「我今天不是來教大家變成 AI 專家，而是想一起找出：哪些工作可以交給 AI，哪些專業判斷一定要留在老師手上。」",
+        prompt: `【破題演講開場心法】
+「各位白河商工的夥伴大家早！
+身為第一線老師，我們最常遇到的焦慮是：
+1. 學生用 AI 寫作業，到底算不算作弊？怎麼打分數？
+2. 班上學生程度落差極大，實作課根本沒時間一個個補救。
+3. 檢定題庫厚厚一本，學生看到文字就睡著。
+我今天想跟各位老師一起找出：哪些繁瑣工作可以交給 AI 幫我們減負，哪些專業判斷一定要留在老師手上！」`
+      },
+      {
+        id: 2,
+        category: "tools",
+        categoryName: "實戰工具箱",
+        icon: "gamepad-2",
+        title: "白河商工 7 職類 9,360 題官方真題播放器",
+        desc: "涵蓋白河商工室配、汽修、車床、機械加工、建築製圖、測量、機車修護等 7 大科，099~115 年 17 年全套官方真題，手機秒開互動刷題！",
+        context: "檢定痛點：學生看厚本題庫容易枯燥放棄，手機網頁讓學生隨時隨地像打手遊一樣快速測驗與即時看官方解析。",
+        solutionTitle: "直接展示專屬播放器",
+        solutionDesc: "現場投影點開 https://puti001.github.io/baihe-quiz-player/quiz_player.html，示範 100% 官方 PDF 解析、無佔位字、支援橫向滑動與全清單稽核。",
+        prompt: `【白河商工真題播放器網址】
+https://puti001.github.io/baihe-quiz-player/quiz_player.html
+
+【特色】
+1. 7 大職類 117 份試卷，100% 官方標準解答無差錯對齊。
+2. 支援按需動態載入（Lazy Loading），手機 0.1 秒秒開。
+3. 具備「檢視當前年度 80 題全清單」稽核功能，方便老師課堂快速講解。`
+      },
+      {
+        id: 3,
+        category: "prep",
+        categoryName: "備課與分層",
+        icon: "layers",
+        title: "同一檢定題，AI 秒產三種難度（分層個別化教學）",
+        desc: "技高雙峰現象嚴重，高成就學生覺得檢定太簡單，落後學生連題目都看不懂。AI 能在 5 秒內把同一題改編為 3 種版本！",
+        context: "教學痛點：實作課沒時間單獨幫補救學生重新寫白話講義，也沒時間為競賽選手出進階情境題。",
+        solutionTitle: "分層提示詞模板",
+        solutionDesc: "將官方題目輸入 AI，一次產出【補救白話比喻版】、【基礎解題線索版】與【進階工廠實務應用題】。",
+        prompt: `【角色】台灣高職專業科目教師。
+【任務】請將以下這題丙級檢定題目，改編為適合不同程度學生的三種版本：
+【原題】「分路用配電箱其主過電流保護器應不超過多少安？ (1)400 (2)200 (3)300 (4)100」
+
+請輸出：
+1. 【補救/綜職白話版】：用國中生聽得懂的生活比喻（如水管總開關）解釋這題，並附帶 1 句好記的記憶口訣。
+2. 【基礎圖解提示版】：指出題目關鍵字，並提供解題的 2 步思考線索。
+3. 【進階選手情境題】：設計一個「工廠實際配電場景故障」的應用題，讓高成就學生計算。`
+      },
+      {
+        id: 4,
+        category: "dept",
+        categoryName: "白河各科案例",
+        icon: "zap",
+        title: "【電機科 / 室配】電路故障情境模擬與診斷問答",
+        desc: "如何將死板的配線法規，轉化為逼真的「工廠配電跳脫、壓降異常」故障排查情境，培養學生真正的工程思維？",
+        context: "科別痛點：學生背得起條文，但在工場看到控制盤配線短路時卻不知從何查起。",
+        solutionTitle: "故障診斷模擬 Prompt",
+        solutionDesc: "讓 AI 扮演工廠廠長提出故障現象，引導學生像偵探一樣進行三步驟儀表量測與查線。",
+        prompt: `【角色】工廠資深廠長，正在面試高職電機科實習生。
+【情境】某工廠的三相感應電動機在按下啟動按鈕後，接觸器吸合但馬達發出嗡嗡聲且無法運轉，3 秒後積熱電驛（TH-RY）跳脫。
+【任務】請設計一個「階梯式故障排查引導」：
+1. 請列出 3 種最可能的故障原因（如欠相、軸承卡死、線圈燒毀）。
+2. 提供學生依序量測的 SOP（三用電表/鉤錶量測步驟與安全注意事項）。
+3. 延伸 1 題丙級室內配線相關的考題。`
+      },
+      {
+        id: 5,
+        category: "dept",
+        categoryName: "白河各科案例",
+        icon: "car",
+        title: "【汽車科 / 機車】模擬客戶非專業報修與診斷問答",
+        desc: "客人修車只會說「車子怪怪的、加速有怪聲」。如何用 AI 模擬真實客戶對話，訓練學生問診與故障排除能力？",
+        context: "科別痛點：高職汽修科學生不擅長口語溝通，面對顧客語意不清時往往直接胡亂換零件。",
+        solutionTitle: "師徒問診對話模擬 Prompt",
+        solutionDesc: "利用 AI 扮演不懂車的車主，學生必須透過發問縮小排查範圍，完成工單紀錄。",
+        prompt: `你現在是一位前來車廠保養的車主，請用「完全不懂車的日常口語」描述故障：
+「老闆，我這台車最近早上發動時都很難發，發動後引擎會一直抖，而且儀表板上有一個黃色的燈一直亮著。」
+
+請為老師設計這堂課的 3 個互動環節：
+- 第 1 關：學生需要向車主追問哪 2 個關鍵問題？（如汽油品質、火星塞里程）
+- 第 2 關：根據車主回答，列出 3 個可能故障元件（點火線圈、含氧感知器、節氣門積碳）。
+- 第 3 關：產出標準檢修與報價工單範本。`
+      },
+      {
+        id: 6,
+        category: "dept",
+        categoryName: "白河各科案例",
+        icon: "cog",
+        title: "【機械科 / 車床】CNC 與車削實習操作 SOP 安全檢核表",
+        desc: "工場實習最怕撞刀、工件飛出與夾傷。如何用 AI 一秒產出標準化「操作前安全檢核表」與「常見失誤防範指南」？",
+        context: "科別痛點：老師邊示範操作邊寫檢核表太耗時，各工序安全要點容易遺漏。",
+        solutionTitle: "機械安全檢核表生成器",
+        solutionDesc: "輸入實習工件名稱（如階梯軸車削），自動產出包含工具準備、安全護目鏡、主軸轉速校對的 Markdown 表格。",
+        prompt: `請針對高職機械科「普通車床外徑階梯軸車削實習第一次操作」，為學生設計一份「操作前安全檢核清單（Checklist）」與「常見 3 大操作失誤防範表」，請用 Markdown 表格呈現，包含：
+1. 【操作前檢查】：工件夾持長度、三爪夾頭板手是否拔除、主軸轉速設定、護目鏡配戴。
+2. 【加工中危險行為】：手觸摸鐵屑、戴手套操作、游標卡尺量測時機。
+3. 【失誤與後果對照】：失誤動作 ➔ 可能後果（撞刀/工件噴出）➔ 正確防範作法。`
+      },
+      {
+        id: 7,
+        category: "dept",
+        categoryName: "白河各科案例",
+        icon: "ruler",
+        title: "【土木 / 建築製圖】工程安全檢查表與施工步驟圖解",
+        desc: "建築電腦繪圖與測量實習中，如何把複雜的施工圖說與安全法規，轉化為直觀的步驟卡？",
+        context: "科別痛點：學生繪製 CAD 圖時常脫離實務，不懂鋼筋保護層或高空鷹架安全規範。",
+        solutionTitle: "施工規範與製圖檢核 Prompt",
+        solutionDesc: "輸入建築製圖丙級題目，自動解析圖面關鍵尺寸、圖層命名規範與實務工法對照。",
+        prompt: `請針對「建築製圖應用 丙級 - 電腦繪圖 貳層平面圖繪製」，產生一份指導學生的「繪圖規範自我檢核清單」：
+1. 圖層設定（中心線、牆線、門窗線、尺寸標註、文字圖層顏色與線寬）。
+2. 常見 3 大扣分地雷（門窗開啟方向錯誤、樓梯級數計算錯誤、標高符號遺漏）。
+3. 結合實務工法說明：為什麼圖面上的鋼筋保護層厚度與無障礙坡度必須嚴格符合法規？`
+      },
+      {
+        id: 8,
+        category: "dept",
+        categoryName: "白河各科案例",
+        icon: "store",
+        title: "【商經科 / 資處】在地白河店家行銷企劃與程式除錯",
+        desc: "結合白河蓮花、蓮子產業！教商管學生用 AI 做在地行銷企劃，資處科學生用 AI 進行 Python / 網頁除錯。",
+        context: "科別痛點：商管企劃案常常空洞無物；資處科寫程式報錯時學生看不懂英文 Error 訊息直接放棄。",
+        solutionTitle: "在地企劃 ＆ 程式除錯 Prompt",
+        solutionDesc: "產出白河在地農產行銷 SWOT 分析，並提供資處科將複雜報錯轉為白話除錯步驟的提示詞。",
+        prompt: `【商經科案例：白河在地蓮花產業數位轉型企劃】
+請為台南白河區在地老牌蓮子農特產店，設計一份適合高職商經科專題製作的「短影音行銷企劃大綱」：
+- 目標客群：25-40 歲注重養生的小資族
+- 企劃亮點：從產地到餐桌、蓮子銀耳湯 DIY 組合包
+- 產出項目：3 支 Reels 短影音腳本（含黃金前 3 秒鉤子 Hook、文案、行動呼籲 CTA）。
+
+【資處科案例：Python 錯誤訊息白話解讀器】
+「我是高職資處科學生，我的 Python 程式出現了：IndexError: list index out of range。請用打電動比喻解釋這是什麼意思？並給我 2 個排查修正的範例。」`
+      },
+      {
+        id: 9,
+        category: "dept",
+        categoryName: "白河各科案例",
+        icon: "palette",
+        title: "【多媒體科 / 綜職科】分鏡腳本與圖像化教學卡",
+        desc: "多媒體科需要腳本與作品提案；綜職科需要分段式、圖像化的工作流程教學卡。AI 能一鍵搞定！",
+        context: "科別痛點：綜職科文字過多學生無法理解；多媒體科畫分鏡耗時且提案架構混亂。",
+        solutionTitle: "多媒體分鏡 ＆ 綜職教學卡 Prompt",
+        solutionDesc: "產出標準 6 格影視分鏡表，以及綜職科「超商貨架整理」分段白話圖卡提示詞。",
+        prompt: `【多媒體科：6 格動畫分鏡腳本生成】
+主題：高職生校園微電影《實習工場的最後一堂課》
+請產生標準 6 幕分鏡表格：景別（特寫/中景/全景）、鏡頭動作、畫面敘述、旁白對白、音效（BGM）。
+
+【綜職科：實用技能學程「洗車實習」分段教學卡】
+請針對綜職科學生，將「汽車外觀泡沫清洗流程」拆解為 4 個極簡步驟：
+- 每個步驟字數在 15 字以內
+- 搭配具體的顏色標記與生動動作形容詞（如：先用清水由上往下沖大泥沙）
+- 附帶 1 個安全提醒（防滑鞋穿好）。`
+      },
+      {
+        id: 10,
+        category: "eval",
+        categoryName: "實作與防作弊",
+        icon: "git-branch",
+        title: "專題製作寫不出字？用 Mermaid 秒產工程流程圖",
+        desc: "高職生實作能力強，但叫他們寫專題大綱、系統架構圖時一臉茫然。用 AI 將口述實作轉為標準 Mermaid 流程圖！",
+        context: "專題痛點：學生報告只有滿滿的照片與口語文字，缺乏工程邏輯與系統架構圖表。",
+        solutionTitle: "專題流程圖與架構生成 Prompt",
+        solutionDesc: "學生口述專題運作流程，AI 自動轉化為 Mermaid.js 代碼，貼上即可生成專業工程圖表。",
+        prompt: `【角色】高職專題製作指導教授。
+【專題名稱】基於 Arduino 與 ESP32 之智慧溫室自動澆水與排風系統
+請幫我將此專題的「感測器偵測 ➔ 數據判斷 ➔ 繼電器驅動抽水馬達/抽風扇 ➔ LINE 通知」運作邏輯，撰寫為一段無語法錯誤的 Mermaid.js 流程圖代碼（graph TD），並附帶專題報告第二章「系統架構說明」的三段文字。`
+      },
+      {
+        id: 11,
+        category: "eval",
+        categoryName: "實作與防作弊",
+        icon: "shield-alert",
+        title: "學生用 AI 代寫怎麼辦？四步防作弊評量法",
+        desc: "不要試圖禁止 AI，禁止只會讓學生偷偷用！把 AI 變成「答辯對手」，讓學生從單純複製變成「審查 AI 的專家」。",
+        context: "評量焦慮：老師改報告時不知道這篇是學生寫的還是 ChatGPT 寫的，喪失評量意義。",
+        solutionTitle: "防作弊四步評量工作流",
+        solutionDesc: "第一步手寫初稿 ➔ 第二步叫 AI 挑毛病 ➔ 第三步學生寫反駁/修正理由 ➔ 第四步口頭答辯（只評修改理由）。",
+        prompt: `【AI 時代高職防作弊作業評量規準範本】
+請老師在指派作業時規定以下 4 個繳交區塊：
+1. 【原始想法與實作草圖】：學生親自手寫或照片記錄（佔 20%）。
+2. 【AI 盲點審查截圖】：學生將草稿餵給 AI，指令為「請找出我這個專題設計的 3 個技術盲點或工安漏洞」（佔 20%）。
+3. 【學生反思與修正說明】：學生必須逐一說明：「我採納了 AI 哪項建議？我為什麼拒絕了 AI 哪項建議？」（佔 40%）。
+4. 【現場口頭答辯】：3 分鐘現場抽問實作細節，能答出修改原理者給分（佔 20%）。`
+      },
+      {
+        id: 12,
+        category: "tools",
+        categoryName: "實戰工具箱",
+        icon: "video",
+        title: "Padlet #35：影片自動逐字稿轉 NotebookLM 技能包",
+        desc: "老師拍的工場實習操作影片、或 YouTube 機具原廠示範，自動抓逐字稿餵給 NotebookLM，秒變專屬操作手冊！",
+        context: "備課痛點：每次實習課都要重複講好幾次操作步驟，學生回去依然忘光光。",
+        solutionTitle: "影音講義產線",
+        solutionDesc: "利用黃老師開源的技能包抓取字幕，搭配 NotebookLM 打造可以 24 小時回答學生實習問題的「工場大腦」。",
+        prompt: `【實習影音轉 NotebookLM 流程】
+1. 將車床/引擎拆裝教學影片或 YouTube 連結，透過 Puti-AI 工具抓出純文字逐字稿。
+2. 開啟 Google NotebookLM，建立新筆記本「白河商工實習工場專屬大腦」，上傳逐字稿與機具 PDF 手冊。
+3. 在 NotebookLM 輸入：「請根據上傳的手冊與影片，整理出學生實習時『最容易犯的 5 個危險動作』與『標準操作口訣』。」`
+      },
+      {
+        id: 13,
+        category: "tools",
+        categoryName: "實戰工具箱",
+        icon: "file-spreadsheet",
+        title: "Padlet #73 & #74：圖片批次瘦身 ＆ 表格秒轉 PPT",
+        desc: "實習佐證照片塞爆 Word？專題簡報排版很醜？黃老師自製的免安裝純前端網頁工具，打開瀏覽器就能用！",
+        context: "行政與專題痛點：學生專題報告檔案動輒 200MB 無法上傳；老師做成果彙整照片排版到半夜。",
+        solutionTitle: "推薦使用 2 大免安裝工具",
+        solutionDesc: "1. Img_bat_name_resize.html (批次瘦身改名) 2. Table2PPT.html (Excel 數據一鍵轉美觀投影片)。",
+        prompt: `【Puti-AI 專用工具連結】
+- 圖片批次命名與瘦身：https://puti001.github.io/teach_tools/Img_bat_name_resize.html
+- 表格轉簡報產生器：https://puti001.github.io/teach_tools/Table2PPT.html
+- 圖片拼接器：https://puti001.github.io/teach_tools/Image_stitcher.html
+
+【操作特點】100% 在本機瀏覽器運作，學生不用註冊帳號、不用上傳伺服器，保護學生隱私！`
+      },
+      {
+        id: 14,
+        category: "tools",
+        categoryName: "實戰工具箱",
+        icon: "command",
+        title: "Padlet #48：Puti-AI 文本擴展器（隨身 Prompt 倉庫）",
+        desc: "常常忘記長篇 Prompt 怎麼寫？安裝這款 Chrome 擴充套件，打縮寫 `/rubric`、`/lesson` 自動展開完整教案指令！",
+        context: "效率痛點：每次備課都要到處翻找以前存的 Prompt 文字檔，複製貼上浪費時間。",
+        solutionTitle: "Chrome 擴充套件安裝",
+        solutionDesc: "在 Chrome 應用程式商店搜尋安裝，將常用的出題、評分規準、學習歷程反思指令設定為快捷代碼。",
+        prompt: `【Puti-AI 文本擴展器 Chrome 商店連結】
+https://chromewebstore.google.com/detail/jhjikkclahioaedgijaddcajdpigclgd
+
+【常用快捷代碼設定建議】
+- 輸入 /exam ➔ 自動展開：【高職丙級檢定單選題出題器與解析生成...】
+- 輸入 /rubric ➔ 自動展開：【高職專題製作四級分評分規準表格...】
+- 輸入 /diff ➔ 自動展開：【請將上述內容改寫為補救教學白話版...】`
+      },
+      {
+        id: 15,
+        category: "prep",
+        categoryName: "政策與倫理",
+        icon: "shield-check",
+        title: "教育部 2026 AI 安全使用守則（三要三不原則）",
+        desc: "學校很在意的個資、版權與倫理問題！用最簡單清晰的守則，幫白河商工全體老師建立安全防護線。",
+        context: "政策痛點：教育部發布指引後，老師不知道學校允許的界線在哪裡，擔心觸犯法規。",
+        solutionTitle: "三要三不速記表",
+        solutionDesc: "不上傳個資、不讓 AI 直接決定學生成績、作品不直接複製；要標註揭露、要查證、老師要保留專業判斷權。",
+        prompt: `【教育部 AI 使用守則 - 三要三不清單】
+❌ 三不原則：
+1. 不上傳學生真實姓名、身分證、學號、家庭背景等個資。
+2. 不讓 AI 直接替學生成績打分數或評定人格品德。
+3. 不允許學生整篇無腦複製 AI 產出交差。
+
+✅ 三要原則：
+1. 學生使用 AI 一律要在報告首頁揭露工具與用途。
+2. AI 產出的數據、法規條文一定要經過人工實務查證。
+3. 老師永遠擁有最終的教學與專業判斷主導權。`
+      },
+      {
+        id: 16,
+        category: "templates",
+        categoryName: "帶得走模板",
+        icon: "file-text",
+        title: "【送給老師】專業主題 ➔ 完整教材五件套 Prompt",
+        desc: "輸入一個專業單元，一次打包產生學習目標、引起動機、操作檢核表、檢定考題與補救口訣！",
+        context: "實用好禮：研習結束後老師回辦公室立刻能複製貼上備課。",
+        solutionTitle: "全科通用備課大師 Prompt",
+        solutionDesc: "適用於電機、汽修、機械、土木、商經、資處等全校所有科別。",
+        prompt: `【角色】高職[請填科別，如：電機科]專業科目教師
+【單元名稱】[請輸入主題，如：三相感應電動機啟動控制]
+請為我生成以下 5 項完整教學資源：
+1. 【學習目標】：列出 3 項具體目標（涵蓋認知、技能、情意，符合 Bloom 分級）。
+2. 【引起動機】：設計一段 5 分鐘的生活/工廠實務案例引言。
+3. 【實作檢核表】：操作前、操作中、操作後的安全檢核表（表格格式）。
+4. 【檢定測驗】：4 題丙級檢定風格單選題（附正確解答與詳細解析）。
+5. 【分層口訣】：針對學習落後學生的白話記憶口訣與常見錯誤防範卡。`
+      },
+      {
+        id: 17,
+        category: "templates",
+        categoryName: "帶得走模板",
+        icon: "clipboard-check",
+        title: "【送給學生】AI 輔助作業使用揭露聲明表",
+        desc: "可直接印成學習單首頁或貼在專題報告第一頁，培養學生負責任的數位倫理與誠實習慣！",
+        context: "教學規範：明確規範學生哪些部分可以使用 AI，並要求記錄修改歷程。",
+        solutionTitle: "作業揭露表範本",
+        solutionDesc: "讓學生勾選工具、說明 AI 提供的建議以及自己如何修改，杜絕作弊疑慮。",
+        prompt: `【臺南市立白河商工 - 學生 AI 工具使用揭露聲明表】
+作業/專題名稱：__________________  班級座號姓名：__________________
+
+1. 本次作業使用之 AI 工具：
+   □ ChatGPT  □ Google Gemini  □ Microsoft Copilot  □ NotebookLM  □ 其他：____
+
+2. 我在作業的哪些環節使用了 AI？（可複選）
+   □ 蒐集背景資料  □ 潤飾文句語法  □ 程式碼除錯  □ 繪製流程圖  □ 尋找實作靈感
+
+3. AI 給了什麼建議？我自己做了什麼修改與驗證？（請簡述 2-3 句）：
+   __________________________________________________________________
+   __________________________________________________________________
+
+4. 學生誠實宣言：本作業核心實作與論點均為本人親自理解完成，無直接抄襲。
+   學生簽名：__________________  日期：2026 年 ___ 月 ___ 日`
+      },
+      {
+        id: 18,
+        category: "templates",
+        categoryName: "帶得走模板",
+        icon: "table",
+        title: "【送給老師】實作專題「AI 時代」評分規準 (Rubrics)",
+        desc: "結合實作技術、AI 批判思辨、口頭答辯與工程安全的 4 級分專業評量表格！",
+        context: "評量工具：提供老師一套符合 108 課綱與 AI 時代精神的客觀評分標準。",
+        solutionTitle: "四級分專題評分規準",
+        solutionDesc: "包含實作技術完整度(40%)、AI辨析與修正能力(30%)、現場答辯(20%)、工程安全(10%)。",
+        prompt: `請為高職「專題製作與實習作品」生成一份 4 級分（優 4、良 3、可 2、待改進 1）的評量規準表格（Rubrics），維度如下：
+
+1. 【專業實作技術完整度】(40%)：
+   - 優：作品功能完整、焊接/加工/線路精美、完全符合工程規範。
+   - 待改進：功能未達成、線路混亂、存在安全隱患。
+
+2. 【AI 工具運用與反思辨析】(30%)：
+   - 優：能精確指派 AI 輔助除錯，並能清楚指認 AI 輸出的錯誤且親自修正。
+   - 待改進：整篇無腦複製 AI 文字，無法說明原理。
+
+3. 【口頭表達與現場答辯】(20%)：
+   - 優：能流暢說明實作邏輯、精準回答老師現場提問。
+   - 待改進：無法解釋作品運作流程。
+
+4. 【團隊協作與工場安全規範】(10%)：
+   - 優：落實 5S、嚴格遵守安全防護裝備、分工明確。`
+      },
+      {
+        id: 19,
+        category: "dept",
+        categoryName: "白河各科案例",
+        icon: "heart-handshake",
+        title: "【綜職科 / 資源班】實用技能訓練與情緒引導",
+        desc: "綜職科與特教學生需要重複、溫和、具體的結構化指令。AI 能扮演耐心無比的口語對話與模擬夥伴！",
+        context: "特教痛點：特教老師需要針對每個孩子客製個別化教育計畫（IEP）與微型教學目標。",
+        solutionTitle: "特教 IEP 與微步驟拆解 Prompt",
+        solutionDesc: "輸入學生的生活技能目標（如門市清潔、零錢找零），拆解為 5 步驟具象化學習清單。",
+        prompt: `【角色】高職綜合職能科特教專業教師。
+【學生能力現況】輕度智能障礙高一學生，具備基本認字能力，但對多步驟指令容易焦慮與遺忘。
+【教學目標】在校內實習商店完成「商品上架與標籤朝前對齊」。
+請為此目標產出：
+1. 5 個微步驟的教學引導語（每句不超過 10 個字，使用具體動作如：雙手拿、看正面、貼線排）。
+2. 當學生放錯方向時，老師 2 句鼓勵性的正向回饋語。
+3. 一張可打勾的日常集點卡文字設計。`
+      },
+      {
+        id: 20,
+        category: "tools",
+        categoryName: "總結與分享",
+        icon: "gift",
+        title: "點亮高職孩子的未來 ＆ Puti-AI 工具庫全公開",
+        desc: "AI 不會取代高職老師，但懂得善用 AI 減負、把時間留給陪伴學生動手做的老師，將點亮更多孩子的未來！",
+        context: "研習結尾：送給白河商工全體師生的無私分享與 Padlet 100 大工具庫資源包。",
+        solutionTitle: "免費分享與更多工具",
+        solutionDesc: "所有今天展示的播放器、教案模板、Padlet 工具庫均免費分享，歡迎掃描推廣！",
+        prompt: `【Puti-AI 教學工具庫 Padlet 總入口】
+https://padlet.com/clongwh/puti-ai-teaching-tool-library-tifvrvjcpg51cw7r
+
+【白河商工專屬真題播放器】
+https://puti001.github.io/baihe-quiz-player/quiz_player.html
+
+【結尾送給全體老師的話】
+「各位老師，科技的進步不是要讓我們更累，而是要把我們從繁瑣的文書與重複勞動中解放出來。
+讓我們把時間留給工場裡火花四射的實作、留給眼神發亮的孩子！謝謝白河商工！」`
+      }
+    ];
+
+    let currentIndex = 0;
+    let filteredData = [...SLIDES_DATA];
+    let isFlipped = false;
+    let soundEnabled = true;
+    let isGridView = false;
+
+    // Web Audio API 音效生成器 (無外部音檔依賴，100% 穩定)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSfx(type) {
+      if (!soundEnabled) return;
+      try {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'hover') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.04);
+          gain.gain.setValueAtTime(0.02, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.04);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } else if (type === 'flip') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.exponentialRampToValueAtTime(520, now + 0.12);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === 'slide') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(320, now + 0.08);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'copy') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, now); // D5
+          osc.frequency.setValueAtTime(880, now + 0.08); // A5
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.linearRampToValueAtTime(0, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        }
+      } catch (e) {
+        // 靜默忽略音效錯誤
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const soundText = document.getElementById('soundText');
+      const soundIcon = document.getElementById('soundIcon');
+      if (soundEnabled) {
+        soundText.innerText = '音效開';
+        soundIcon.setAttribute('data-lucide', 'volume-2');
+        soundIcon.classList.remove('text-slate-400');
+        soundIcon.classList.add('text-emerald-600');
+        showToast('🔊 音效已開啟');
+      } else {
+        soundText.innerText = '靜音';
+        soundIcon.setAttribute('data-lucide', 'volume-x');
+        soundIcon.classList.remove('text-emerald-600');
+        soundIcon.classList.add('text-slate-400');
+        showToast('🔇 已切換為靜音模式');
+      }
+      lucide.createIcons();
+    }
+
+    function renderSlide(index) {
+      if (filteredData.length === 0) return;
+      const item = filteredData[index];
+
+      // 重置翻面狀態為正面
+      if (isFlipped) {
+        isFlipped = false;
+        document.getElementById('slideCardInner').classList.remove('slide-card-flipped');
+      }
+
+      // 正面內容填充
+      document.getElementById('frontCategoryText').innerText = item.categoryName;
+      document.getElementById('frontIndexBadge').innerText = `#${String(item.id).padStart(2, '0')} / ${SLIDES_DATA.length}`;
+      document.getElementById('frontIcon').setAttribute('data-lucide', item.icon);
+      document.getElementById('frontTitle').innerText = item.title;
+      document.getElementById('frontDescription').innerText = item.desc;
+      document.getElementById('frontContextText').innerText = item.context;
+
+      // 背面內容填充
+      document.getElementById('backTitleSmall').innerText = item.title;
+      document.getElementById('backSolutionTitle').innerHTML = `<i data-lucide="lightbulb" class="w-5 h-5 text-amber-400 shrink-0"></i><span>${item.solutionTitle}</span>`;
+      document.getElementById('backSolutionDesc').innerText = item.solutionDesc;
+      document.getElementById('backPromptCode').innerText = item.prompt;
+
+      // 頁碼更新
+      document.getElementById('currentSlideNum').innerText = index + 1;
+      document.getElementById('totalSlideNum').innerText = filteredData.length;
+
+      // 按鈕狀態控制
+      document.getElementById('btnPrev').disabled = index === 0;
+      document.getElementById('btnNext').disabled = index === filteredData.length - 1;
+
+      // 重新生成 Lucide Icons
+      lucide.createIcons();
+
+      // 更新縮圖高亮
+      updateThumbnailsHighlight(index);
+    }
+
+    function flipCard() {
+      isFlipped = !isFlipped;
+      const cardInner = document.getElementById('slideCardInner');
+      if (isFlipped) {
+        cardInner.classList.add('slide-card-flipped');
+      } else {
+        cardInner.classList.remove('slide-card-flipped');
+      }
+      playSfx('flip');
+    }
+
+    function nextSlide() {
+      if (currentIndex < filteredData.length - 1) {
+        currentIndex++;
+        renderSlide(currentIndex);
+        playSfx('slide');
+      }
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderSlide(currentIndex);
+        playSfx('slide');
+      }
+    }
+
+    function filterCategory(cat) {
+      // 更新按鈕樣式
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.category === cat) {
+          btn.classList.add('active', 'bg-indigo-600', 'text-white', 'shadow-sm');
+          btn.classList.remove('bg-slate-200/80', 'text-slate-700');
+        } else {
+          btn.classList.remove('active', 'bg-indigo-600', 'text-white', 'shadow-sm');
+          btn.classList.add('bg-slate-200/80', 'text-slate-700');
+        }
+      });
+
+      if (cat === 'all') {
+        filteredData = [...SLIDES_DATA];
+      } else {
+        filteredData = SLIDES_DATA.filter(item => item.category === cat);
+      }
+
+      currentIndex = 0;
+      renderThumbnails();
+      renderSlide(currentIndex);
+      if (isGridView) renderGridView();
+      playSfx('slide');
+    }
+
+    function renderThumbnails() {
+      const container = document.getElementById('thumbnailContainer');
+      container.innerHTML = '';
+
+      filteredData.forEach((item, idx) => {
+        const thumb = document.createElement('button');
+        thumb.className = `shrink-0 w-24 sm:w-28 p-2 rounded-xl border text-left transition flex flex-col justify-between h-16 ${
+          idx === currentIndex ? 'border-indigo-600 bg-indigo-50 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-100'
+        }`;
+        thumb.id = `thumb-${idx}`;
+        thumb.onclick = (e) => {
+          e.stopPropagation();
+          currentIndex = idx;
+          renderSlide(currentIndex);
+          playSfx('slide');
+        };
+        thumb.onmouseenter = () => playSfx('hover');
+
+        thumb.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-indigo-600 font-mono">#${String(item.id).padStart(2, '0')}</span>
+            <i data-lucide="${item.icon}" class="w-3.5 h-3.5 text-slate-400"></i>
+          </div>
+          <p class="text-[11px] font-bold text-slate-700 truncate">${item.title}</p>
+        `;
+        container.appendChild(thumb);
+      });
+
+      lucide.createIcons();
+    }
+
+    function updateThumbnailsHighlight(activeIdx) {
+      filteredData.forEach((_, idx) => {
+        const el = document.getElementById(`thumb-${idx}`);
+        if (!el) return;
+        if (idx === activeIdx) {
+          el.className = 'shrink-0 w-24 sm:w-28 p-2 rounded-xl border text-left transition flex flex-col justify-between h-16 border-indigo-600 bg-indigo-50 shadow-sm scale-105';
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          el.className = 'shrink-0 w-24 sm:w-28 p-2 rounded-xl border text-left transition flex flex-col justify-between h-16 border-slate-200 bg-white hover:bg-slate-100';
+        }
+      });
+    }
+
+    function toggleViewMode() {
+      isGridView = !isGridView;
+      const presView = document.getElementById('presentationView');
+      const gridView = document.getElementById('gridView');
+      const viewModeIcon = document.getElementById('viewModeIcon');
+      const viewModeText = document.getElementById('viewModeText');
+
+      if (isGridView) {
+        presView.classList.add('hidden');
+        gridView.classList.remove('hidden');
+        viewModeIcon.setAttribute('data-lucide', 'presentation');
+        viewModeText.innerText = '簡報模式';
+        renderGridView();
+      } else {
+        gridView.classList.add('hidden');
+        presView.classList.remove('hidden');
+        viewModeIcon.setAttribute('data-lucide', 'grid');
+        viewModeText.innerText = '全覽網格';
+        renderSlide(currentIndex);
+      }
+      lucide.createIcons();
+      playSfx('slide');
+    }
+
+    function renderGridView() {
+      const container = document.getElementById('gridContainer');
+      container.innerHTML = '';
+
+      filteredData.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white border-2 border-slate-200 hover:border-indigo-500 rounded-3xl p-5 shadow-sm hover:shadow-lg transition cursor-pointer flex flex-col justify-between space-y-4 group';
+        card.onclick = () => {
+          currentIndex = idx;
+          toggleViewMode();
+        };
+        card.onmouseenter = () => playSfx('hover');
+
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-indigo-50 text-indigo-700 border border-indigo-200">
+                ${item.categoryName}
+              </span>
+              <span class="text-xs font-mono font-bold text-slate-400">#${String(item.id).padStart(2, '0')}</span>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 shrink-0 group-hover:scale-110 transition">
+                <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-black text-base text-slate-900 group-hover:text-indigo-600 transition leading-snug">${item.title}</h3>
+            </div>
+            <p class="text-xs text-slate-500 font-medium line-clamp-3">${item.desc}</p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+            <span class="font-bold text-indigo-600 flex items-center gap-1">
+              <span>查看 Prompt</span> <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </span>
+            <span>點擊開啟</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function copyCurrentPrompt(e) {
+      e.stopPropagation();
+      const promptText = filteredData[currentIndex].prompt;
+      navigator.clipboard.writeText(promptText).then(() => {
+        playSfx('copy');
+        const copyBtnText = document.getElementById('copyBtnText');
+        copyBtnText.innerText = '已複製！';
+        setTimeout(() => {
+          copyBtnText.innerText = '一鍵複製此 Prompt';
+        }, 2000);
+        showToast('✨ 已成功複製完整 Prompt 提示詞到剪貼簿！');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastText').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2500);
+    }
+
+    // 鍵盤左右鍵 ＆ 空白鍵快速導航
+    document.addEventListener('keydown', (e) => {
+      if (isGridView) return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === ' ' || e.key === 'Enter') {
+        flipCard();
+      }
+    });
+
+    // 頁面初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      renderThumbnails();
+      renderSlide(currentIndex);
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

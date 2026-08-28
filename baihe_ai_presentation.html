@@ -129,7 +129,7 @@
             <span class="px-2.5 py-0.5 text-xs font-black tracking-wide uppercase rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700">高職備課・實作・評量革新</span>
           </div>
           <p class="text-xs sm:text-sm text-slate-500 font-bold mt-0.5">
-            20 大高職教學痛點 3D 簡報級互動卡牌庫 ｜ 屏東縣後庄國小 黃朝榮老師作品
+            21 大高職教學痛點 3D 簡報級互動卡牌庫 ｜ 屏東縣後庄國小 黃朝榮老師作品
           </p>
         </div>
       </a>
@@ -170,7 +170,7 @@
     <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-3 sm:mb-4">
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar w-full sm:w-auto pb-1 sm:pb-0" id="filterContainer">
         <button onclick="filterCategory('all')" onmouseenter="playSfx('hover')" class="filter-btn active px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap bg-indigo-600 text-white shadow-sm" data-category="all">
-          全部 (20)
+          全部 (<span id="countAll">21</span>)
         </button>
         <button onclick="filterCategory('prep')" onmouseenter="playSfx('hover')" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition whitespace-nowrap bg-slate-200/80 text-slate-700 hover:bg-slate-300" data-category="prep">
           🎯 備課與分層
@@ -214,7 +214,7 @@
                 <i data-lucide="tag" class="w-3.5 h-3.5"></i>
                 <span id="frontCategoryText">備課與分層</span>
               </span>
-              <span id="frontIndexBadge" class="text-xs font-black text-slate-400 font-mono">#01 / 20</span>
+              <span id="frontIndexBadge" class="text-xs font-black text-slate-400 font-mono">#01 / 21</span>
             </div>
 
             <div class="flex items-center gap-2">
@@ -323,7 +323,7 @@
         <div class="flex items-center gap-1.5 font-mono text-xs sm:text-sm font-black text-slate-600 bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm">
           <span id="currentSlideNum" class="text-indigo-600 text-base">1</span>
           <span class="text-slate-400">/</span>
-          <span id="totalSlideNum">20</span>
+          <span id="totalSlideNum">21</span>
         </div>
 
         <!-- 下一頁 -->
@@ -335,7 +335,7 @@
 
       <!-- 底部縮圖列 (Horizontal Scroll Thumbnails) -->
       <div class="thumbnail-scroll flex gap-2 overflow-x-auto py-2 px-1" id="thumbnailContainer">
-        <!-- 動態渲染 20 個縮圖 -->
+        <!-- 動態渲染 21 個縮圖 -->
       </div>
     </div>
 
@@ -345,7 +345,7 @@
   <div id="gridView" class="hidden flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-200">
       <div>
-        <h2 class="text-xl sm:text-2xl font-black text-slate-900">白河商工 AI 教學實戰錦囊：20 大主題全覽</h2>
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900">白河商工 AI 教學實戰錦囊：21 大主題全覽</h2>
         <p class="text-xs sm:text-sm text-slate-500 font-bold">點擊任意卡片可直接進入簡報焦點模式</p>
       </div>
       <button onclick="toggleViewMode()" onmouseenter="playSfx('hover')" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm">
@@ -374,7 +374,7 @@
     </div>
   </footer>
 
-  <!-- 20 張卡牌的核心資料庫 -->
+  <!-- 21 張卡牌的核心資料庫 -->
   <script>
     const SLIDES_DATA = [
       {
@@ -446,6 +446,25 @@
       },
       {
         id: 4,
+        category: "prep",
+        categoryName: "備課與分層",
+        icon: "layers",
+        title: "同一檢定題，AI 秒產三種難度（分層個別化教學）",
+        desc: "技高雙峰現象嚴重，高成就學生覺得檢定太簡單，落後學生連題目都看不懂。AI 能在 5 秒內把同一題改編為 3 種版本！",
+        context: "教學痛點：實作課沒時間單獨幫補救學生重新寫白話講義，也沒時間為競賽選手出進階情境題。",
+        solutionTitle: "分層提示詞模板",
+        solutionDesc: "將官方題目輸入 AI，一次產出【補救白話比喻版】、【基礎解題線索版】與【進階工廠實務應用題】。",
+        prompt: `【角色】台灣高職專業科目教師。
+【任務】請將以下這題丙級檢定題目，改編為適合不同程度學生的三種版本：
+【原題】「分路用配電箱其主過電流保護器應不超過多少安？ (1)400 (2)200 (3)300 (4)100」
+
+請輸出：
+1. 【補救/綜職白話版】：用國中生聽得懂的生活比喻（如水管總開關）解釋這題，並附帶 1 句好記的記憶口訣。
+2. 【基礎圖解提示版】：指出題目關鍵字，並提供解題的 2 步思考線索。
+3. 【進階選手情境題】：設計一個「工廠實際配電場景故障」的應用題，讓高成就學生計算。`
+      },
+      {
+        id: 5,
         category: "dept",
         categoryName: "白河各科案例",
         icon: "zap",
@@ -462,7 +481,7 @@
 3. 延伸 1 題丙級室內配線相關的考題。`
       },
       {
-        id: 5,
+        id: 6,
         category: "dept",
         categoryName: "白河各科案例",
         icon: "car",
@@ -480,7 +499,7 @@
 - 第 3 關：產出標準檢修與報價工單範本。`
       },
       {
-        id: 6,
+        id: 7,
         category: "dept",
         categoryName: "白河各科案例",
         icon: "cog",
@@ -495,7 +514,7 @@
 3. 【失誤與後果對照】：失誤動作 ➔ 可能後果（撞刀/工件噴出）➔ 正確防範作法。`
       },
       {
-        id: 7,
+        id: 8,
         category: "dept",
         categoryName: "白河各科案例",
         icon: "ruler",
@@ -510,7 +529,7 @@
 3. 結合實務工法說明：為什麼圖面上的鋼筋保護層厚度與無障礙坡度必須嚴格符合法規？`
       },
       {
-        id: 8,
+        id: 9,
         category: "dept",
         categoryName: "白河各科案例",
         icon: "store",
@@ -529,7 +548,7 @@
 「我是高職資處科學生，我的 Python 程式出現了：IndexError: list index out of range。請用打電動比喻解釋這是什麼意思？並給我 2 個排查修正的範例。」`
       },
       {
-        id: 9,
+        id: 10,
         category: "dept",
         categoryName: "白河各科案例",
         icon: "palette",
@@ -549,7 +568,7 @@
 - 附帶 1 個安全提醒（防滑鞋穿好）。`
       },
       {
-        id: 10,
+        id: 11,
         category: "eval",
         categoryName: "實作與防作弊",
         icon: "git-branch",
@@ -563,7 +582,7 @@
 請幫我將此專題的「感測器偵測 ➔ 數據判斷 ➔ 繼電器驅動抽水馬達/抽風扇 ➔ LINE 通知」運作邏輯，撰寫為一段無語法錯誤的 Mermaid.js 流程圖代碼（graph TD），並附帶專題報告第二章「系統架構說明」的三段文字。`
       },
       {
-        id: 11,
+        id: 12,
         category: "eval",
         categoryName: "實作與防作弊",
         icon: "shield-alert",
@@ -580,7 +599,7 @@
 4. 【現場口頭答辯】：3 分鐘現場抽問實作細節，能答出修改原理者給分（佔 20%）。`
       },
       {
-        id: 12,
+        id: 13,
         category: "tools",
         categoryName: "實戰工具箱",
         icon: "video",
@@ -595,7 +614,7 @@
 3. 在 NotebookLM 輸入：「請根據上傳的手冊與影片，整理出學生實習時『最容易犯的 5 個危險動作』與『標準操作口訣』。」`
       },
       {
-        id: 13,
+        id: 14,
         category: "tools",
         categoryName: "實戰工具箱",
         icon: "file-spreadsheet",
@@ -612,7 +631,7 @@
 【操作特點】100% 在本機瀏覽器運作，學生不用註冊帳號、不用上傳伺服器，保護學生隱私！`
       },
       {
-        id: 14,
+        id: 15,
         category: "tools",
         categoryName: "實戰工具箱",
         icon: "command",
@@ -630,7 +649,7 @@ https://chromewebstore.google.com/detail/jhjikkclahioaedgijaddcajdpigclgd
 - 輸入 /diff ➔ 自動展開：【請將上述內容改寫為補救教學白話版...】`
       },
       {
-        id: 15,
+        id: 16,
         category: "prep",
         categoryName: "政策與倫理",
         icon: "shield-check",
@@ -651,7 +670,7 @@ https://chromewebstore.google.com/detail/jhjikkclahioaedgijaddcajdpigclgd
 3. 老師永遠擁有最終的教學與專業判斷主導權。`
       },
       {
-        id: 16,
+        id: 17,
         category: "templates",
         categoryName: "帶得走模板",
         icon: "file-text",
@@ -670,7 +689,7 @@ https://chromewebstore.google.com/detail/jhjikkclahioaedgijaddcajdpigclgd
 5. 【分層口訣】：針對學習落後學生的白話記憶口訣與常見錯誤防範卡。`
       },
       {
-        id: 17,
+        id: 18,
         category: "templates",
         categoryName: "帶得走模板",
         icon: "clipboard-check",
@@ -696,7 +715,7 @@ https://chromewebstore.google.com/detail/jhjikkclahioaedgijaddcajdpigclgd
    學生簽名：__________________  日期：2026 年 ___ 月 ___ 日`
       },
       {
-        id: 18,
+        id: 19,
         category: "templates",
         categoryName: "帶得走模板",
         icon: "table",
@@ -723,7 +742,7 @@ https://chromewebstore.google.com/detail/jhjikkclahioaedgijaddcajdpigclgd
    - 優：落實 5S、嚴格遵守安全防護裝備、分工明確。`
       },
       {
-        id: 19,
+        id: 20,
         category: "dept",
         categoryName: "白河各科案例",
         icon: "heart-handshake",
@@ -741,7 +760,7 @@ https://chromewebstore.google.com/detail/jhjikkclahioaedgijaddcajdpigclgd
 3. 一張可打勾的日常集點卡文字設計。`
       },
       {
-        id: 20,
+        id: 21,
         category: "tools",
         categoryName: "總結與分享",
         icon: "gift",
@@ -1137,6 +1156,7 @@ https://puti001.github.io/baihe-quiz-player/quiz_player.html
 
     // 頁面初始化
     document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('countAll').innerText = SLIDES_DATA.length;
       renderThumbnails();
       renderSlide(currentIndex);
       lucide.createIcons();

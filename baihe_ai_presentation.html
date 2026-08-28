@@ -235,12 +235,12 @@
             </h2>
 
             <p id="frontDescription" class="text-sm sm:text-lg text-slate-600 leading-relaxed font-medium">
-              高職老師最需要的，不是再認識 20 個工具，而是「AI 如何幫我減少備課與行政負擔，同時讓學生真正學會專業」。
+              高職老師最需要的，不是再認識 20 個工具，而是「AI 如何幫我減少備課與行政負擔，同時讓學生真正學會專業實務」。
             </p>
 
             <div id="frontContextBox" class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 font-bold flex items-start gap-2.5">
               <i data-lucide="compass" class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5"></i>
-              <span id="frontContextText">研習主軸：鎖定「檢定題庫手遊化」、「工場安全SOP」、「防作弊新評量」與「各科落地案例」。</span>
+              <span id="frontContextText">研習總覽：鎖定「技能檢定手遊化」、「工場安全SOP」、「專題防作弊新評量」與「白河各科實戰案例」。</span>
             </div>
           </div>
 
@@ -365,19 +365,12 @@
     <span id="toastText">已成功複製 Prompt 提示詞！</span>
   </div>
 
-  <!-- 頁尾版權宣告 -->
+  <!-- 頁尾版權宣告 (乾淨標準版) -->
   <footer class="bg-white border-t border-slate-200 py-6 mt-8 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <p class="text-xs sm:text-sm text-slate-600 font-bold leading-relaxed">
         屏東縣後庄國小黃朝榮老師作品，免費分享，歡迎擴散推廣，嚴禁商用與任何侵權、不尊重著作權的行為，更多 Puti-AI 教學工具 <a href="https://padlet.com/clongwh/puti_ai_tools" target="_blank" class="text-indigo-600 font-black hover:underline">點此前往 (Padlet 工具庫)</a>
       </p>
-      <div class="flex items-center justify-center gap-4 text-[11px] text-slate-400 font-mono">
-        <span>Puti-AI 2026 Edition</span>
-        <span>•</span>
-        <span>臺南市立白河商工專題研習精華</span>
-        <span>•</span>
-        <span>7 大職類 9,360 題真題收錄</span>
-      </div>
     </div>
   </footer>
 
@@ -408,15 +401,17 @@
         title: "白河商工 7 職類 9,360 題官方真題播放器",
         desc: "涵蓋白河商工室配、汽修、車床、機械加工、建築製圖、測量、機車修護等 7 大科，099~115 年 17 年全套官方真題，手機秒開互動刷題！",
         context: "檢定痛點：學生看厚本題庫容易枯燥放棄，手機網頁讓學生隨時隨地像打手遊一樣快速測驗與即時看官方解析。",
-        solutionTitle: "直接展示專屬播放器",
-        solutionDesc: "現場投影點開 https://puti001.github.io/baihe-quiz-player/quiz_player.html，示範 100% 官方 PDF 解析、無佔位字、支援橫向滑動與全清單稽核。",
-        prompt: `【白河商工真題播放器網址】
-https://puti001.github.io/baihe-quiz-player/quiz_player.html
+        solutionTitle: "題庫轉「課堂破冰快問快答」Prompt",
+        solutionDesc: "把任何一題官方檢定題目貼進去，AI 秒轉為課堂 3 分鐘互動 PK 題目與白話觀念解析！",
+        prompt: `【角色】高職專業科目教師
+【任務】請將以下這題官方丙級檢定題目，改編為課堂前 3 分鐘「搶答破冰快問快答」格式：
+【題目輸入】：[請在此貼上檢定題目與選項]
 
-【特色】
-1. 7 大職類 117 份試卷，100% 官方標準解答無差錯對齊。
-2. 支援按需動態載入（Lazy Loading），手機 0.1 秒秒開。
-3. 具備「檢視當前年度 80 題全清單」稽核功能，方便老師課堂快速講解。`
+【請輸出】：
+1. 【快問快答題幹】：改寫為生活情境或工廠實務狀況題，增加趣味性。
+2. 【4 個選項】：保留正確解答，並將錯誤選項加上常見混淆誘答分析。
+3. 【白話解析】：用 2 句話解釋為什麼選這個答案，並點出 1 個考點關鍵字。
+4. 【課堂提問】：設計 1 個延伸問題，讓答對的學生能口頭解釋原理。`
       },
       {
         id: 3,
